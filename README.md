@@ -2,7 +2,9 @@
  <h1>STON.fi SDK</h1>
 </div>
 
-In-depth documentation on this SDK is available at [Placeholder](Placeholder)
+[![npm version](https://img.shields.io/npm/v/@ston-fi/sdk/latest.svg)](https://www.npmjs.com/package/@ston-fi/sdk/v/latest)
+
+Documentation on this SDK is available at [docs.ston.fi](https://docs.ston.fi/docs/technical-reference/sdk/gettingstarted)
 ​
 ## Installing
 
