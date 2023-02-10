@@ -12,6 +12,7 @@ export type JettonMinter = InstanceType<typeof TonWeb.token.ft.JettonMinter>;
 export type JettonWallet = InstanceType<typeof TonWeb.token.ft.JettonWallet>;
 export type BN = InstanceType<typeof TonWeb.utils.BN>;
 export type AddressType = string | Address;
+export type QueryIdType = number | BN;
 export interface ContractOptions extends TW_ContractOptions {}
 export interface JettonMinterOptions extends TW_JettonMinterOptions {}
 

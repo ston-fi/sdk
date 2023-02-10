@@ -1,8 +1,7 @@
 import TonWeb from 'tonweb';
 
-import { LpAccount } from '@/contracts/lp-account/LpAccount';
+import { LpAccountRevisionV1 } from '@/contracts/lp-account/LpAccountRevisionV1';
 import { parseAddressFromCell } from '@/utils/parseAddressFromCell';
-import { ROUTER_REVISION } from '@/constants';
 import { OP_CODES } from '@/constants';
 import type { Address, Cell, BN } from '@/types';
 
@@ -129,15 +128,8 @@ export class PoolRevisionV1 implements PoolRevision {
     return parseAddressFromCell(result);
   };
 
-  public constructLpAccount: PoolRevision['constructLpAccount'] = (
-    pool,
-    lpAccountAddress,
-  ) => {
-    return new LpAccount(pool.provider, {
-      address: lpAccountAddress,
-      revision: ROUTER_REVISION.V1,
-    });
-  };
+  public constructLpAccountRevision: PoolRevision['constructLpAccountRevision'] =
+    (_pool) => new LpAccountRevisionV1();
 
   public getData: PoolRevision['getData'] = async (pool) => {
     const contractAddress = await pool.getAddress();

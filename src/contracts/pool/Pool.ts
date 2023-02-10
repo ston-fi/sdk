@@ -1,6 +1,6 @@
 import TonWeb from 'tonweb';
 
-import type { LpAccount } from '@/contracts/lp-account/LpAccount';
+import { LpAccount } from '@/contracts/lp-account/LpAccount';
 import { ROUTER_REVISION } from '@/constants';
 import type {
   Address,
@@ -10,6 +10,7 @@ import type {
   JettonWallet,
   BN,
   AddressType,
+  QueryIdType,
   JettonMinterOptions,
   MessageData,
 } from '@/types';
@@ -116,11 +117,13 @@ export class Pool extends JettonMinter {
   /**
    * Create a payload for the `collect_fees` transaction.
    *
-   * @param {BN | undefined} params.queryId - Optional; query id
+   * @param {BN | number | undefined} params.queryId - Optional; query id
    *
    * @returns {Cell} payload for the `collect_fees` transaction.
    */
-  public async createCollectFeesBody(params?: { queryId?: BN }): Promise<Cell> {
+  public async createCollectFeesBody(params?: {
+    queryId?: QueryIdType;
+  }): Promise<Cell> {
     return this.revision.createCollectFeesBody(this, params);
   }
 
@@ -129,14 +132,14 @@ export class Pool extends JettonMinter {
    *
    * @param {BN} params.amount - Amount of lp tokens to burn (in basic token units)
    * @param {AddressType} params.responseAddress - Address of a user
-   * @param {BN | undefined} params.queryId - Optional; query id
+   * @param {BN | number | undefined} params.queryId - Optional; query id
    *
    * @returns {Cell} payload for the `burn` transaction.
    */
   public async createBurnBody(params: {
     amount: BN;
     responseAddress: AddressType;
-    queryId?: BN;
+    queryId?: QueryIdType;
   }): Promise<Cell> {
     return this.revision.createBurnBody(this, params);
   }
@@ -221,7 +224,10 @@ export class Pool extends JettonMinter {
 
     if (!accountAddress) return null;
 
-    return this.revision.constructLpAccount(this, accountAddress);
+    return new LpAccount(this.provider, {
+      address: accountAddress,
+      revision: this.revision.constructLpAccountRevision(this),
+    });
   }
 
   /**
@@ -234,12 +240,12 @@ export class Pool extends JettonMinter {
   /**
    * Build all data required to execute a `collect_fees` transaction.
    *
-   * @param {BN | undefined} params.queryId - Optional; query id
+   * @param {BN | number | undefined} params.queryId - Optional; query id
    *
    * @returns {MessageData} all data required to execute a `collect_fees` transaction.
    */
   public async buildCollectFeeTxParams(params: {
-    queryId?: BN;
+    queryId?: QueryIdType;
   }): Promise<MessageData> {
     const payload = await this.createCollectFeesBody({
       queryId: params.queryId,
@@ -257,14 +263,14 @@ export class Pool extends JettonMinter {
    *
    * @param {BN} params.amount - Amount of lp tokens to burn (in basic token units)
    * @param {AddressType} params.responseAddress - Address of a user
-   * @param {BN | undefined} params.queryId - Optional; query id
+   * @param {BN | number | undefined} params.queryId - Optional; query id
    *
    * @returns {MessageData} all data required to execute a `burn` transaction.
    */
   public async buildBurnTxParams(params: {
     amount: BN;
     responseAddress: AddressType;
-    queryId?: BN;
+    queryId?: QueryIdType;
   }): Promise<MessageData> {
     const payload = await this.createBurnBody({
       amount: params.amount,

@@ -1,5 +1,5 @@
-import type { LpAccount } from '@/contracts/lp-account/LpAccount';
-import type { Address, Cell, BN, AddressType } from '@/types';
+import type { LpAccountRevision } from '@/contracts/lp-account/LpAccountRevision';
+import type { Address, Cell, BN, AddressType, QueryIdType } from '@/types';
 
 import type {
   Pool,
@@ -19,7 +19,7 @@ export interface PoolRevision {
   createCollectFeesBody(
     pool: Pool,
     params?: {
-      queryId?: BN;
+      queryId?: QueryIdType;
     },
   ): Promise<Cell>;
 
@@ -28,7 +28,7 @@ export interface PoolRevision {
     params: {
       amount: BN;
       responseAddress: AddressType;
-      queryId?: BN;
+      queryId?: QueryIdType;
     },
   ): Promise<Cell>;
 
@@ -62,7 +62,7 @@ export interface PoolRevision {
     },
   ): Promise<Address | null>;
 
-  constructLpAccount(pool: Pool, lpAccountAddress: AddressType): LpAccount;
+  constructLpAccountRevision(pool: Pool): LpAccountRevision;
 
   getData(pool: Pool): Promise<PoolData>;
 }

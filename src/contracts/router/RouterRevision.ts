@@ -1,4 +1,4 @@
-import type { Pool } from '@/contracts/pool/Pool';
+import type { PoolRevision } from '@/contracts/pool/PoolRevision';
 import type { Address, Cell, BN, AddressType } from '@/types';
 
 import type { Router, RouterData } from './Router';
@@ -17,11 +17,9 @@ export interface RouterRevision {
     router: Router,
     params: {
       userWalletAddress: AddressType;
-      offerAmount: BN;
       minAskAmount: BN;
       askJettonWalletAddress: AddressType;
-      forwardGasAmount?: BN;
-      queryId?: BN;
+      referralAddress?: AddressType;
     },
   ): Promise<Cell>;
 
@@ -29,10 +27,7 @@ export interface RouterRevision {
     router: Router,
     params: {
       routerWalletAddress: AddressType;
-      lpAmount: BN;
       minLpOut: BN;
-      forwardGasAmount?: BN;
-      queryId?: BN;
     },
   ): Promise<Cell>;
 
@@ -44,7 +39,7 @@ export interface RouterRevision {
     },
   ): Promise<Address | null>;
 
-  constructPool(router: Router, poolAddress: AddressType): Pool;
+  constructPoolRevision(router: Router): PoolRevision;
 
   getData(router: Router): Promise<RouterData>;
 }

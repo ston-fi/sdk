@@ -1,7 +1,8 @@
 import TonWeb from 'tonweb';
 
-import type { Pool } from '@/contracts/pool/Pool';
+import { Pool } from '@/contracts/pool/Pool';
 import { ROUTER_REVISION } from '@/constants';
+import { createJettonTransferMessage } from '@/utils/createJettonTransferMessage';
 import type {
   Address,
   Cell,
@@ -12,6 +13,7 @@ import type {
   AddressType,
   ContractOptions,
   MessageData,
+  QueryIdType,
 } from '@/types';
 
 import type { RouterGasConstants, RouterRevision } from './RouterRevision';
@@ -23,6 +25,7 @@ const {
   token: {
     jetton: { JettonMinter },
   },
+  utils: { BN },
 } = TonWeb;
 
 const REVISIONS = {
@@ -86,21 +89,17 @@ export class Router extends Contract {
    * Create a payload for the `swap` transaction.
    *
    * @param {AddressType} params.userWalletAddress - User's address
-   * @param {BN} params.offerAmount - Amount of tokens to be swapped (in basic token units)
    * @param {BN} params.minAskAmount - Minimum amount of tokens received (in basic token units)
    * @param {AddressType} params.askJettonWalletAddress - Jetton router's wallet address of tokens to be received
-   * @param {BN | undefined} params.forwardGasAmount - Optional; forward amount of gas for the next transaction (in nanoTons)
-   * @param {BN | undefined} params.queryId - Optional; query id
+   * @param {AddressType | undefined} params.referralAddress - Optional; referral address
    *
    * @returns {Cell} payload for the `swap` transaction.
    */
   public async createSwapBody(params: {
     userWalletAddress: AddressType;
-    offerAmount: BN;
     minAskAmount: BN;
     askJettonWalletAddress: AddressType;
-    forwardGasAmount?: BN;
-    queryId?: BN;
+    referralAddress?: AddressType;
   }): Promise<Cell> {
     return this.revision.createSwapBody(this, params);
   }
@@ -109,19 +108,13 @@ export class Router extends Contract {
    * Create a payload for the `provide_lp` transaction.
    *
    * @param {AddressType} params.routerWalletAddress - Address of the router's Jetton token wallet
-   * @param {BN} params.lpAmount - Amount of deposited tokens as liquidity (in basic token units)
    * @param {BN} params.minLpOut - Minimum amount of created liquidity tokens (in basic token units)
-   * @param {BN | undefined} params.forwardGasAmount - Optional; forward amount of gas for the next transaction (in nanoTons)
-   * @param {BN | undefined} params.queryId - Optional; query id
    *
    * @returns payload for the `provide_lp` transaction.
    */
   public async createProvideLiquidityBody(params: {
     routerWalletAddress: AddressType;
-    lpAmount: BN;
     minLpOut: BN;
-    forwardGasAmount?: BN;
-    queryId?: BN;
   }): Promise<Cell> {
     return this.revision.createProvideLiquidityBody(this, params);
   }
@@ -182,7 +175,15 @@ export class Router extends Contract {
 
     if (!poolAddress) return null;
 
-    return this.revision.constructPool(this, poolAddress);
+    return new Pool(
+      this.provider,
+      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+      // @ts-ignore
+      {
+        address: poolAddress,
+        revision: this.revision.constructPoolRevision(this),
+      },
+    );
   }
 
   /**
@@ -193,7 +194,7 @@ export class Router extends Contract {
   }
 
   /**
-   * Build all data required to execute a `swap` transaction.
+   * Build all data required to execute a jetton `swap` transaction
    *
    * @param {AddressType} params.userWalletAddress - User's address
    * @param {AddressType} params.offerJettonAddress - Jetton address of a token to be swapped
@@ -201,18 +202,20 @@ export class Router extends Contract {
    * @param {BN} params.offerAmount - Amount of tokens to be swapped (in basic token units)
    * @param {BN} params.minAskAmount - Minimum amount of tokens received (in basic token units)
    * @param {BN | undefined} params.forwardGasAmount - Optional; forward amount of gas for the next transaction (in nanoTons)
-   * @param {BN | undefined} params.queryId - Optional; query id
+   * @param {BN | number | undefined} params.queryId - Optional; query id
+   * @param {AddressType | undefined} params.referralAddress - Optional; referral address
    *
-   * @returns {MessageData} data required to execute a `swap` transaction.
+   * @returns {MessageData} data required to execute a jetton `swap` transaction
    */
-  public async buildSwapTxParams(params: {
+  public async buildSwapJettonTxParams(params: {
     userWalletAddress: AddressType;
     offerJettonAddress: AddressType;
     askJettonAddress: AddressType;
     offerAmount: BN;
     minAskAmount: BN;
     forwardGasAmount?: BN;
-    queryId?: BN;
+    queryId?: QueryIdType;
+    referralAddress?: AddressType;
   }): Promise<MessageData> {
     const offerJetton = new JettonMinter(
       this.provider,
@@ -239,147 +242,232 @@ export class Router extends Contract {
       await this.getAddress(),
     );
 
-    const payload = await this.createSwapBody({
+    const forwardPayload = await this.createSwapBody({
       userWalletAddress: params.userWalletAddress,
-      offerAmount: params.offerAmount,
       minAskAmount: params.minAskAmount,
       askJettonWalletAddress: askJettonWalletAddress,
-      forwardGasAmount: params.forwardGasAmount,
-      queryId: params.queryId,
+      referralAddress: params.referralAddress,
+    });
+
+    const payload = createJettonTransferMessage({
+      queryId: params.queryId ?? 0,
+      amount: params.offerAmount,
+      destination: await this.getAddress(),
+      forwardTonAmount:
+        params.forwardGasAmount ?? this.gasConstants.swapForward,
+      forwardPayload,
     });
 
     return {
       to: offerJettonWalletAddress,
-      payload: payload,
+      payload,
       gasAmount: this.gasConstants.swap,
     };
   }
 
   /**
-   * Collect all data required to execute a `provide_lp` transaction  for the first Jetton token of the pair.
+   * Build all data required to execute a ton to jetton `swap` transaction
    *
    * @param {AddressType} params.userWalletAddress - User's address
-   * @param {AddressType} params.jettonAddresses.token0 - Address of the first Jetton token
-   * @param {AddressType} params.jettonAddresses.token1 - Address of the second Jetton token
-   * @param {BN} params.lpAmount0 - Amount of the first token deposited as liquidity (in basic token units)
-   * @param {BN} params.minLpOut - Minimum amount of created liquidity tokens (in basic token units)
+   * @param {AddressType} params.proxyTonAddress - Address of a proxy ton contract
+   * @param {AddressType} params.askJettonAddress - Jetton address of a token to be received
+   * @param {BN} params.offerAmount - Amount of ton to be swapped (in nanoTons)
+   * @param {BN} params.minAskAmount - Minimum amount of tokens received (in basic token units)
    * @param {BN | undefined} params.forwardGasAmount - Optional; forward amount of gas for the next transaction (in nanoTons)
-   * @param {BN | undefined} params.queryId - Optional; query id
+   * @param {AddressType | undefined} params.referralAddress - Optional; referral address
+   * @param {BN | number | undefined} params.queryId - Optional; query id
    *
-   * @returns {MessageData} data required to execute a `provide_lp` transaction  for the first Jetton token of the pair.
+   * @returns {MessageData} data required to execute a ton to jetton `swap` transaction
    */
-  public async buildProvideLiquidityTxParamsToken0(params: {
+  public async buildSwapProxyTonTxParams(params: {
     userWalletAddress: AddressType;
-    jettonAddresses: {
-      token0: AddressType;
-      token1: AddressType;
-    };
-    lpAmount0: BN;
-    minLpOut: BN;
+    proxyTonAddress: AddressType;
+    askJettonAddress: AddressType;
+    offerAmount: BN;
+    minAskAmount: BN;
     forwardGasAmount?: BN;
-    queryId?: BN;
+    referralAddress?: AddressType | undefined;
+    queryId?: QueryIdType;
   }): Promise<MessageData> {
-    const jetton0 = new JettonMinter(
+    const proxyTonMinter = new JettonMinter(
       this.provider,
       // eslint-disable-next-line @typescript-eslint/ban-ts-comment
       // @ts-ignore
       {
-        address: params.jettonAddresses.token0,
+        address: params.proxyTonAddress,
       },
     );
 
-    const jetton1 = new JettonMinter(
+    const askJettonMinter = new JettonMinter(
       this.provider,
       // eslint-disable-next-line @typescript-eslint/ban-ts-comment
       // @ts-ignore
       {
-        address: params.jettonAddresses.token1,
+        address: params.askJettonAddress,
       },
     );
 
-    const jettonWalletAddress = await jetton0.getJettonWalletAddress(
-      new Address(params.userWalletAddress),
+    const proxyTonWalletAddress = await proxyTonMinter.getJettonWalletAddress(
+      await this.getAddress(),
     );
-    const routerWalletAddress = await jetton1.getJettonWalletAddress(
+    const askJettonWalletAddress = await askJettonMinter.getJettonWalletAddress(
       await this.getAddress(),
     );
 
-    const payload = await this.createProvideLiquidityBody({
+    const forwardPayload = await this.createSwapBody({
+      userWalletAddress: params.userWalletAddress,
+      minAskAmount: params.minAskAmount,
+      askJettonWalletAddress: askJettonWalletAddress,
+      referralAddress: params.referralAddress,
+    });
+
+    const payload = createJettonTransferMessage({
+      queryId: params.queryId ?? 0,
+      amount: params.offerAmount,
+      destination: await this.getAddress(),
+      forwardTonAmount: params.forwardGasAmount ?? this.gasConstants.swap,
+      forwardPayload,
+    });
+
+    return {
+      to: proxyTonWalletAddress,
+      payload,
+      gasAmount: params.offerAmount.add(this.gasConstants.swap),
+    };
+  }
+
+  /**
+   * Collect all data required to execute a jetton `provide_lp` transaction
+   *
+   * @param {AddressType} params.userWalletAddress - User's address
+   * @param {AddressType} params.sendTokenAddress - Address of the provided Jetton token
+   * @param {AddressType} params.otherTokenAddress - Address of the other Jetton token in pair
+   * @param {BN} params.sendAmount - Amount of the first token deposited as liquidity (in basic token units)
+   * @param {BN} params.minLpOut - Minimum amount of created liquidity tokens (in basic token units)
+   * @param {BN | undefined} params.forwardGasAmount - Optional; forward amount of gas for the next transaction (in nanoTons)
+   * @param {BN | number | undefined} params.queryId - Optional; query id
+   *
+   * @returns {MessageData} data required to execute a jetton `provide_lp` transaction
+   */
+  public async buildProvideLiquidityJettonTxParams(params: {
+    userWalletAddress: AddressType;
+    sendTokenAddress: AddressType;
+    otherTokenAddress: AddressType;
+    sendAmount: BN;
+    minLpOut: BN;
+    forwardGasAmount?: BN;
+    queryId?: QueryIdType;
+  }): Promise<MessageData> {
+    const sendJettonMinter = new JettonMinter(
+      this.provider,
+      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+      // @ts-ignore
+      {
+        address: params.sendTokenAddress,
+      },
+    );
+
+    const otherJettonMinter = new JettonMinter(
+      this.provider,
+      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+      // @ts-ignore
+      {
+        address: params.otherTokenAddress,
+      },
+    );
+
+    const jettonWalletAddress = await sendJettonMinter.getJettonWalletAddress(
+      new Address(params.userWalletAddress),
+    );
+    const routerWalletAddress = await otherJettonMinter.getJettonWalletAddress(
+      await this.getAddress(),
+    );
+
+    const forwardPayload = await this.createProvideLiquidityBody({
       routerWalletAddress: routerWalletAddress,
-      lpAmount: params.lpAmount0,
       minLpOut: params.minLpOut,
-      forwardGasAmount: params.forwardGasAmount,
-      queryId: params.queryId,
+    });
+
+    const payload = createJettonTransferMessage({
+      queryId: params.queryId ?? 0,
+      amount: params.sendAmount,
+      destination: await this.getAddress(),
+      forwardTonAmount:
+        params.forwardGasAmount ?? this.gasConstants.provideLpForward,
+      forwardPayload,
     });
 
     return {
       to: jettonWalletAddress,
-      payload: payload,
+      payload,
       gasAmount: this.gasConstants.provideLp,
     };
   }
 
   /**
-   * Build all data required to execute a `provide_lp` transaction for the second Jetton token of the pair.
+   * Collect all data required to execute a proxy ton `provide_lp` transaction
    *
-   * @param {AddressType} params.userWalletAddress -  User's address
-   * @param {AddressType} params.jettonAddresses.token0 - Address of the first Jetton token
-   * @param {AddressType} params.jettonAddresses.token1 - Address of the second Jetton token
-   * @param {BN} params.lpAmount1 - Amount of the second token deposited as liquidity (in basic token units)
+   * @param {AddressType} params.userWalletAddress - User's address
+   * @param {AddressType} params.proxyTonAddress - Address of a proxy ton contract
+   * @param {AddressType} params.otherTokenAddress - Address of the other Jetton token in pair
+   * @param {BN} params.sendAmount - Amount of ton deposited as liquidity (in nanoTons)
    * @param {BN} params.minLpOut - Minimum amount of created liquidity tokens (in basic token units)
    * @param {BN | undefined} params.forwardGasAmount - Optional; forward amount of gas for the next transaction (in nanoTons)
-   * @param {BN | undefined} params.queryId - Optional; query id
+   * @param {BN | number | undefined} params.queryId - Optional; query id
    *
-   * @returns {MessageData} data required to execute a `provide_lp` transaction for the second Jetton token of the pair.
+   * @returns {MessageData} data required to execute a proxy ton `provide_lp` transaction
    */
-  public async buildProvideLiquidityTxParamsToken1(params: {
+  public async buildProvideLiquidityProxyTonTxParams(params: {
     userWalletAddress: AddressType;
-    jettonAddresses: {
-      token0: AddressType;
-      token1: AddressType;
-    };
-    lpAmount1: BN;
+    proxyTonAddress: AddressType;
+    otherTokenAddress: AddressType;
+    sendAmount: BN;
     minLpOut: BN;
     forwardGasAmount?: BN;
-    queryId?: BN;
+    queryId?: QueryIdType;
   }): Promise<MessageData> {
-    const jetton0 = new JettonMinter(
+    const tonProxyMinter = new JettonMinter(
       this.provider,
       // eslint-disable-next-line @typescript-eslint/ban-ts-comment
       // @ts-ignore
       {
-        address: params.jettonAddresses.token0,
+        address: params.proxyTonAddress,
       },
     );
 
-    const jetton1 = new JettonMinter(
+    const otherJettonMinter = new JettonMinter(
       this.provider,
       // eslint-disable-next-line @typescript-eslint/ban-ts-comment
       // @ts-ignore
       {
-        address: params.jettonAddresses.token1,
+        address: params.otherTokenAddress,
       },
     );
 
-    const jettonWalletAddress = await jetton1.getJettonWalletAddress(
-      new Address(params.userWalletAddress),
+    const proxyTonWalletAddress = await tonProxyMinter.getJettonWalletAddress(
+      await this.getAddress(),
     );
-    const routerWalletAddress = await jetton0.getJettonWalletAddress(
+    const routerWalletAddress = await otherJettonMinter.getJettonWalletAddress(
       await this.getAddress(),
     );
 
-    const payload = await this.createProvideLiquidityBody({
+    const forwardPayload = await this.createProvideLiquidityBody({
       routerWalletAddress: routerWalletAddress,
-      lpAmount: params.lpAmount1,
       minLpOut: params.minLpOut,
-      forwardGasAmount: params.forwardGasAmount,
-      queryId: params.queryId,
+    });
+
+    const payload = createJettonTransferMessage({
+      queryId: params.queryId ?? 0,
+      amount: params.sendAmount,
+      destination: await this.getAddress(),
+      forwardTonAmount: params.forwardGasAmount ?? this.gasConstants.provideLp,
+      forwardPayload,
     });
 
     return {
-      to: jettonWalletAddress,
-      payload: payload,
-      gasAmount: this.gasConstants.provideLp,
+      to: proxyTonWalletAddress,
+      payload,
+      gasAmount: params.sendAmount.add(this.gasConstants.provideLp),
     };
   }
 }

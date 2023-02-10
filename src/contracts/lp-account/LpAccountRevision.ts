@@ -1,4 +1,4 @@
-import type { Cell, BN } from '@/types';
+import type { Cell, BN, QueryIdType } from '@/types';
 
 import type { LpAccount, LpAccountData } from './LpAccount';
 
@@ -14,7 +14,7 @@ export interface LpAccountRevision {
   createRefundBody(
     account: LpAccount,
     params?: {
-      queryId?: BN;
+      queryId?: QueryIdType;
     },
   ): Promise<Cell>;
 
@@ -24,14 +24,14 @@ export interface LpAccountRevision {
       amount0: BN;
       amount1: BN;
       miniumLpToMint?: BN;
-      queryId?: BN;
+      queryId?: QueryIdType;
     },
   ): Promise<Cell>;
 
   createResetGasBody(
     account: LpAccount,
     params?: {
-      queryId?: BN;
+      queryId?: QueryIdType;
     },
   ): Promise<Cell>;
 

@@ -2,9 +2,17 @@ import TonWeb from 'tonweb';
 
 import { Router, ROUTER_REVISION, ROUTER_REVISION_ADDRESS } from '@ston-fi/sdk';
 
-async () => {
-  const WALLET_ADDRESS = '' // YOUR WALLET ADDRESS HERE
-  const WALLET_SECRET = '' // YOUR WALLET SECRET HERE
+/**
+ * This example shows how to burn liquidity tokens
+ * from your lp-account to get back your initial deposits
+ */
+
+(async () => {
+  const WALLET_ADDRESS = '' // YOUR WALLET ADDRESS
+  const WALLET_SECRET = '' // YOUR WALLET SECRET
+
+  const JETTON0 = 'EQDQoc5M3Bh8eWFephi9bClhevelbZZvWhkqdo80XuY_0qXv';
+  const JETTON1 = 'EQC_1YoM8RBixN95lz7odcF3Vrkc_N8Ne7gQi7Abtlet_Efi';
 
   const provider = new TonWeb.HttpProvider();
 
@@ -17,26 +25,22 @@ async () => {
     address: ROUTER_REVISION_ADDRESS.V1,
   });
 
-  // Get pool for JETTON0/JETTON1
   const pool = await router.getPool({
-    jettonAddresses: ['EQDQoc5M3Bh8eWFephi9bClhevelbZZvWhkqdo80XuY_0qXv', 'EQC_1YoM8RBixN95lz7odcF3Vrkc_N8Ne7gQi7Abtlet_Efi'],
+    jettonAddresses: [JETTON0, JETTON1],
   });
 
   if (!pool) {
-    throw Error(`Pool for JETTON0/JETTON1 not found`);
+    throw Error(`Pool for ${JETTON0}/${JETTON1} not found`);
   }
 
-  // Get balance for LP token of pool
   const lpTokenWallet = await pool.getJettonWallet({ ownerAddress: WALLET_ADDRESS });
   const lpTokenWalletData = await lpTokenWallet.getData();
-  const lpTokenBalance = lpTokenWalletData.balance;
 
-  // Create transaction params for burn operation
-  // given object also contains address where you should send payload and suggested gas amount
+  // Build transaction params to burn all LP tokens from JETTON0/JETTON1 account
   const params = await pool.buildBurnTxParams({
-    amount: lpTokenBalance,
+    amount: lpTokenWalletData.balance,
     responseAddress: WALLET_ADDRESS,
-    queryId: new TonWeb.utils.BN(12345),
+    queryId: 12345,
   });
 
   wallet.methods.transfer({
@@ -47,4 +51,4 @@ async () => {
     payload: params.payload,
     sendMode: 3,
   });
-};
+})();

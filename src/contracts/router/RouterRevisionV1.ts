@@ -1,9 +1,8 @@
 import TonWeb from 'tonweb';
 
-import { Pool } from '@/contracts/pool/Pool';
-import { createJettonTransferMessage } from '@/utils/createJettonTransferMessage';
+import { PoolRevisionV1 } from '@/contracts/pool/PoolRevisionV1';
 import { parseAddressFromCell } from '@/utils/parseAddressFromCell';
-import { OP_CODES, ROUTER_REVISION } from '@/constants';
+import { OP_CODES } from '@/constants';
 import type { Address, Cell, BN } from '@/types';
 
 import type { RouterRevision } from './RouterRevision';
@@ -25,7 +24,7 @@ export class RouterRevisionV1 implements RouterRevision {
   }
 
   public createSwapBody: RouterRevision['createSwapBody'] = async (
-    router,
+    _router,
     params,
   ) => {
     const payload = new Cell();
@@ -34,33 +33,26 @@ export class RouterRevisionV1 implements RouterRevision {
     payload.bits.writeAddress(new Address(params.askJettonWalletAddress));
     payload.bits.writeCoins(params.minAskAmount);
     payload.bits.writeAddress(new Address(params.userWalletAddress));
-    payload.bits.writeUint(0, 1);
 
-    return createJettonTransferMessage({
-      toAddress: await router.getAddress(),
-      jettonAmount: params.offerAmount,
-      payload: payload,
-      gasAmount: params?.forwardGasAmount ?? this.gasConstants.swapForward,
-      queryId: params.queryId,
-    });
+    if (params.referralAddress) {
+      payload.bits.writeUint(1, 1);
+      payload.bits.writeAddress(new Address(params.referralAddress));
+    } else {
+      payload.bits.writeUint(0, 1);
+    }
+
+    return payload;
   };
 
   public createProvideLiquidityBody: RouterRevision['createProvideLiquidityBody'] =
-    async (router, params) => {
+    async (_router, params) => {
       const payload = new Cell();
 
       payload.bits.writeUint(OP_CODES.PROVIDE_LIQUIDITY, 32);
       payload.bits.writeAddress(new Address(params.routerWalletAddress));
       payload.bits.writeCoins(params.minLpOut);
 
-      return createJettonTransferMessage({
-        toAddress: await router.getAddress(),
-        jettonAmount: params.lpAmount,
-        payload: payload,
-        gasAmount:
-          params.forwardGasAmount ?? this.gasConstants.provideLpForward,
-        queryId: params.queryId,
-      });
+      return payload;
     };
 
   public getPoolAddress: RouterRevision['getPoolAddress'] = async (
@@ -89,20 +81,9 @@ export class RouterRevisionV1 implements RouterRevision {
     return parseAddressFromCell(result);
   };
 
-  public constructPool: RouterRevision['constructPool'] = (
-    router,
-    poolAddress,
-  ) => {
-    return new Pool(
-      router.provider,
-      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-      // @ts-ignore
-      {
-        address: poolAddress,
-        revision: ROUTER_REVISION.V1,
-      },
-    );
-  };
+  public constructPoolRevision: RouterRevision['constructPoolRevision'] = (
+    _router,
+  ) => new PoolRevisionV1();
 
   public getData: RouterRevision['getData'] = async (router) => {
     const contractAddress = await router.getAddress();

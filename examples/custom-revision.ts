@@ -1,8 +1,6 @@
 import TonWeb from 'tonweb';
 import {
-  LpAccount,
   LpAccountRevisionV1,
-  Pool,
   PoolRevision,
   PoolRevisionV1,
   Router,
@@ -10,66 +8,33 @@ import {
   RouterRevisionV1,
 } from '@ston-fi/sdk';
 
-// You can define your own revison for router
+/**
+ * This example shows how to create custom revision
+ * for the router, pool, and lp-account classes
+ */
+
 class MyRouterRevision extends RouterRevisionV1 {
-  public createSwapBody: RouterRevision['createSwapBody'] = async (
-    router,
-    params,
-  ) => {
-    // Replace super-call here with your own method implementation
+  // here you can override any method from default revision with your own implementation
 
-    return super.createSwapBody(router, params);
-  };
-
-  // Override construct pool if you need custom pool revision
-  public constructPool: RouterRevision['constructPool'] = (
+  // if you will need custom pool revision, you need to override constructPoolRevision method
+  public override constructPoolRevision: RouterRevision['constructPoolRevision'] = (
     router,
-    poolAddress,
-  ) => {
-    return new Pool(
-      router.provider,
-      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-      // @ts-ignore
-      {
-        address: poolAddress,
-        revision: new MyPoolRevision(),
-      },
-    );
-  };
+  ) => new MyPoolRevision();
 }
 
-// Also you can define your own revison for pool
 class MyPoolRevision extends PoolRevisionV1 {
-  public getExpectedLiquidity: PoolRevision['getExpectedLiquidity'] = async (
-    pool,
-    params,
-  ) => {
-    // Replace super-call here with your own method implementation
+  // here you can override any method from default revision with your own implementation
 
-    return super.getExpectedLiquidity(pool, params);
-  };
-
-  // Override if you need custom lp account revision
-  public constructLpAccount: PoolRevision['constructLpAccount'] = (
-    pool,
-    lpAccountAddress,
-  ) => {
-    return new LpAccount(pool.provider, {
-      address: lpAccountAddress,
-      revision: new MyLpAccountRevision(),
-    });
-  };
+  // if you will need custom lp account revision, you need to override constructLpAccountRevision method
+  public override constructLpAccountRevision: PoolRevision['constructLpAccountRevision'] =
+    (pool) => new MyLpAccountRevision();
 }
 
-// And also for lp account
-class MyLpAccountRevision extends LpAccountRevisionV1 {}
+class MyLpAccountRevision extends LpAccountRevisionV1 {
+  // here you can override any method from default revision with your own implementation
+}
 
-async () => {
-  const provider = new TonWeb.HttpProvider();
-
-  // Create router with your own revision
-  const router = new Router(provider, {
-    revision: new MyRouterRevision(),
-    address: 'EQB3ncyBUTjZUA5EnFKR5_EnOMI9V1tTEAAPaiU71gc4TiUt',
-  });
-};
+const customRouter = new Router(new TonWeb.HttpProvider(), {
+  revision: new MyRouterRevision(),
+  address: 'EQB3ncyBUTjZUA5EnFKR5_EnOMI9V1tTEAAPaiU71gc4TiUt',
+});

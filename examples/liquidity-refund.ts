@@ -2,9 +2,17 @@ import TonWeb from 'tonweb';
 
 import { Router, ROUTER_REVISION, ROUTER_REVISION_ADDRESS } from '@ston-fi/sdk';
 
-async () => {
-  const WALLET_ADDRESS = '' // YOUR WALLET ADDRESS HERE
-  const WALLET_SECRET = '' // YOUR WALLET SECRET HERE
+/**
+ * This example shows how to refund liquidity from the your lp-account of the pool
+ * to get back your tokens located on the lp-account balance
+ */
+
+(async () => {
+  const WALLET_ADDRESS = '' // YOUR WALLET ADDRESS
+  const WALLET_SECRET = '' // YOUR WALLET SECRET
+
+  const JETTON0 = 'EQDQoc5M3Bh8eWFephi9bClhevelbZZvWhkqdo80XuY_0qXv';
+  const JETTON1 = 'EQC_1YoM8RBixN95lz7odcF3Vrkc_N8Ne7gQi7Abtlet_Efi';
 
   const provider = new TonWeb.HttpProvider();
 
@@ -17,26 +25,23 @@ async () => {
     address: ROUTER_REVISION_ADDRESS.V1,
   });
 
-  // Get pool for JETTON0/JETTON1 jettons
   const pool = await router.getPool({
-    jettonAddresses: ['EQDQoc5M3Bh8eWFephi9bClhevelbZZvWhkqdo80XuY_0qXv', 'EQC_1YoM8RBixN95lz7odcF3Vrkc_N8Ne7gQi7Abtlet_Efi'],
+    jettonAddresses: [JETTON0, JETTON1],
   });
 
   if (!pool) {
-    throw Error('Pool for JETTON0/JETTON1 not found');
+    throw Error(`Pool for ${JETTON0}/${JETTON1} not found`);
   }
 
-  // Get lp account for JETTON0/JETTON1 pool
   const lpAccount = await pool.getLpAccount({ ownerAddress: WALLET_ADDRESS });
 
   if (!lpAccount) {
-    throw Error('Account for JETTON0/JETTON1 pool not found');
+    throw Error(`LpAccount for ${JETTON0}/${JETTON1} & owner ${WALLET_ADDRESS} not found`);
   }
 
-  // Create transaction params for refund operation
-  // given object also contains address where you should send payload and suggested gas amount
+  // Build transaction params to refund all tokens from JETTON0/JETTON1 lp-account
   const params = await lpAccount.buildRefundTxParams({
-    queryId: new TonWeb.utils.BN(12345),
+    queryId: 12345,
   });
 
   wallet.methods.transfer({
@@ -47,4 +52,4 @@ async () => {
     payload: params.payload,
     sendMode: 3,
   });
-};
+})();

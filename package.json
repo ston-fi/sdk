@@ -1,6 +1,6 @@
 {
   "name": "@ston-fi/sdk",
-  "version": "0.1.0-rc.1",
+  "version": "0.2.0",
   "description": "Typescript SDK to interact with the Ston.fi DEX",
   "license": "MIT",
   "type": "module",
@@ -23,13 +23,14 @@
     }
   },
   "scripts": {
-    "build": "CI=true yarn test && vite build",
+    "build": "CI=true yarn lint && yarn test && vite build",
     "lint": "yarn lint:prettier",
     "lint:fix": "yarn lint:prettier --write",
     "lint:prettier": "prettier --check ./src",
     "test": "yarn test:typecheck && yarn test:unit-test",
     "test:typecheck": "tsc --noEmit",
-    "test:unit-test": "vitest"
+    "test:unit-test": "vitest",
+    "test:coverage": "yarn test:unit-test --coverage"
   },
   "dependencies": {
     "tonweb": "0.0.50"
@@ -37,6 +38,7 @@
   "devDependencies": {
     "@types/bn.js": "5.1.1",
     "@types/node": "^18.11.7",
+    "@vitest/coverage-c8": "^0.28.4",
     "prettier": "^2.8.1",
     "typescript": "4.8.4",
     "vite": "^4.0.0",

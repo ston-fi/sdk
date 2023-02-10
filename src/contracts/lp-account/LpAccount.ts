@@ -8,6 +8,7 @@ import type {
   HttpProvider,
   BN,
   AddressType,
+  QueryIdType,
   ContractOptions,
   MessageData,
 } from '@/types';
@@ -78,11 +79,13 @@ export class LpAccount extends Contract {
   /**
    * Create a payload for the `refund_me` transaction.
    *
-   * @param {BN} params.queryId - Optional; query id
+   * @param {BN | number | undefined} params.queryId - Optional; query id
    *
    * @returns {Cell} payload for the `refund_me` transaction.
    */
-  public async createRefundBody(params?: { queryId?: BN }): Promise<Cell> {
+  public async createRefundBody(params?: {
+    queryId?: QueryIdType;
+  }): Promise<Cell> {
     return this.revision.createRefundBody(this, params);
   }
 
@@ -92,7 +95,7 @@ export class LpAccount extends Contract {
    * @param {BN} params.amount0 - Amount of the first Jetton tokens (in basic token units)
    * @param {BN} params.amount1 - Amount of the second Jetton tokens (in basic token units)
    * @param {BN} params.miniumLpToMint - Optional; minimum amount of received liquidity tokens (in basic token units)
-   * @param {BN} params.queryId - Optional; query id
+   * @param {BN | number | undefined} params.queryId - Optional; query id
    *
    * @returns {Cell} payload for the `direct_add_liquidity` transaction.
    */
@@ -100,7 +103,7 @@ export class LpAccount extends Contract {
     amount0: BN;
     amount1: BN;
     miniumLpToMint?: BN;
-    queryId?: BN;
+    queryId?: QueryIdType;
   }): Promise<Cell> {
     return this.revision.createDirectAddLiquidityBody(this, params);
   }
@@ -108,11 +111,13 @@ export class LpAccount extends Contract {
   /**
    * Create a payload for the `reset_gas` transaction.
    *
-   * @param {BN} params.queryId - Optional; query id
+   * @param {BN | number | undefined} params.queryId - Optional; query id
    *
    * @returns {Cell} payload for the `reset_gas` transaction.
    */
-  public async createResetGasBody(params?: { queryId?: BN }): Promise<Cell> {
+  public async createResetGasBody(params?: {
+    queryId?: QueryIdType;
+  }): Promise<Cell> {
     return this.revision.createResetGasBody(this, params);
   }
 
@@ -126,12 +131,12 @@ export class LpAccount extends Contract {
   /**
    * Build all data required to execute a `refund_me` transaction.
    *
-   * @param {BN} params.queryId - Optional; query id
+   * @param {BN | number | undefined} params.queryId - Optional; query id
    *
    * @returns {MessageData} all data required to execute a `refund_me` transaction.
    */
   public async buildRefundTxParams(params?: {
-    queryId?: BN;
+    queryId?: QueryIdType;
   }): Promise<MessageData> {
     const payload = await this.createRefundBody({
       queryId: params?.queryId,
@@ -150,7 +155,7 @@ export class LpAccount extends Contract {
    * @param {BN} params.amount0 - Amount of the first Jetton tokens (in basic token units)
    * @param {BN} params.amount1 - Amount of the second Jetton tokens (in basic token units)
    * @param {BN} params.miniumLpToMint - Optional; minimum amount of received liquidity tokens (in basic token units)
-   * @param {BN} params.queryId - Optional; query id
+   * @param {BN | number | undefined} params.queryId - Optional; query id
    *
    * @returns {MessageData} all data required to execute a `direct_add_liquidity` transaction.
    */
@@ -158,7 +163,7 @@ export class LpAccount extends Contract {
     amount0: BN;
     amount1: BN;
     miniumLpToMint?: BN;
-    queryId?: BN;
+    queryId?: QueryIdType;
   }): Promise<MessageData> {
     const payload = await this.createDirectAddLiquidityBody({
       amount0: params.amount0,
@@ -177,12 +182,12 @@ export class LpAccount extends Contract {
   /**
    * Build all data required to execute a `reset_gas` transaction.
    *
-   * @param {BN} params.queryId - Optional; query id
+   * @param {BN | number | undefined} params.queryId - Optional; query id
    *
    * @returns {MessageData} all data required to execute a `reset_gas` transaction.
    */
   public async buildResetGasTxParams(params?: {
-    queryId?: BN;
+    queryId?: QueryIdType;
   }): Promise<MessageData> {
     const payload = await this.createResetGasBody({
       queryId: params?.queryId,
