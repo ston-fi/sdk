@@ -12,7 +12,7 @@ const {
 describe('createJettonTransferMessage', () => {
   const queryId = 1;
   const amount = new BN(1000000000);
-  const destination = 'EQDneJ03j4n9vWFwvuEZbt8o_UtoT2A1YPv46-97KXsvWsOZ';
+  const destination = 'EQB3YmWW5ZLhe2gPUAw550e2doyWnkj5hzv3TXp2ekpAWe7v';
   const forwardTonAmount = new BN(500000000);
 
   it('should create message with expected content with all required fields', async () => {
@@ -25,7 +25,7 @@ describe('createJettonTransferMessage', () => {
 
     expect(message).toBeInstanceOf(Cell);
     expect(bytesToBase64(await message.toBoc())).toMatchInlineSnapshot(
-      '"te6ccsEBAQEAOQAAAG0Pin6lAAAAAAAAAAFDuaygCAHO8TpvHxP7esLhfcIy3b5R+pbQnsBqwffx1972UvZetBB3NZQBmPapTA=="',
+      '"te6ccsEBAQEAOQAAAG0Pin6lAAAAAAAAAAFDuaygCADuxMstyyXC9tAeoBhzzo9s7RktPJHzDnfumvTs9JSAshB3NZQBUGLNgw=="',
     );
   });
 
@@ -43,7 +43,7 @@ describe('createJettonTransferMessage', () => {
 
     expect(message).toBeInstanceOf(Cell);
     expect(bytesToBase64(await message.toBoc())).toMatchInlineSnapshot(
-      '"te6ccsEBAgEAQAAAOgFtD4p+pQAAAAAAAAABQ7msoAgBzvE6bx8T+3rC4X3CMt2+UfqW0J7AasH38dfe9lL2XrRQdzWUAQEACAAAAAEyCMcv"',
+      '"te6ccsEBAgEAQAAAOgFtD4p+pQAAAAAAAAABQ7msoAgA7sTLLcslwvbQHqAYc86PbO0ZLTyR8w537pr07PSUgLJQdzWUAQEACAAAAAHNYDxa"',
     );
   });
 
@@ -61,7 +61,7 @@ describe('createJettonTransferMessage', () => {
 
     expect(message).toBeInstanceOf(Cell);
     expect(bytesToBase64(await message.toBoc())).toMatchInlineSnapshot(
-      '"te6ccsEBAgEAQAAAOgFtD4p+pQAAAAAAAAABQ7msoAgBzvE6bx8T+3rC4X3CMt2+UfqW0J7AasH38dfe9lL2XrQQdzWUAwEACAAAAALEYUjK"',
+      '"te6ccsEBAgEAQAAAOgFtD4p+pQAAAAAAAAABQ7msoAgA7sTLLcslwvbQHqAYc86PbO0ZLTyR8w537pr07PSUgLIQdzWUAwEACAAAAAI7CbO/"',
     );
   });
 
@@ -80,7 +80,7 @@ describe('createJettonTransferMessage', () => {
 
     expect(message).toBeInstanceOf(Cell);
     expect(bytesToBase64(await message.toBoc())).toMatchInlineSnapshot(
-      '"te6ccsEBAQEAWgAAALAPin6lAAAAAAAAAAFDuaygCAHO8TpvHxP7esLhfcIy3b5R+pbQnsBqwffx1972UvZetQAEJ8S6pV9gesOI0M88z1gPHslmVWQc+mNA//J6AESzmgg7msoA0PJ1JQ=="',
+      '"te6ccsEBAQEAWgAAALAPin6lAAAAAAAAAAFDuaygCADuxMstyyXC9tAeoBhzzo9s7RktPJHzDnfumvTs9JSAswAEJ8S6pV9gesOI0M88z1gPHslmVWQc+mNA//J6AESzmgg7msoAPPnA8g=="',
     );
   });
 
@@ -97,7 +97,7 @@ describe('createJettonTransferMessage', () => {
 
     expect(message).toBeInstanceOf(Cell);
     expect(bytesToBase64(await message.toBoc())).toMatchInlineSnapshot(
-      '"te6ccsEBAwEAaAAAXGICsA+KfqUAAAAAAAAAAUO5rKAIAc7xOm8fE/t6wuF9wjLdvlH6ltCewGrB9/HX3vZS9l61AAQnxLqlX2B6w4jQzzzPWA8eyWZVZBz6Y0D/8noARLOaKDuaygEBAgAIAAAAAQAIAAAAAvO/HGA="',
+      '"te6ccsEBAwEAaAAAXGICsA+KfqUAAAAAAAAAAUO5rKAIAO7Eyy3LJcL20B6gGHPOj2ztGS08kfMOd+6a9Oz0lICzAAQnxLqlX2B6w4jQzzzPWA8eyWZVZBz6Y0D/8noARLOaKDuaygEBAgAIAAAAAQAIAAAAAmQoBQo="',
     );
   });
 });

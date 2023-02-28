@@ -9,11 +9,11 @@ import type {
   Contract,
   HttpProvider,
   JettonMinter,
-  BN,
   AddressType,
-  ContractOptions,
+  AmountType,
   MessageData,
   QueryIdType,
+  ContractOptions,
 } from '@/types';
 
 import type { RouterGasConstants, RouterRevision } from './RouterRevision';
@@ -22,10 +22,10 @@ import { RouterRevisionV1 } from './RouterRevisionV1';
 const {
   Address,
   Contract,
+  utils: { BN },
   token: {
     jetton: { JettonMinter },
   },
-  utils: { BN },
 } = TonWeb;
 
 const REVISIONS = {
@@ -88,16 +88,16 @@ export class Router extends Contract {
   /**
    * Create a payload for the `swap` transaction.
    *
-   * @param {AddressType} params.userWalletAddress - User's address
-   * @param {BN} params.minAskAmount - Minimum amount of tokens received (in basic token units)
-   * @param {AddressType} params.askJettonWalletAddress - Jetton router's wallet address of tokens to be received
-   * @param {AddressType | undefined} params.referralAddress - Optional; referral address
+   * @param {Address | string} params.userWalletAddress - User's address
+   * @param {BN | number} params.minAskAmount - Minimum amount of tokens received (in basic token units)
+   * @param {Address | string} params.askJettonWalletAddress - Jetton router's wallet address of tokens to be received
+   * @param {Address | string | undefined} params.referralAddress - Optional; referral address
    *
    * @returns {Cell} payload for the `swap` transaction.
    */
   public async createSwapBody(params: {
     userWalletAddress: AddressType;
-    minAskAmount: BN;
+    minAskAmount: AmountType;
     askJettonWalletAddress: AddressType;
     referralAddress?: AddressType;
   }): Promise<Cell> {
@@ -107,14 +107,14 @@ export class Router extends Contract {
   /**
    * Create a payload for the `provide_lp` transaction.
    *
-   * @param {AddressType} params.routerWalletAddress - Address of the router's Jetton token wallet
-   * @param {BN} params.minLpOut - Minimum amount of created liquidity tokens (in basic token units)
+   * @param {Address | string} params.routerWalletAddress - Address of the router's Jetton token wallet
+   * @param {BN | number} params.minLpOut - Minimum amount of created liquidity tokens (in basic token units)
    *
    * @returns payload for the `provide_lp` transaction.
    */
   public async createProvideLiquidityBody(params: {
     routerWalletAddress: AddressType;
-    minLpOut: BN;
+    minLpOut: AmountType;
   }): Promise<Cell> {
     return this.revision.createProvideLiquidityBody(this, params);
   }
@@ -122,8 +122,8 @@ export class Router extends Contract {
   /**
    * **Note:** It's necessary to specify addresses of Jetton wallets of the router as the arguments of this method.
    * These addresses can be retrieved with getJettonWalletAddress of the Jetton minter.
-   * @param {AddressType} token0 - The address of the router's wallet of first Jetton
-   * @param {AddressType} token1 - The address of the router's wallet of second Jetton
+   * @param {Address | string} params.token0 - The address of the router's wallet of first Jetton
+   * @param {Address | string} params.token1 - The address of the router's wallet of second Jetton
    *
    * @returns {Address | null} an address of a pool for a specified pair of assets.
    */
@@ -135,7 +135,7 @@ export class Router extends Contract {
   }
 
   /**
-   * @param {[AddressType, AddressType]} params.jettonAddresses - Tuple of Jetton addresses of a pool
+   * @param {[Address | string, Address | string]} params.jettonAddresses - Tuple of Jetton addresses of a pool
    *
    * @returns {Pool} object for a pool with specified Jetton token addresses.
    */
@@ -196,14 +196,14 @@ export class Router extends Contract {
   /**
    * Build all data required to execute a jetton `swap` transaction
    *
-   * @param {AddressType} params.userWalletAddress - User's address
-   * @param {AddressType} params.offerJettonAddress - Jetton address of a token to be swapped
-   * @param {AddressType} params.askJettonAddress - Jetton address of a token to be received
-   * @param {BN} params.offerAmount - Amount of tokens to be swapped (in basic token units)
-   * @param {BN} params.minAskAmount - Minimum amount of tokens received (in basic token units)
-   * @param {BN | undefined} params.forwardGasAmount - Optional; forward amount of gas for the next transaction (in nanoTons)
+   * @param {Address | string} params.userWalletAddress - User's address
+   * @param {Address | string} params.offerJettonAddress - Jetton address of a token to be swapped
+   * @param {Address | string} params.askJettonAddress - Jetton address of a token to be received
+   * @param {BN | number} params.offerAmount - Amount of tokens to be swapped (in basic token units)
+   * @param {BN | number} params.minAskAmount - Minimum amount of tokens received (in basic token units)
+   * @param {BN | number | undefined} params.forwardGasAmount - Optional; forward amount of gas for the next transaction (in nanoTons)
+   * @param {Address | string | undefined} params.referralAddress - Optional; referral address
    * @param {BN | number | undefined} params.queryId - Optional; query id
-   * @param {AddressType | undefined} params.referralAddress - Optional; referral address
    *
    * @returns {MessageData} data required to execute a jetton `swap` transaction
    */
@@ -211,11 +211,11 @@ export class Router extends Contract {
     userWalletAddress: AddressType;
     offerJettonAddress: AddressType;
     askJettonAddress: AddressType;
-    offerAmount: BN;
-    minAskAmount: BN;
-    forwardGasAmount?: BN;
-    queryId?: QueryIdType;
+    offerAmount: AmountType;
+    minAskAmount: AmountType;
+    forwardGasAmount?: AmountType;
     referralAddress?: AddressType;
+    queryId?: QueryIdType;
   }): Promise<MessageData> {
     const offerJetton = new JettonMinter(
       this.provider,
@@ -268,13 +268,13 @@ export class Router extends Contract {
   /**
    * Build all data required to execute a ton to jetton `swap` transaction
    *
-   * @param {AddressType} params.userWalletAddress - User's address
-   * @param {AddressType} params.proxyTonAddress - Address of a proxy ton contract
-   * @param {AddressType} params.askJettonAddress - Jetton address of a token to be received
-   * @param {BN} params.offerAmount - Amount of ton to be swapped (in nanoTons)
-   * @param {BN} params.minAskAmount - Minimum amount of tokens received (in basic token units)
-   * @param {BN | undefined} params.forwardGasAmount - Optional; forward amount of gas for the next transaction (in nanoTons)
-   * @param {AddressType | undefined} params.referralAddress - Optional; referral address
+   * @param {Address | string} params.userWalletAddress - User's address
+   * @param {Address | string} params.proxyTonAddress - Address of a proxy ton contract
+   * @param {Address | string} params.askJettonAddress - Jetton address of a token to be received
+   * @param {BN | number} params.offerAmount - Amount of ton to be swapped (in nanoTons)
+   * @param {BN | number} params.minAskAmount - Minimum amount of tokens received (in basic token units)
+   * @param {BN | number | undefined} params.forwardGasAmount - Optional; forward amount of gas for the next transaction (in nanoTons)
+   * @param {Address | string | undefined} params.referralAddress - Optional; referral address
    * @param {BN | number | undefined} params.queryId - Optional; query id
    *
    * @returns {MessageData} data required to execute a ton to jetton `swap` transaction
@@ -283,9 +283,9 @@ export class Router extends Contract {
     userWalletAddress: AddressType;
     proxyTonAddress: AddressType;
     askJettonAddress: AddressType;
-    offerAmount: BN;
-    minAskAmount: BN;
-    forwardGasAmount?: BN;
+    offerAmount: AmountType;
+    minAskAmount: AmountType;
+    forwardGasAmount?: AmountType;
     referralAddress?: AddressType | undefined;
     queryId?: QueryIdType;
   }): Promise<MessageData> {
@@ -332,19 +332,19 @@ export class Router extends Contract {
     return {
       to: proxyTonWalletAddress,
       payload,
-      gasAmount: params.offerAmount.add(this.gasConstants.swap),
+      gasAmount: new BN(params.offerAmount).add(this.gasConstants.swap),
     };
   }
 
   /**
    * Collect all data required to execute a jetton `provide_lp` transaction
    *
-   * @param {AddressType} params.userWalletAddress - User's address
-   * @param {AddressType} params.sendTokenAddress - Address of the provided Jetton token
-   * @param {AddressType} params.otherTokenAddress - Address of the other Jetton token in pair
-   * @param {BN} params.sendAmount - Amount of the first token deposited as liquidity (in basic token units)
-   * @param {BN} params.minLpOut - Minimum amount of created liquidity tokens (in basic token units)
-   * @param {BN | undefined} params.forwardGasAmount - Optional; forward amount of gas for the next transaction (in nanoTons)
+   * @param {Address | string} params.userWalletAddress - User's address
+   * @param {Address | string} params.sendTokenAddress - Address of the provided Jetton token
+   * @param {Address | string} params.otherTokenAddress - Address of the other Jetton token in pair
+   * @param {BN | number} params.sendAmount - Amount of the first token deposited as liquidity (in basic token units)
+   * @param {BN | number} params.minLpOut - Minimum amount of created liquidity tokens (in basic token units)
+   * @param {BN | number | undefined} params.forwardGasAmount - Optional; forward amount of gas for the next transaction (in nanoTons)
    * @param {BN | number | undefined} params.queryId - Optional; query id
    *
    * @returns {MessageData} data required to execute a jetton `provide_lp` transaction
@@ -353,9 +353,9 @@ export class Router extends Contract {
     userWalletAddress: AddressType;
     sendTokenAddress: AddressType;
     otherTokenAddress: AddressType;
-    sendAmount: BN;
-    minLpOut: BN;
-    forwardGasAmount?: BN;
+    sendAmount: AmountType;
+    minLpOut: AmountType;
+    forwardGasAmount?: AmountType;
     queryId?: QueryIdType;
   }): Promise<MessageData> {
     const sendJettonMinter = new JettonMinter(
@@ -407,12 +407,12 @@ export class Router extends Contract {
   /**
    * Collect all data required to execute a proxy ton `provide_lp` transaction
    *
-   * @param {AddressType} params.userWalletAddress - User's address
-   * @param {AddressType} params.proxyTonAddress - Address of a proxy ton contract
-   * @param {AddressType} params.otherTokenAddress - Address of the other Jetton token in pair
-   * @param {BN} params.sendAmount - Amount of ton deposited as liquidity (in nanoTons)
-   * @param {BN} params.minLpOut - Minimum amount of created liquidity tokens (in basic token units)
-   * @param {BN | undefined} params.forwardGasAmount - Optional; forward amount of gas for the next transaction (in nanoTons)
+   * @param {Address | string} params.userWalletAddress - User's address
+   * @param {Address | string} params.proxyTonAddress - Address of a proxy ton contract
+   * @param {Address | string} params.otherTokenAddress - Address of the other Jetton token in pair
+   * @param {BN | number} params.sendAmount - Amount of ton deposited as liquidity (in nanoTons)
+   * @param {BN | number} params.minLpOut - Minimum amount of created liquidity tokens (in basic token units)
+   * @param {BN | number | undefined} params.forwardGasAmount - Optional; forward amount of gas for the next transaction (in nanoTons)
    * @param {BN | number | undefined} params.queryId - Optional; query id
    *
    * @returns {MessageData} data required to execute a proxy ton `provide_lp` transaction
@@ -421,9 +421,9 @@ export class Router extends Contract {
     userWalletAddress: AddressType;
     proxyTonAddress: AddressType;
     otherTokenAddress: AddressType;
-    sendAmount: BN;
-    minLpOut: BN;
-    forwardGasAmount?: BN;
+    sendAmount: AmountType;
+    minLpOut: AmountType;
+    forwardGasAmount?: AmountType;
     queryId?: QueryIdType;
   }): Promise<MessageData> {
     const tonProxyMinter = new JettonMinter(
@@ -460,14 +460,15 @@ export class Router extends Contract {
       queryId: params.queryId ?? 0,
       amount: params.sendAmount,
       destination: await this.getAddress(),
-      forwardTonAmount: params.forwardGasAmount ?? this.gasConstants.provideLp,
+      forwardTonAmount:
+        params.forwardGasAmount ?? this.gasConstants.provideLpForward,
       forwardPayload,
     });
 
     return {
       to: proxyTonWalletAddress,
       payload,
-      gasAmount: params.sendAmount.add(this.gasConstants.provideLp),
+      gasAmount: new BN(params.sendAmount).add(this.gasConstants.provideLp),
     };
   }
 }

@@ -1,4 +1,4 @@
-import type { Cell, BN, QueryIdType } from '@/types';
+import type { Cell, BN, QueryIdType, AmountType } from '@/types';
 
 import type { LpAccount, LpAccountData } from './LpAccount';
 
@@ -21,9 +21,9 @@ export interface LpAccountRevision {
   createDirectAddLiquidityBody(
     account: LpAccount,
     params: {
-      amount0: BN;
-      amount1: BN;
-      miniumLpToMint?: BN;
+      amount0: AmountType;
+      amount1: AmountType;
+      minimumLpToMint?: AmountType;
       queryId?: QueryIdType;
     },
   ): Promise<Cell>;

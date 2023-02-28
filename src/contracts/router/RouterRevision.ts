@@ -1,5 +1,5 @@
 import type { PoolRevision } from '@/contracts/pool/PoolRevision';
-import type { Address, Cell, BN, AddressType } from '@/types';
+import type { Address, Cell, BN, AddressType, AmountType } from '@/types';
 
 import type { Router, RouterData } from './Router';
 
@@ -17,7 +17,7 @@ export interface RouterRevision {
     router: Router,
     params: {
       userWalletAddress: AddressType;
-      minAskAmount: BN;
+      minAskAmount: AmountType;
       askJettonWalletAddress: AddressType;
       referralAddress?: AddressType;
     },
@@ -27,7 +27,7 @@ export interface RouterRevision {
     router: Router,
     params: {
       routerWalletAddress: AddressType;
-      minLpOut: BN;
+      minLpOut: AmountType;
     },
   ): Promise<Cell>;
 

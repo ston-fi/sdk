@@ -16,7 +16,7 @@ Documentation on this SDK is available at [docs.ston.fi](https://docs.ston.fi/do
 To install SDK via NPM use
 
 ```bash
-npm install @ston-fi/sdk
+npm install tonweb @ston-fi/sdk
 
-yarn add @ston-fi/sdk
+yarn add tonweb @ston-fi/sdk
 ```

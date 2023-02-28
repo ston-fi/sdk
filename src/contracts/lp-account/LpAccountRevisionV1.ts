@@ -40,7 +40,7 @@ export class LpAccountRevisionV1 implements LpAccountRevision {
       message.bits.writeUint(params.queryId ?? 0, 64);
       message.bits.writeCoins(params.amount0);
       message.bits.writeCoins(params.amount1);
-      message.bits.writeCoins(params.miniumLpToMint ?? new BN(1));
+      message.bits.writeCoins(params.minimumLpToMint ?? new BN(1));
 
       return message;
     };

@@ -1,7 +1,7 @@
 import TonWeb from 'tonweb';
 
 import { OP_CODES } from '@/constants';
-import type { AddressType, QueryIdType, Cell, BN } from '@/types';
+import type { AddressType, QueryIdType, AmountType, Cell } from '@/types';
 
 const {
   boc: { Cell },
@@ -18,11 +18,11 @@ const {
  */
 export function createJettonTransferMessage(params: {
   queryId: QueryIdType;
-  amount: BN;
+  amount: AmountType;
   destination: AddressType;
   responseDestination?: AddressType;
   customPayload?: Cell;
-  forwardTonAmount: BN;
+  forwardTonAmount: AmountType;
   forwardPayload?: Cell;
 }) {
   const message = new Cell();

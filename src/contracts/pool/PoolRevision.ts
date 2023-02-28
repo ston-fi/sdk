@@ -1,5 +1,12 @@
 import type { LpAccountRevision } from '@/contracts/lp-account/LpAccountRevision';
-import type { Address, Cell, BN, AddressType, QueryIdType } from '@/types';
+import type {
+  Address,
+  Cell,
+  BN,
+  AddressType,
+  QueryIdType,
+  AmountType,
+} from '@/types';
 
 import type {
   Pool,
@@ -26,7 +33,7 @@ export interface PoolRevision {
   createBurnBody(
     pool: Pool,
     params: {
-      amount: BN;
+      amount: AmountType;
       responseAddress: AddressType;
       queryId?: QueryIdType;
     },
@@ -35,7 +42,7 @@ export interface PoolRevision {
   getExpectedOutputs(
     pool: Pool,
     params: {
-      amount: BN;
+      amount: AmountType;
       jettonWallet: AddressType;
     },
   ): Promise<ExpectedOutputsData>;
@@ -43,15 +50,15 @@ export interface PoolRevision {
   getExpectedTokens(
     pool: Pool,
     params: {
-      amount0: BN;
-      amount1: BN;
+      amount0: AmountType;
+      amount1: AmountType;
     },
   ): Promise<BN>;
 
   getExpectedLiquidity(
     pool: Pool,
     params: {
-      jettonAmount: BN;
+      jettonAmount: AmountType;
     },
   ): Promise<PoolAmountsData>;
 

@@ -4,13 +4,13 @@ import { ROUTER_REVISION } from '@/constants';
 import type {
   Address,
   Cell,
-  Contract,
   HttpProvider,
   BN,
   AddressType,
   QueryIdType,
   ContractOptions,
   MessageData,
+  AmountType,
 } from '@/types';
 
 import type {
@@ -92,17 +92,17 @@ export class LpAccount extends Contract {
   /**
    * Create a payload for the `direct_add_liquidity` transaction.
    *
-   * @param {BN} params.amount0 - Amount of the first Jetton tokens (in basic token units)
-   * @param {BN} params.amount1 - Amount of the second Jetton tokens (in basic token units)
-   * @param {BN} params.miniumLpToMint - Optional; minimum amount of received liquidity tokens (in basic token units)
+   * @param {BN | number} params.amount0 - Amount of the first Jetton tokens (in basic token units)
+   * @param {BN | number} params.amount1 - Amount of the second Jetton tokens (in basic token units)
+   * @param {BN | number | undefined} params.minimumLpToMint - Optional; minimum amount of received liquidity tokens (in basic token units)
    * @param {BN | number | undefined} params.queryId - Optional; query id
    *
    * @returns {Cell} payload for the `direct_add_liquidity` transaction.
    */
   public async createDirectAddLiquidityBody(params: {
-    amount0: BN;
-    amount1: BN;
-    miniumLpToMint?: BN;
+    amount0: AmountType;
+    amount1: AmountType;
+    minimumLpToMint?: AmountType;
     queryId?: QueryIdType;
   }): Promise<Cell> {
     return this.revision.createDirectAddLiquidityBody(this, params);
@@ -152,23 +152,23 @@ export class LpAccount extends Contract {
   /**
    * Build all data required to execute a `direct_add_liquidity` transaction.
    *
-   * @param {BN} params.amount0 - Amount of the first Jetton tokens (in basic token units)
-   * @param {BN} params.amount1 - Amount of the second Jetton tokens (in basic token units)
-   * @param {BN} params.miniumLpToMint - Optional; minimum amount of received liquidity tokens (in basic token units)
+   * @param {BN | number} params.amount0 - Amount of the first Jetton tokens (in basic token units)
+   * @param {BN | number} params.amount1 - Amount of the second Jetton tokens (in basic token units)
+   * @param {BN | number | undefined} params.minimumLpToMint - Optional; minimum amount of received liquidity tokens (in basic token units)
    * @param {BN | number | undefined} params.queryId - Optional; query id
    *
    * @returns {MessageData} all data required to execute a `direct_add_liquidity` transaction.
    */
   public async buildDirectAddLiquidityTxParams(params: {
-    amount0: BN;
-    amount1: BN;
-    miniumLpToMint?: BN;
+    amount0: AmountType;
+    amount1: AmountType;
+    minimumLpToMint?: AmountType;
     queryId?: QueryIdType;
   }): Promise<MessageData> {
     const payload = await this.createDirectAddLiquidityBody({
       amount0: params.amount0,
       amount1: params.amount1,
-      miniumLpToMint: params.miniumLpToMint,
+      minimumLpToMint: params.minimumLpToMint,
       queryId: params.queryId,
     });
 

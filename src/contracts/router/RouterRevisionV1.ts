@@ -3,7 +3,7 @@ import TonWeb from 'tonweb';
 import { PoolRevisionV1 } from '@/contracts/pool/PoolRevisionV1';
 import { parseAddressFromCell } from '@/utils/parseAddressFromCell';
 import { OP_CODES } from '@/constants';
-import type { Address, Cell, BN } from '@/types';
+import type { Cell, BN } from '@/types';
 
 import type { RouterRevision } from './RouterRevision';
 
@@ -81,25 +81,25 @@ export class RouterRevisionV1 implements RouterRevision {
     return parseAddressFromCell(result);
   };
 
-  public constructPoolRevision: RouterRevision['constructPoolRevision'] = (
-    _router,
-  ) => new PoolRevisionV1();
-
   public getData: RouterRevision['getData'] = async (router) => {
-    const contractAddress = await router.getAddress();
+    const routerAddress = await router.getAddress();
     const result = await router.provider.call2(
-      contractAddress.toString(),
+      routerAddress.toString(),
       'get_router_data',
       [],
     );
 
     return {
       isLocked: !(result[0] as BN).isZero(),
-      adminAddress: parseAddressFromCell(result[1]),
+      adminAddress: parseAddressFromCell(result[1] as Cell),
       tempUpgrade: result[2] as Cell,
       poolCode: result[3] as Cell,
       jettonLpWalletCode: result[4] as Cell,
       lpAccountCode: result[5] as Cell,
     };
   };
+
+  public constructPoolRevision: RouterRevision['constructPoolRevision'] = (
+    _router,
+  ) => new PoolRevisionV1();
 }

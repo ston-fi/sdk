@@ -13,6 +13,7 @@ import type {
   QueryIdType,
   JettonMinterOptions,
   MessageData,
+  AmountType,
 } from '@/types';
 
 import { PoolGasConstants, PoolRevision } from './PoolRevision';
@@ -20,7 +21,6 @@ import { PoolRevisionV1 } from './PoolRevisionV1';
 
 const {
   Address,
-  Contract,
   token: {
     jetton: { JettonMinter, JettonWallet },
   },
@@ -130,14 +130,14 @@ export class Pool extends JettonMinter {
   /**
    * Create a payload for the `burn` transaction.
    *
-   * @param {BN} params.amount - Amount of lp tokens to burn (in basic token units)
-   * @param {AddressType} params.responseAddress - Address of a user
+   * @param {BN | number} params.amount - Amount of lp tokens to burn (in basic token units)
+   * @param {Address | string} params.responseAddress - Address of a user
    * @param {BN | number | undefined} params.queryId - Optional; query id
    *
    * @returns {Cell} payload for the `burn` transaction.
    */
   public async createBurnBody(params: {
-    amount: BN;
+    amount: AmountType;
     responseAddress: AddressType;
     queryId?: QueryIdType;
   }): Promise<Cell> {
@@ -147,13 +147,13 @@ export class Pool extends JettonMinter {
   /**
    * Estimate expected result of the amount of jettonWallet tokens swapped to the other type of tokens of the pool
    *
-   * @param {BN} params.amount - Amount of tokens to swap (in basic token units)
-   * @param {AddressType} params.jettonWallet - Token Jetton address (must be equal to one of the Jetton addresses of the pool)
+   * @param {BN | number} params.amount - Amount of tokens to swap (in basic token units)
+   * @param {Address | string} params.jettonWallet - Token Jetton address (must be equal to one of the Jetton addresses of the pool)
    *
    * @returns {ExpectedOutputsData} structure with expected result of a token swap
    */
   public async getExpectedOutputs(params: {
-    amount: BN;
+    amount: AmountType;
     jettonWallet: AddressType;
   }): Promise<ExpectedOutputsData> {
     return this.revision.getExpectedOutputs(this, params);
@@ -162,14 +162,14 @@ export class Pool extends JettonMinter {
   /**
    * Estimate an expected amount of lp tokens minted when providing liquidity.
    *
-   * @param {BN} params.amount0 - Amount of tokens for the first Jetton (in basic token units)
-   * @param {BN} params.amount1 - Amount of tokens for the second Jetton (in basic token units)
+   * @param {BN | number} params.amount0 - Amount of tokens for the first Jetton (in basic token units)
+   * @param {BN | number} params.amount1 - Amount of tokens for the second Jetton (in basic token units)
    *
    * @returns {BN} an estimated amount of liquidity tokens to be minted
    */
   public async getExpectedTokens(params: {
-    amount0: BN;
-    amount1: BN;
+    amount0: AmountType;
+    amount1: AmountType;
   }): Promise<BN> {
     return this.revision.getExpectedTokens(this, params);
   }
@@ -177,18 +177,18 @@ export class Pool extends JettonMinter {
   /**
    * Estimate expected liquidity freed upon burning liquidity tokens.
    *
-   * @param {BN} params.jettonAmount - Amount of liquidity tokens (in basic token units)
+   * @param {BN | number} params.jettonAmount - Amount of liquidity tokens (in basic token units)
    *
    * @returns {PoolAmountsData} structure with expected freed liquidity
    */
   public async getExpectedLiquidity(params: {
-    jettonAmount: BN;
+    jettonAmount: AmountType;
   }): Promise<PoolAmountsData> {
     return this.revision.getExpectedLiquidity(this, params);
   }
 
   /**
-   * @param {AddressType} params.ownerAddress - Address of a user
+   * @param {Address | string} params.ownerAddress - Address of a user
    *
    * @returns a JettonWallet object for an address returned by getJettonWalletAddress
    */
@@ -202,7 +202,7 @@ export class Pool extends JettonMinter {
   }
 
   /**
-   * @param {AddressType} params.ownerAddress - Address of a user
+   * @param {Address | string} params.ownerAddress - Address of a user
    *
    * @returns the lp account address of a user
    */
@@ -213,7 +213,7 @@ export class Pool extends JettonMinter {
   }
 
   /**
-   * @param {AddressType} params.ownerAddress - Address of a user
+   * @param {Address | string} params.ownerAddress - Address of a user
    *
    * @returns {LpAccount} object for address returned by getLpAccountAddress
    */
@@ -244,11 +244,11 @@ export class Pool extends JettonMinter {
    *
    * @returns {MessageData} all data required to execute a `collect_fees` transaction.
    */
-  public async buildCollectFeeTxParams(params: {
+  public async buildCollectFeeTxParams(params?: {
     queryId?: QueryIdType;
   }): Promise<MessageData> {
     const payload = await this.createCollectFeesBody({
-      queryId: params.queryId,
+      queryId: params?.queryId,
     });
 
     return {
@@ -261,14 +261,14 @@ export class Pool extends JettonMinter {
   /**
    * Build all data required to execute a `burn` transaction.
    *
-   * @param {BN} params.amount - Amount of lp tokens to burn (in basic token units)
-   * @param {AddressType} params.responseAddress - Address of a user
+   * @param {BN | number} params.amount - Amount of lp tokens to burn (in basic token units)
+   * @param {Address | string} params.responseAddress - Address of a user
    * @param {BN | number | undefined} params.queryId - Optional; query id
    *
    * @returns {MessageData} all data required to execute a `burn` transaction.
    */
   public async buildBurnTxParams(params: {
-    amount: BN;
+    amount: AmountType;
     responseAddress: AddressType;
     queryId?: QueryIdType;
   }): Promise<MessageData> {
