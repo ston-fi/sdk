@@ -460,8 +460,7 @@ export class Router extends Contract {
       queryId: params.queryId ?? 0,
       amount: params.sendAmount,
       destination: await this.getAddress(),
-      forwardTonAmount:
-        params.forwardGasAmount ?? this.gasConstants.provideLpForward,
+      forwardTonAmount: params.forwardGasAmount ?? this.gasConstants.provideLp,
       forwardPayload,
     });
 

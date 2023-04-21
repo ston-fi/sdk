@@ -890,7 +890,7 @@ describe('Router', () => {
         '0:1150b518b2626ad51899f98887f8824b70065456455f7fe2813f012699a4061f',
       );
       expect(bytesToBase64(await params.payload.toBoc())).toMatchInlineSnapshot(
-        '"te6ccsEBAgEAUwAANwFnD4p+pQAAAAAAAAAAQdzWUAgA7zuZAqJxsqAciTilI8/iTnGEeq62piAAHtRKd6wOcJwEEwEANGNyZWF0ZVByb3ZpZGVMaXF1aWRpdHlCb2R50W/y2g=="',
+        '"te6ccsEBAgEAUwAANwFnD4p+pQAAAAAAAAAAQdzWUAgA7zuZAqJxsqAciTilI8/iTnGEeq62piAAHtRKd6wOcJwECwEANGNyZWF0ZVByb3ZpZGVMaXF1aWRpdHlCb2R5+AFwKQ=="',
       );
       expect(params.gasAmount).toEqual(
         ROUTER_REVISION.gasConstants.provideLp.add(sendAmount),
@@ -966,7 +966,7 @@ describe('Router', () => {
         '0:1150b518b2626ad51899f98887f8824b70065456455f7fe2813f012699a4061f',
       );
       expect(bytesToBase64(await params.payload.toBoc())).toMatchInlineSnapshot(
-        '"te6ccsEBAgEAUwAANwFnD4p+pQAAAAAAADA5QdzWUAgA7zuZAqJxsqAciTilI8/iTnGEeq62piAAHtRKd6wOcJwEEwEANGNyZWF0ZVByb3ZpZGVMaXF1aWRpdHlCb2R5OI61fQ=="',
+        '"te6ccsEBAgEAUwAANwFnD4p+pQAAAAAAADA5QdzWUAgA7zuZAqJxsqAciTilI8/iTnGEeq62piAAHtRKd6wOcJwECwEANGNyZWF0ZVByb3ZpZGVMaXF1aWRpdHlCb2R5EeA3jg=="',
       );
       expect(params.gasAmount).toEqual(
         ROUTER_REVISION.gasConstants.provideLp.add(sendAmount),
