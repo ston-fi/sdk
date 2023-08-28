@@ -4,6 +4,7 @@ import { PoolRevisionV1 } from '@/contracts/pool/PoolRevisionV1';
 import { parseAddressFromCell } from '@/utils/parseAddressFromCell';
 import { OP_CODES } from '@/constants';
 import type { Cell, BN } from '@/types';
+import { parseBoolean } from '@/utils/parseBoolean';
 
 import type { RouterRevision } from './RouterRevision';
 
@@ -31,7 +32,7 @@ export class RouterRevisionV1 implements RouterRevision {
 
     payload.bits.writeUint(OP_CODES.SWAP, 32);
     payload.bits.writeAddress(new Address(params.askJettonWalletAddress));
-    payload.bits.writeCoins(params.minAskAmount);
+    payload.bits.writeCoins(new BN(params.minAskAmount));
     payload.bits.writeAddress(new Address(params.userWalletAddress));
 
     if (params.referralAddress) {
@@ -50,7 +51,7 @@ export class RouterRevisionV1 implements RouterRevision {
 
       payload.bits.writeUint(OP_CODES.PROVIDE_LIQUIDITY, 32);
       payload.bits.writeAddress(new Address(params.routerWalletAddress));
-      payload.bits.writeCoins(params.minLpOut);
+      payload.bits.writeCoins(new BN(params.minLpOut));
 
       return payload;
     };
@@ -90,7 +91,7 @@ export class RouterRevisionV1 implements RouterRevision {
     );
 
     return {
-      isLocked: !(result[0] as BN).isZero(),
+      isLocked: parseBoolean(result[0]),
       adminAddress: parseAddressFromCell(result[1] as Cell),
       tempUpgrade: result[2] as Cell,
       poolCode: result[3] as Cell,

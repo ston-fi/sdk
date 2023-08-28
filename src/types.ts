@@ -11,9 +11,9 @@ export type HttpProvider = InstanceType<typeof TonWeb.HttpProvider>;
 export type JettonMinter = InstanceType<typeof TonWeb.token.ft.JettonMinter>;
 export type JettonWallet = InstanceType<typeof TonWeb.token.ft.JettonWallet>;
 export type BN = InstanceType<typeof TonWeb.utils.BN>;
-export type AddressType = string | Address;
+export type AddressType = ConstructorParameters<typeof TonWeb.utils.Address>[0];
 export type QueryIdType = number | BN;
-export type AmountType = number | BN;
+export type AmountType = ConstructorParameters<typeof TonWeb.utils.BN>[0];
 export interface ContractOptions extends TW_ContractOptions {}
 export interface JettonMinterOptions extends TW_JettonMinterOptions {}
 

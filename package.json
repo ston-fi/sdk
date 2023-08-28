@@ -1,6 +1,6 @@
 {
   "name": "@ston-fi/sdk",
-  "version": "0.3.1",
+  "version": "0.3.4",
   "description": "Typescript SDK to interact with the Ston.fi DEX",
   "license": "MIT",
   "type": "module",
@@ -9,6 +9,16 @@
     "url": "git+https://github.com/ston-fi/sdk.git"
   },
   "homepage": "https://github.com/ston-fi/sdk#readme",
+  "contributors": [
+    {
+      "name": "Marsianin22",
+      "url": "https://github.com/marsianin22"
+    },
+    {
+      "name": "Pavel Rakhmanov",
+      "url": "https://github.com/pavel-rakhmanov"
+    }
+  ],
   "files": [
     "dist",
     "README.md",
@@ -28,7 +38,7 @@
     "build": "vite build",
     "lint": "npm run lint:prettier",
     "lint:fix": "npm run lint:prettier -- --write",
-    "lint:prettier": "prettier --check ./src",
+    "lint:prettier": "prettier --check ./",
     "test": "npm run test:typecheck && npm run test:unit-test",
     "test:typecheck": "tsc --noEmit",
     "test:unit-test": "vitest",

@@ -41,7 +41,7 @@ export class PoolRevisionV1 implements PoolRevision {
 
     message.bits.writeUint(OP_CODES.REQUEST_BURN, 32);
     message.bits.writeUint(params.queryId ?? 0, 64);
-    message.bits.writeCoins(params.amount);
+    message.bits.writeCoins(new BN(params.amount));
     message.bits.writeAddress(new Address(params.responseAddress));
 
     return message;

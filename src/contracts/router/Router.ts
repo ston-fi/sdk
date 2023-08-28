@@ -201,6 +201,7 @@ export class Router extends Contract {
    * @param {Address | string} params.askJettonAddress - Jetton address of a token to be received
    * @param {BN | number} params.offerAmount - Amount of tokens to be swapped (in basic token units)
    * @param {BN | number} params.minAskAmount - Minimum amount of tokens received (in basic token units)
+   * @param {BN | number | undefined} params.gasAmount - Optional; amount of gas for the transaction (in nanoTons)
    * @param {BN | number | undefined} params.forwardGasAmount - Optional; forward amount of gas for the next transaction (in nanoTons)
    * @param {Address | string | undefined} params.referralAddress - Optional; referral address
    * @param {BN | number | undefined} params.queryId - Optional; query id
@@ -213,6 +214,7 @@ export class Router extends Contract {
     askJettonAddress: AddressType;
     offerAmount: AmountType;
     minAskAmount: AmountType;
+    gasAmount?: AmountType;
     forwardGasAmount?: AmountType;
     referralAddress?: AddressType;
     queryId?: QueryIdType;
@@ -249,19 +251,24 @@ export class Router extends Contract {
       referralAddress: params.referralAddress,
     });
 
+    const forwardTonAmount = new BN(
+      params.forwardGasAmount ?? this.gasConstants.swapForward,
+    );
+
     const payload = createJettonTransferMessage({
       queryId: params.queryId ?? 0,
       amount: params.offerAmount,
       destination: await this.getAddress(),
-      forwardTonAmount:
-        params.forwardGasAmount ?? this.gasConstants.swapForward,
+      forwardTonAmount,
       forwardPayload,
     });
+
+    const gasAmount = new BN(params.gasAmount ?? this.gasConstants.swap);
 
     return {
       to: offerJettonWalletAddress,
       payload,
-      gasAmount: this.gasConstants.swap,
+      gasAmount,
     };
   }
 
@@ -321,18 +328,24 @@ export class Router extends Contract {
       referralAddress: params.referralAddress,
     });
 
+    const forwardTonAmount = new BN(
+      params.forwardGasAmount ?? this.gasConstants.swapForward,
+    );
+
     const payload = createJettonTransferMessage({
       queryId: params.queryId ?? 0,
       amount: params.offerAmount,
       destination: await this.getAddress(),
-      forwardTonAmount: params.forwardGasAmount ?? this.gasConstants.swap,
+      forwardTonAmount,
       forwardPayload,
     });
+
+    const gasAmount = new BN(params.offerAmount).add(forwardTonAmount);
 
     return {
       to: proxyTonWalletAddress,
       payload,
-      gasAmount: new BN(params.offerAmount).add(this.gasConstants.swap),
+      gasAmount,
     };
   }
 
@@ -344,6 +357,7 @@ export class Router extends Contract {
    * @param {Address | string} params.otherTokenAddress - Address of the other Jetton token in pair
    * @param {BN | number} params.sendAmount - Amount of the first token deposited as liquidity (in basic token units)
    * @param {BN | number} params.minLpOut - Minimum amount of created liquidity tokens (in basic token units)
+   * @param {BN | number | undefined} params.gasAmount - Optional; amount of gas for the transaction (in nanoTons)
    * @param {BN | number | undefined} params.forwardGasAmount - Optional; forward amount of gas for the next transaction (in nanoTons)
    * @param {BN | number | undefined} params.queryId - Optional; query id
    *
@@ -355,6 +369,7 @@ export class Router extends Contract {
     otherTokenAddress: AddressType;
     sendAmount: AmountType;
     minLpOut: AmountType;
+    gasAmount?: AmountType;
     forwardGasAmount?: AmountType;
     queryId?: QueryIdType;
   }): Promise<MessageData> {
@@ -388,19 +403,24 @@ export class Router extends Contract {
       minLpOut: params.minLpOut,
     });
 
+    const forwardTonAmount = new BN(
+      params.forwardGasAmount ?? this.gasConstants.provideLpForward,
+    );
+
     const payload = createJettonTransferMessage({
       queryId: params.queryId ?? 0,
       amount: params.sendAmount,
       destination: await this.getAddress(),
-      forwardTonAmount:
-        params.forwardGasAmount ?? this.gasConstants.provideLpForward,
+      forwardTonAmount,
       forwardPayload,
     });
+
+    const gasAmount = new BN(params.gasAmount ?? this.gasConstants.provideLp);
 
     return {
       to: jettonWalletAddress,
       payload,
-      gasAmount: this.gasConstants.provideLp,
+      gasAmount,
     };
   }
 
@@ -456,18 +476,24 @@ export class Router extends Contract {
       minLpOut: params.minLpOut,
     });
 
+    const forwardTonAmount = new BN(
+      params.forwardGasAmount ?? this.gasConstants.provideLp,
+    );
+
     const payload = createJettonTransferMessage({
       queryId: params.queryId ?? 0,
       amount: params.sendAmount,
       destination: await this.getAddress(),
-      forwardTonAmount: params.forwardGasAmount ?? this.gasConstants.provideLp,
+      forwardTonAmount,
       forwardPayload,
     });
+
+    const gasAmount = new BN(params.sendAmount).add(forwardTonAmount);
 
     return {
       to: proxyTonWalletAddress,
       payload,
-      gasAmount: new BN(params.sendAmount).add(this.gasConstants.provideLp),
+      gasAmount,
     };
   }
 }

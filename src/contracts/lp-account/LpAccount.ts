@@ -19,7 +19,10 @@ import type {
 } from './LpAccountRevision';
 import { LpAccountRevisionV1 } from './LpAccountRevisionV1';
 
-const { Contract } = TonWeb;
+const {
+  Contract,
+  utils: { BN },
+} = TonWeb;
 
 const REVISIONS = {
   [ROUTER_REVISION.V1]: LpAccountRevisionV1,
@@ -131,22 +134,22 @@ export class LpAccount extends Contract {
   /**
    * Build all data required to execute a `refund_me` transaction.
    *
+   * @param {BN | number | undefined} params.gasAmount - Optional; amount of gas for the transaction (in nanoTons)
    * @param {BN | number | undefined} params.queryId - Optional; query id
    *
    * @returns {MessageData} all data required to execute a `refund_me` transaction.
    */
   public async buildRefundTxParams(params?: {
+    gasAmount?: AmountType;
     queryId?: QueryIdType;
   }): Promise<MessageData> {
-    const payload = await this.createRefundBody({
-      queryId: params?.queryId,
-    });
+    const to = await this.getAddress();
 
-    return {
-      to: await this.getAddress(),
-      payload: payload,
-      gasAmount: this.gasConstants.refund,
-    };
+    const payload = await this.createRefundBody({ queryId: params?.queryId });
+
+    const gasAmount = new BN(params?.gasAmount ?? this.gasConstants.refund);
+
+    return { to, payload, gasAmount };
   }
 
   /**
@@ -155,6 +158,7 @@ export class LpAccount extends Contract {
    * @param {BN | number} params.amount0 - Amount of the first Jetton tokens (in basic token units)
    * @param {BN | number} params.amount1 - Amount of the second Jetton tokens (in basic token units)
    * @param {BN | number | undefined} params.minimumLpToMint - Optional; minimum amount of received liquidity tokens (in basic token units)
+   * @param {BN | number | undefined} params.gasAmount - Optional; amount of gas for the transaction (in nanoTons)
    * @param {BN | number | undefined} params.queryId - Optional; query id
    *
    * @returns {MessageData} all data required to execute a `direct_add_liquidity` transaction.
@@ -163,8 +167,11 @@ export class LpAccount extends Contract {
     amount0: AmountType;
     amount1: AmountType;
     minimumLpToMint?: AmountType;
+    gasAmount?: AmountType;
     queryId?: QueryIdType;
   }): Promise<MessageData> {
+    const to = await this.getAddress();
+
     const payload = await this.createDirectAddLiquidityBody({
       amount0: params.amount0,
       amount1: params.amount1,
@@ -172,31 +179,29 @@ export class LpAccount extends Contract {
       queryId: params.queryId,
     });
 
-    return {
-      to: await this.getAddress(),
-      payload: payload,
-      gasAmount: this.gasConstants.directAddLp,
-    };
+    const gasAmount = new BN(params.gasAmount ?? this.gasConstants.directAddLp);
+
+    return { to, payload, gasAmount };
   }
 
   /**
    * Build all data required to execute a `reset_gas` transaction.
    *
+   * @param {BN | number | undefined} params.gasAmount - Optional; amount of gas for the transaction (in nanoTons)
    * @param {BN | number | undefined} params.queryId - Optional; query id
    *
    * @returns {MessageData} all data required to execute a `reset_gas` transaction.
    */
   public async buildResetGasTxParams(params?: {
+    gasAmount?: AmountType;
     queryId?: QueryIdType;
   }): Promise<MessageData> {
-    const payload = await this.createResetGasBody({
-      queryId: params?.queryId,
-    });
+    const to = await this.getAddress();
 
-    return {
-      to: await this.getAddress(),
-      payload: payload,
-      gasAmount: this.gasConstants.resetGas,
-    };
+    const payload = await this.createResetGasBody({ queryId: params?.queryId });
+
+    const gasAmount = new BN(params?.gasAmount ?? this.gasConstants.resetGas);
+
+    return { to, payload, gasAmount };
   }
 }

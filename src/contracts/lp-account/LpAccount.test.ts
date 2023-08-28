@@ -19,6 +19,7 @@ const LP_ACCOUNT_REVISION = createMockObj<LpAccountRevision>({
   gasConstants: {
     refund: new BN(1),
     resetGas: new BN(2),
+    directAddLp: new BN(3),
   },
   createRefundBody: vi.fn(() => {
     const cell = new Cell();
@@ -224,6 +225,30 @@ describe('LpAccount', () => {
       );
       expect(params.gasAmount).toBe(LP_ACCOUNT_REVISION.gasConstants.refund);
     });
+    it('should build expected params when gasAmount is defined', async () => {
+      const lpAccount = new LpAccount(PROVIDER, {
+        revision: LP_ACCOUNT_REVISION,
+        address: LP_ACCOUNT_ADDRESS,
+      });
+
+      const gasAmount = new BN(12345);
+
+      const params = await lpAccount.buildRefundTxParams({
+        gasAmount,
+      });
+
+      expect(LP_ACCOUNT_REVISION.createRefundBody).toBeCalledTimes(1);
+      expect(LP_ACCOUNT_REVISION.createRefundBody).toHaveBeenCalledWith(
+        lpAccount,
+        expect.objectContaining({}),
+      );
+
+      expect(params.to.toString()).toBe(LP_ACCOUNT_ADDRESS);
+      expect(bytesToBase64(await params.payload.toBoc())).toMatchInlineSnapshot(
+        '"te6ccsEBAQEAEgAAACBjcmVhdGVSZWZ1bmRCb2R5HJ3cuw=="',
+      );
+      expect(params.gasAmount).toBe(gasAmount);
+    });
     it('should build expected params when queryId is defined', async () => {
       const lpAccount = new LpAccount(PROVIDER, {
         revision: LP_ACCOUNT_REVISION,
@@ -324,6 +349,39 @@ describe('LpAccount', () => {
         LP_ACCOUNT_REVISION.gasConstants.directAddLp,
       );
     });
+    it('should build expected params when gasAmount is defined', async () => {
+      const lpAccount = new LpAccount(PROVIDER, {
+        revision: LP_ACCOUNT_REVISION,
+        address: LP_ACCOUNT_ADDRESS,
+      });
+
+      const gasAmount = new BN(12345);
+
+      const params = await lpAccount.buildDirectAddLiquidityTxParams({
+        amount0,
+        amount1,
+        gasAmount,
+      });
+
+      expect(LP_ACCOUNT_REVISION.createDirectAddLiquidityBody).toBeCalledTimes(
+        1,
+      );
+      expect(
+        LP_ACCOUNT_REVISION.createDirectAddLiquidityBody,
+      ).toHaveBeenCalledWith(
+        lpAccount,
+        expect.objectContaining({
+          amount0,
+          amount1,
+        }),
+      );
+
+      expect(params.to.toString()).toBe(LP_ACCOUNT_ADDRESS);
+      expect(bytesToBase64(await params.payload.toBoc())).toMatchInlineSnapshot(
+        '"te6ccsEBAQEAHgAAADhjcmVhdGVEaXJlY3RBZGRMaXF1aWRpdHlCb2R5LYLS3A=="',
+      );
+      expect(params.gasAmount).toBe(gasAmount);
+    });
     it('should build expected params when queryId is defined', async () => {
       const lpAccount = new LpAccount(PROVIDER, {
         revision: LP_ACCOUNT_REVISION,
@@ -382,6 +440,30 @@ describe('LpAccount', () => {
         '"te6ccsEBAQEAFAAAACRjcmVhdGVSZXNldEdhc0JvZHnOomJJ"',
       );
       expect(params.gasAmount).toBe(LP_ACCOUNT_REVISION.gasConstants.resetGas);
+    });
+    it('should build expected params when gasAmount is defined', async () => {
+      const lpAccount = new LpAccount(PROVIDER, {
+        revision: LP_ACCOUNT_REVISION,
+        address: LP_ACCOUNT_ADDRESS,
+      });
+
+      const gasAmount = new BN(12345);
+
+      const params = await lpAccount.buildResetGasTxParams({
+        gasAmount,
+      });
+
+      expect(LP_ACCOUNT_REVISION.createResetGasBody).toBeCalledTimes(1);
+      expect(LP_ACCOUNT_REVISION.createResetGasBody).toHaveBeenCalledWith(
+        lpAccount,
+        expect.objectContaining({}),
+      );
+
+      expect(params.to.toString()).toBe(LP_ACCOUNT_ADDRESS);
+      expect(bytesToBase64(await params.payload.toBoc())).toMatchInlineSnapshot(
+        '"te6ccsEBAQEAFAAAACRjcmVhdGVSZXNldEdhc0JvZHnOomJJ"',
+      );
+      expect(params.gasAmount).toBe(gasAmount);
     });
     it('should build expected params when queryId is defined', async () => {
       const lpAccount = new LpAccount(PROVIDER, {

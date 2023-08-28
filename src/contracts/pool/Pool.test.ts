@@ -509,6 +509,32 @@ describe('Pool', () => {
       );
       expect(params.gasAmount).toEqual(POOL_REVISION.gasConstants.collectFees);
     });
+    it('should build expected params when gasAmount is defined', async () => {
+      const pool = new Pool(
+        PROVIDER,
+        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+        // @ts-ignore
+        {
+          revision: POOL_REVISION,
+          address: POOL_ADDRESS,
+        },
+      );
+
+      const gasAmount = new BN(12345);
+      const params = await pool.buildCollectFeeTxParams({ gasAmount });
+
+      expect(POOL_REVISION.createCollectFeesBody).toBeCalledTimes(1);
+      expect(POOL_REVISION.createCollectFeesBody).toBeCalledWith(
+        pool,
+        expect.objectContaining({}),
+      );
+
+      expect(params.to).toStrictEqual(new Address(POOL_ADDRESS));
+      expect(bytesToBase64(await params.payload.toBoc())).toMatchInlineSnapshot(
+        '"te6ccsEBAQEAFwAAACpjcmVhdGVDb2xsZWN0RmVlc0JvZHkhF9zp"',
+      );
+      expect(params.gasAmount).toBe(gasAmount);
+    });
     it('should build expected params when queryId is defined', async () => {
       const pool = new Pool(
         PROVIDER,
@@ -591,6 +617,40 @@ describe('Pool', () => {
         '"te6ccsEBAQEAEAAAABxjcmVhdGVCdXJuQm9keblT5zQ="',
       );
       expect(params.gasAmount).toEqual(POOL_REVISION.gasConstants.burn);
+    });
+    it('should build expected params when gasAmount is defined', async () => {
+      const pool = new Pool(
+        provider,
+        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+        // @ts-ignore
+        {
+          revision: POOL_REVISION,
+          address: POOL_ADDRESS,
+        },
+      );
+
+      const gasAmount = new BN(12345);
+      const params = await pool.buildBurnTxParams({
+        amount,
+        responseAddress,
+        gasAmount,
+      });
+
+      expect(POOL_REVISION.createBurnBody).toBeCalledTimes(1);
+      expect(POOL_REVISION.createBurnBody).toBeCalledWith(
+        pool,
+        expect.objectContaining({}),
+      );
+
+      expect(params.to).toStrictEqual(
+        new Address(
+          '0:565a1b3b8098eb0bffe6286eb115fd6fab84a38b742a638bb4ef603b4665b152',
+        ),
+      );
+      expect(bytesToBase64(await params.payload.toBoc())).toMatchInlineSnapshot(
+        '"te6ccsEBAQEAEAAAABxjcmVhdGVCdXJuQm9keblT5zQ="',
+      );
+      expect(params.gasAmount).toBe(gasAmount);
     });
     it('should build expected params when queryId is defined', async () => {
       const pool = new Pool(

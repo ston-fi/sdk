@@ -21,6 +21,7 @@ import { PoolRevisionV1 } from './PoolRevisionV1';
 
 const {
   Address,
+  utils: { BN },
   token: {
     jetton: { JettonMinter, JettonWallet },
   },
@@ -240,22 +241,26 @@ export class Pool extends JettonMinter {
   /**
    * Build all data required to execute a `collect_fees` transaction.
    *
+   * @param {BN | number | undefined} params.gasAmount - Optional; amount of gas for the transaction (in nanoTons)
    * @param {BN | number | undefined} params.queryId - Optional; query id
    *
    * @returns {MessageData} all data required to execute a `collect_fees` transaction.
    */
   public async buildCollectFeeTxParams(params?: {
+    gasAmount?: AmountType;
     queryId?: QueryIdType;
   }): Promise<MessageData> {
+    const to = await this.getAddress();
+
     const payload = await this.createCollectFeesBody({
       queryId: params?.queryId,
     });
 
-    return {
-      to: await this.getAddress(),
-      payload: payload,
-      gasAmount: this.gasConstants.collectFees,
-    };
+    const gasAmount = new BN(
+      params?.gasAmount ?? this.gasConstants.collectFees,
+    );
+
+    return { to, payload, gasAmount };
   }
 
   /**
@@ -263,6 +268,7 @@ export class Pool extends JettonMinter {
    *
    * @param {BN | number} params.amount - Amount of lp tokens to burn (in basic token units)
    * @param {Address | string} params.responseAddress - Address of a user
+   * @param {BN | number | undefined} params.gasAmount - Optional; amount of gas for the transaction (in nanoTons)
    * @param {BN | number | undefined} params.queryId - Optional; query id
    *
    * @returns {MessageData} all data required to execute a `burn` transaction.
@@ -270,20 +276,21 @@ export class Pool extends JettonMinter {
   public async buildBurnTxParams(params: {
     amount: AmountType;
     responseAddress: AddressType;
+    gasAmount?: AmountType;
     queryId?: QueryIdType;
   }): Promise<MessageData> {
+    const to = await this.getJettonWalletAddress(
+      new Address(params.responseAddress),
+    );
+
     const payload = await this.createBurnBody({
       amount: params.amount,
       responseAddress: params.responseAddress,
       queryId: params.queryId,
     });
 
-    return {
-      to: await this.getJettonWalletAddress(
-        new Address(params.responseAddress),
-      ),
-      payload: payload,
-      gasAmount: this.gasConstants.burn,
-    };
+    const gasAmount = new BN(params?.gasAmount ?? this.gasConstants.burn);
+
+    return { to, payload, gasAmount };
   }
 }

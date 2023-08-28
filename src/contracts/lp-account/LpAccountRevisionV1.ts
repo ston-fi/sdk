@@ -38,9 +38,9 @@ export class LpAccountRevisionV1 implements LpAccountRevision {
 
       message.bits.writeUint(OP_CODES.DIRECT_ADD_LIQUIDITY, 32);
       message.bits.writeUint(params.queryId ?? 0, 64);
-      message.bits.writeCoins(params.amount0);
-      message.bits.writeCoins(params.amount1);
-      message.bits.writeCoins(params.minimumLpToMint ?? new BN(1));
+      message.bits.writeCoins(new BN(params.amount0));
+      message.bits.writeCoins(new BN(params.amount1));
+      message.bits.writeCoins(new BN(params.minimumLpToMint ?? 1));
 
       return message;
     };

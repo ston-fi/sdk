@@ -4,6 +4,7 @@ import { OP_CODES } from '@/constants';
 import type { AddressType, QueryIdType, AmountType, Cell } from '@/types';
 
 const {
+  utils: { BN },
   boc: { Cell },
   Address,
 } = TonWeb;
@@ -29,7 +30,7 @@ export function createJettonTransferMessage(params: {
 
   message.bits.writeUint(OP_CODES.REQUEST_TRANSFER, 32);
   message.bits.writeUint(params.queryId, 64);
-  message.bits.writeCoins(params.amount);
+  message.bits.writeCoins(new BN(params.amount));
   message.bits.writeAddress(new Address(params.destination));
   message.bits.writeAddress(
     params.responseDestination
@@ -44,7 +45,7 @@ export function createJettonTransferMessage(params: {
     message.bits.writeBit(false);
   }
 
-  message.bits.writeCoins(params.forwardTonAmount);
+  message.bits.writeCoins(new BN(params.forwardTonAmount));
 
   if (params.forwardPayload) {
     message.refs.push(params.forwardPayload);

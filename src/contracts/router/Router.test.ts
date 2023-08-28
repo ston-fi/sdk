@@ -418,6 +418,43 @@ describe('Router', () => {
       );
       expect(params.gasAmount).toEqual(ROUTER_REVISION.gasConstants.swap);
     });
+    it('should build expected params when gasAmount is defined', async () => {
+      const router = new Router(provider, {
+        revision: ROUTER_REVISION,
+        address: ROUTER_ADDRESS,
+      });
+
+      const gasAmount = new BN(123456789);
+
+      const params = await router.buildSwapJettonTxParams({
+        userWalletAddress,
+        offerJettonAddress,
+        askJettonAddress,
+        offerAmount,
+        minAskAmount,
+        gasAmount,
+      });
+
+      expect(ROUTER_REVISION.createSwapBody).toBeCalledTimes(1);
+      expect(ROUTER_REVISION.createSwapBody).toBeCalledWith(
+        router,
+        expect.objectContaining({
+          userWalletAddress,
+          minAskAmount,
+          askJettonWalletAddress: new Address(
+            '0:08067306c91e2f5ee685dcecd1f342c867667fa5edf3fbfb7faba065bb61ca2d',
+          ),
+        }),
+      );
+
+      expect(params.to.toString()).toMatchInlineSnapshot(
+        '"0:41fde88343d609ffb52236cad5be14cab763b4a0a8ca7bbe9e550ed03d2fa860"',
+      );
+      expect(bytesToBase64(await params.payload.toBoc())).toMatchInlineSnapshot(
+        '"te6ccsEBAgEARwAANwFnD4p+pQAAAAAAAAAAQdzWUAgA7zuZAqJxsqAciTilI8/iTnGEeq62piAAHtRKd6wOcJwEDwEAHGNyZWF0ZVN3YXBCb2R5Y5yczQ=="',
+      );
+      expect(params.gasAmount).toEqual(gasAmount);
+    });
     it('should build expected params when forwardGasAmount is defined', async () => {
       const router = new Router(provider, {
         revision: ROUTER_REVISION,
@@ -558,10 +595,10 @@ describe('Router', () => {
         '0:1150b518b2626ad51899f98887f8824b70065456455f7fe2813f012699a4061f',
       );
       expect(bytesToBase64(await params.payload.toBoc())).toMatchInlineSnapshot(
-        '"te6ccsEBAgEARwAANwFnD4p+pQAAAAAAAAAAQdzWUAgA7zuZAqJxsqAciTilI8/iTnGEeq62piAAHtRKd6wOcJwEBwEAHGNyZWF0ZVN3YXBCb2R5O43Utg=="',
+        '"te6ccsEBAgEARwAANwFnD4p+pQAAAAAAAAAAQdzWUAgA7zuZAqJxsqAciTilI8/iTnGEeq62piAAHtRKd6wOcJwEDwEAHGNyZWF0ZVN3YXBCb2R5Y5yczQ=="',
       );
       expect(params.gasAmount).toEqual(
-        ROUTER_REVISION.gasConstants.swap.add(offerAmount),
+        offerAmount.add(ROUTER_REVISION.gasConstants.swapForward),
       );
     });
     it('should build expected params when referralAddress is defined', async () => {
@@ -599,10 +636,10 @@ describe('Router', () => {
         '0:1150b518b2626ad51899f98887f8824b70065456455f7fe2813f012699a4061f',
       );
       expect(bytesToBase64(await params.payload.toBoc())).toMatchInlineSnapshot(
-        '"te6ccsEBAgEARwAANwFnD4p+pQAAAAAAAAAAQdzWUAgA7zuZAqJxsqAciTilI8/iTnGEeq62piAAHtRKd6wOcJwEBwEAHGNyZWF0ZVN3YXBCb2R5O43Utg=="',
+        '"te6ccsEBAgEARwAANwFnD4p+pQAAAAAAAAAAQdzWUAgA7zuZAqJxsqAciTilI8/iTnGEeq62piAAHtRKd6wOcJwEDwEAHGNyZWF0ZVN3YXBCb2R5Y5yczQ=="',
       );
       expect(params.gasAmount).toEqual(
-        ROUTER_REVISION.gasConstants.swap.add(offerAmount),
+        offerAmount.add(ROUTER_REVISION.gasConstants.swapForward),
       );
     });
     it('should build expected params when forwardGasAmount is defined', async () => {
@@ -640,9 +677,7 @@ describe('Router', () => {
       expect(bytesToBase64(await params.payload.toBoc())).toMatchInlineSnapshot(
         '"te6ccsEBAgEASgAAOgFtD4p+pQAAAAAAAAAAQdzWUAgA7zuZAqJxsqAciTilI8/iTnGEeq62piAAHtRKd6wOcJwQHW80VwEAHGNyZWF0ZVN3YXBCb2R5A3iuuw=="',
       );
-      expect(params.gasAmount).toEqual(
-        ROUTER_REVISION.gasConstants.swap.add(offerAmount),
-      );
+      expect(params.gasAmount).toEqual(offerAmount.add(forwardGasAmount));
     });
     it('should build expected params when queryId is defined', async () => {
       const router = new Router(provider, {
@@ -677,10 +712,10 @@ describe('Router', () => {
         '0:1150b518b2626ad51899f98887f8824b70065456455f7fe2813f012699a4061f',
       );
       expect(bytesToBase64(await params.payload.toBoc())).toMatchInlineSnapshot(
-        '"te6ccsEBAgEARwAANwFnD4p+pQAAAAAAADA5QdzWUAgA7zuZAqJxsqAciTilI8/iTnGEeq62piAAHtRKd6wOcJwEBwEAHGNyZWF0ZVN3YXBCb2R5wo05/g=="',
+        '"te6ccsEBAgEARwAANwFnD4p+pQAAAAAAADA5QdzWUAgA7zuZAqJxsqAciTilI8/iTnGEeq62piAAHtRKd6wOcJwEDwEAHGNyZWF0ZVN3YXBCb2R5mpxxhQ=="',
       );
       expect(params.gasAmount).toEqual(
-        ROUTER_REVISION.gasConstants.swap.add(offerAmount),
+        offerAmount.add(ROUTER_REVISION.gasConstants.swapForward),
       );
     });
   });
@@ -751,6 +786,42 @@ describe('Router', () => {
         '"te6ccsEBAgEAUwAANwFnD4p+pQAAAAAAAAAAQdzWUAgA7zuZAqJxsqAciTilI8/iTnGEeq62piAAHtRKd6wOcJwEEwEANGNyZWF0ZVByb3ZpZGVMaXF1aWRpdHlCb2R50W/y2g=="',
       );
       expect(params.gasAmount).toEqual(ROUTER_REVISION.gasConstants.provideLp);
+    });
+    it('should build expected params when gasAmount is defined', async () => {
+      const router = new Router(provider, {
+        revision: ROUTER_REVISION,
+        address: ROUTER_ADDRESS,
+      });
+
+      const gasAmount = new BN(12345);
+
+      const params = await router.buildProvideLiquidityJettonTxParams({
+        userWalletAddress,
+        sendTokenAddress,
+        otherTokenAddress,
+        sendAmount,
+        minLpOut,
+        gasAmount,
+      });
+
+      expect(ROUTER_REVISION.createProvideLiquidityBody).toBeCalledTimes(1);
+      expect(ROUTER_REVISION.createProvideLiquidityBody).toBeCalledWith(
+        router,
+        expect.objectContaining({
+          routerWalletAddress: new Address(
+            '0:08067306c91e2f5ee685dcecd1f342c867667fa5edf3fbfb7faba065bb61ca2d',
+          ),
+          minLpOut,
+        }),
+      );
+
+      expect(params.to.toString()).toBe(
+        '0:41fde88343d609ffb52236cad5be14cab763b4a0a8ca7bbe9e550ed03d2fa860',
+      );
+      expect(bytesToBase64(await params.payload.toBoc())).toMatchInlineSnapshot(
+        '"te6ccsEBAgEAUwAANwFnD4p+pQAAAAAAAAAAQdzWUAgA7zuZAqJxsqAciTilI8/iTnGEeq62piAAHtRKd6wOcJwEEwEANGNyZWF0ZVByb3ZpZGVMaXF1aWRpdHlCb2R50W/y2g=="',
+      );
+      expect(params.gasAmount).toEqual(gasAmount);
     });
     it('should build expected params when forwardGasAmount is defined', async () => {
       const router = new Router(provider, {
@@ -930,9 +1001,7 @@ describe('Router', () => {
       expect(bytesToBase64(await params.payload.toBoc())).toMatchInlineSnapshot(
         '"te6ccsEBAgEAVgAAOgFtD4p+pQAAAAAAAAAAQdzWUAgA7zuZAqJxsqAciTilI8/iTnGEeq62piAAHtRKd6wOcJwQHW80VwEANGNyZWF0ZVByb3ZpZGVMaXF1aWRpdHlCb2R5hpMt4w=="',
       );
-      expect(params.gasAmount).toEqual(
-        ROUTER_REVISION.gasConstants.provideLp.add(sendAmount),
-      );
+      expect(params.gasAmount).toEqual(sendAmount.add(forwardGasAmount));
     });
     it('should build expected params when queryId is defined', async () => {
       const router = new Router(provider, {
@@ -969,7 +1038,7 @@ describe('Router', () => {
         '"te6ccsEBAgEAUwAANwFnD4p+pQAAAAAAADA5QdzWUAgA7zuZAqJxsqAciTilI8/iTnGEeq62piAAHtRKd6wOcJwECwEANGNyZWF0ZVByb3ZpZGVMaXF1aWRpdHlCb2R5EeA3jg=="',
       );
       expect(params.gasAmount).toEqual(
-        ROUTER_REVISION.gasConstants.provideLp.add(sendAmount),
+        sendAmount.add(ROUTER_REVISION.gasConstants.provideLp),
       );
     });
   });

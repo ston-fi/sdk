@@ -17,9 +17,8 @@ class MyRouterRevision extends RouterRevisionV1 {
   // here you can override any method from default revision with your own implementation
 
   // if you will need custom pool revision, you need to override constructPoolRevision method
-  public override constructPoolRevision: RouterRevision['constructPoolRevision'] = (
-    router,
-  ) => new MyPoolRevision();
+  public override constructPoolRevision: RouterRevision['constructPoolRevision'] =
+    (router) => new MyPoolRevision();
 }
 
 class MyPoolRevision extends PoolRevisionV1 {

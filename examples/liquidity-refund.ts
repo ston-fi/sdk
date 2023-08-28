@@ -3,22 +3,14 @@ import TonWeb from 'tonweb';
 import { Router, ROUTER_REVISION, ROUTER_REVISION_ADDRESS } from '@ston-fi/sdk';
 
 /**
- * This example shows how to refund liquidity from the your lp-account of the pool
- * to get back your tokens located on the lp-account balance
+ * This example shows how to refund liquidity from the your lp-account
  */
-
 (async () => {
-  const WALLET_ADDRESS = '' // YOUR WALLET ADDRESS
-  const WALLET_SECRET = '' // YOUR WALLET SECRET
-
-  const JETTON0 = 'EQDQoc5M3Bh8eWFephi9bClhevelbZZvWhkqdo80XuY_0qXv';
-  const JETTON1 = 'EQC_1YoM8RBixN95lz7odcF3Vrkc_N8Ne7gQi7Abtlet_Efi';
+  const WALLET_ADDRESS = ''; // ! replace with your address
+  const JETTON0 = 'EQA2kCVNwVsil2EM2mB0SkXytxCqQjS4mttjDpnXmwG9T6bO'; // STON
+  const JETTON1 = 'EQBynBO23ywHy_CgarY9NK9FTz0yDsG82PtcbSTQgGoXwiuA'; // jUSDT
 
   const provider = new TonWeb.HttpProvider();
-
-  const wallet = new TonWeb(provider).wallet.create({
-    address: WALLET_ADDRESS,
-  });
 
   const router = new Router(provider, {
     revision: ROUTER_REVISION.V1,
@@ -36,20 +28,22 @@ import { Router, ROUTER_REVISION, ROUTER_REVISION_ADDRESS } from '@ston-fi/sdk';
   const lpAccount = await pool.getLpAccount({ ownerAddress: WALLET_ADDRESS });
 
   if (!lpAccount) {
-    throw Error(`LpAccount for ${JETTON0}/${JETTON1} & owner ${WALLET_ADDRESS} not found`);
+    throw Error(
+      `LpAccount for ${WALLET_ADDRESS} at ${JETTON0}/${JETTON1} pool not found`,
+    );
   }
 
-  // Build transaction params to refund all tokens from JETTON0/JETTON1 lp-account
-  const params = await lpAccount.buildRefundTxParams({
+  // transaction to refund all tokens from JETTON0/JETTON1 lp-account contract
+  const refundTxParams = await lpAccount.buildRefundTxParams({
+    // query id to identify your transaction in the blockchain (optional)
     queryId: 12345,
   });
 
-  wallet.methods.transfer({
-    secretKey: new TextEncoder().encode(WALLET_SECRET),
-    toAddress: params.to,
-    amount: params.gasAmount,
-    seqno: (await wallet.methods.seqno().call()) ?? 0,
-    payload: params.payload,
-    sendMode: 3,
+  // to execute the transaction you need to send transaction to the blockchain
+  // (replace with your wallet implementation, logging is used for demonstration purposes)
+  console.log({
+    to: refundTxParams.to,
+    amount: refundTxParams.gasAmount,
+    payload: refundTxParams.payload,
   });
 })();

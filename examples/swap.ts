@@ -3,50 +3,49 @@ import TonWeb from 'tonweb';
 import { Router, ROUTER_REVISION, ROUTER_REVISION_ADDRESS } from '@ston-fi/sdk';
 
 /**
- * This example shows how to swap jettons using the router contract
+ * This example shows how to swap two jettons using the router contract
  */
-
 (async () => {
-  const WALLET_ADDRESS = ''; // YOUR WALLET ADDRESS
-  const WALLET_SECRET = ''; // YOUR WALLET SECRET
-
-  const REFERRAL_ADDRESS = undefined; // REFERRAL ADDRESS (OPTIONAL)
-
-  const JETTON0 = 'EQDQoc5M3Bh8eWFephi9bClhevelbZZvWhkqdo80XuY_0qXv';
-  const JETTON1 = 'EQC_1YoM8RBixN95lz7odcF3Vrkc_N8Ne7gQi7Abtlet_Efi';
+  const WALLET_ADDRESS = ''; // ! replace with your address
+  const JETTON0 = 'EQA2kCVNwVsil2EM2mB0SkXytxCqQjS4mttjDpnXmwG9T6bO'; // STON
+  const JETTON1 = 'EQBynBO23ywHy_CgarY9NK9FTz0yDsG82PtcbSTQgGoXwiuA'; // jUSDT
 
   const provider = new TonWeb.HttpProvider();
-
-  const wallet = new TonWeb(provider).wallet.create({
-    address: WALLET_ADDRESS,
-  });
 
   const router = new Router(provider, {
     revision: ROUTER_REVISION.V1,
     address: ROUTER_REVISION_ADDRESS.V1,
   });
 
-  // Build transaction params to swap 500000000 JETTON0 to JETTON1
-  // but not less than 200000000 JETTON1
-  const params = await router.buildSwapJettonTxParams({
+  // transaction to swap 1.0 JETTON0 to JETTON1 but not less than 1 nano JETTON1
+  const swapTxParams = await router.buildSwapJettonTxParams({
+    // address of the wallet that holds offerJetton you want to swap
     userWalletAddress: WALLET_ADDRESS,
+    // address of the jetton you want to swap
     offerJettonAddress: JETTON0,
+    // amount of the jetton you want to swap
+    offerAmount: TonWeb.utils.toNano('1'), // 1.0
+    // address of the jetton you want to receive
     askJettonAddress: JETTON1,
-    offerAmount: new TonWeb.utils.BN(500000000),
-    minAskAmount: new TonWeb.utils.BN(200000000),
+    // minimal amount of the jetton you want to receive as a result of the swap.
+    // If the amount of the jetton you want to receive is less than minAskAmount
+    // the transaction will bounce
+    minAskAmount: new TonWeb.utils.BN(1),
+    // query id to identify your transaction in the blockchain (optional)
     queryId: 12345,
-
-    // Set your address if you want to give referral payouts
-    // from everyone who using this code to swap jettons
-    referralAddress: REFERRAL_ADDRESS,
+    // address of the wallet to receive the referral fee (optional)
+    referralAddress: undefined,
   });
 
-  wallet.methods.transfer({
-    secretKey: new TextEncoder().encode(WALLET_SECRET),
-    toAddress: params.to,
-    amount: params.gasAmount,
-    seqno: (await wallet.methods.seqno().call()) ?? 0,
-    payload: params.payload,
-    sendMode: 3,
+  // to execute the transaction you need to send transaction to the blockchain
+  // (replace with your wallet implementation, logging is used for demonstration purposes)
+  console.log({
+    to: swapTxParams.to,
+    amount: swapTxParams.gasAmount,
+    payload: swapTxParams.payload,
   });
+
+  // reverse transaction is the same,
+  // you just need to swap `offerJettonAddress` and `askJettonAddress` values
+  // and adjust `offerAmount` and `minAskAmount` accordingly
 })();
