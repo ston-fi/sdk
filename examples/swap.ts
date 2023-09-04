@@ -24,7 +24,7 @@ import { Router, ROUTER_REVISION, ROUTER_REVISION_ADDRESS } from '@ston-fi/sdk';
     // address of the jetton you want to swap
     offerJettonAddress: JETTON0,
     // amount of the jetton you want to swap
-    offerAmount: TonWeb.utils.toNano('1'), // 1.0
+    offerAmount: new TonWeb.utils.BN('1000000000'),
     // address of the jetton you want to receive
     askJettonAddress: JETTON1,
     // minimal amount of the jetton you want to receive as a result of the swap.

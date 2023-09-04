@@ -27,7 +27,7 @@ import { Router, ROUTER_REVISION, ROUTER_REVISION_ADDRESS } from '@ston-fi/sdk';
     userWalletAddress: WALLET_ADDRESS,
     proxyTonAddress: PROXY_TON,
     // amount of the TON you want to swap
-    offerAmount: TonWeb.utils.toNano('1'), // 1.0
+    offerAmount: new TonWeb.utils.BN('1000000000'),
     // address of the jetton you want to receive
     askJettonAddress: JETTON0,
     // minimal amount of the jetton you want to receive as a result of the swap.

@@ -26,7 +26,7 @@ import { Router, ROUTER_REVISION, ROUTER_REVISION_ADDRESS } from '@ston-fi/sdk';
       // address of the jetton you want to provide
       sendTokenAddress: JETTON0,
       // amount of the jetton you want to provide
-      sendAmount: TonWeb.utils.toNano('0.5'), // 0.5
+      sendAmount: new TonWeb.utils.BN('500000000'),
       // address of the second jetton you want to provide
       otherTokenAddress: JETTON1,
       // minimal amount of the LP tokens you want to receive as a result of the provision
@@ -51,7 +51,7 @@ import { Router, ROUTER_REVISION, ROUTER_REVISION_ADDRESS } from '@ston-fi/sdk';
       // address of the jetton you want to provide
       sendTokenAddress: JETTON1,
       // amount of the jetton you want to provide
-      sendAmount: TonWeb.utils.toNano('0.2'), // 0.2
+      sendAmount: new TonWeb.utils.BN('200000000'),
       // address of the second jetton you want to provide
       otherTokenAddress: JETTON0,
       // minimal amount of the LP tokens you want to receive as a result of the provision
