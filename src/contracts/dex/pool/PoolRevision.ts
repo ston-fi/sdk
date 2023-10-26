@@ -1,4 +1,4 @@
-import type { LpAccountRevision } from '@/contracts/lp-account/LpAccountRevision';
+import type { LpAccountRevision } from '../lp-account/LpAccountRevision';
 import type {
   Address,
   Cell,

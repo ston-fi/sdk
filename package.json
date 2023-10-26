@@ -1,6 +1,6 @@
 {
   "name": "@ston-fi/sdk",
-  "version": "0.3.4",
+  "version": "0.4.0",
   "description": "Typescript SDK to interact with the Ston.fi DEX",
   "license": "MIT",
   "type": "module",
@@ -34,6 +34,7 @@
     }
   },
   "scripts": {
+    "preinstall": "npx only-allow npm",
     "prebuild": "npm install && rimraf dist && npm run lint && CI=true npm run test",
     "build": "vite build",
     "lint": "npm run lint:prettier",

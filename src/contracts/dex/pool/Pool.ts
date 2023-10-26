@@ -1,7 +1,7 @@
 import TonWeb from 'tonweb';
 
-import { LpAccount } from '@/contracts/lp-account/LpAccount';
-import { ROUTER_REVISION } from '@/constants';
+import { LpAccount } from '../lp-account/LpAccount';
+import { ROUTER_REVISION } from '../constants';
 import type {
   Address,
   Cell,

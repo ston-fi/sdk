@@ -1,6 +1,8 @@
 import TonWeb, {
   ContractOptions as TW_ContractOptions,
   JettonMinterOptions as TW_JettonMinterOptions,
+  NftItemOptions as TW_NftItemOptions,
+  NftCollectionOptions as TW_NftCollectionOptions,
 } from 'tonweb';
 
 export type Address = InstanceType<typeof TonWeb.utils.Address>;
@@ -16,6 +18,8 @@ export type QueryIdType = number | BN;
 export type AmountType = ConstructorParameters<typeof TonWeb.utils.BN>[0];
 export interface ContractOptions extends TW_ContractOptions {}
 export interface JettonMinterOptions extends TW_JettonMinterOptions {}
+export interface NftItemOptions extends TW_NftItemOptions {}
+export interface NftCollectionOptions extends TW_NftCollectionOptions {}
 
 /**
  * @type {MessageData}

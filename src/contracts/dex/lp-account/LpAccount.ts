@@ -1,6 +1,6 @@
 import TonWeb from 'tonweb';
 
-import { ROUTER_REVISION } from '@/constants';
+import { ROUTER_REVISION } from '../constants';
 import type {
   Address,
   Cell,

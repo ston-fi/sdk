@@ -1,7 +1,7 @@
 import TonWeb from 'tonweb';
 
-import { parseAddressFromCell } from '@/utils/parseAddressFromCell';
-import { OP_CODES } from '@/constants';
+import { parseAddress } from '@/utils/parseAddress';
+import { DEX_OP_CODES } from '../constants';
 import type { Cell, BN } from '@/types';
 
 import type { LpAccountRevision } from './LpAccountRevision';
@@ -26,7 +26,7 @@ export class LpAccountRevisionV1 implements LpAccountRevision {
   ) => {
     const message = new Cell();
 
-    message.bits.writeUint(OP_CODES.REFUND, 32);
+    message.bits.writeUint(DEX_OP_CODES.REFUND, 32);
     message.bits.writeUint(params?.queryId ?? 0, 64);
 
     return message;
@@ -36,7 +36,7 @@ export class LpAccountRevisionV1 implements LpAccountRevision {
     async (_lpAccount, params) => {
       const message = new Cell();
 
-      message.bits.writeUint(OP_CODES.DIRECT_ADD_LIQUIDITY, 32);
+      message.bits.writeUint(DEX_OP_CODES.DIRECT_ADD_LIQUIDITY, 32);
       message.bits.writeUint(params.queryId ?? 0, 64);
       message.bits.writeCoins(new BN(params.amount0));
       message.bits.writeCoins(new BN(params.amount1));
@@ -51,7 +51,7 @@ export class LpAccountRevisionV1 implements LpAccountRevision {
   ) => {
     const message = new Cell();
 
-    message.bits.writeUint(OP_CODES.RESET_GAS, 32);
+    message.bits.writeUint(DEX_OP_CODES.RESET_GAS, 32);
     message.bits.writeUint(params?.queryId ?? 0, 64);
 
     return message;
@@ -65,8 +65,8 @@ export class LpAccountRevisionV1 implements LpAccountRevision {
     );
 
     return {
-      userAddress: parseAddressFromCell(result[0]),
-      poolAddress: parseAddressFromCell(result[1]),
+      userAddress: parseAddress(result[0]),
+      poolAddress: parseAddress(result[1]),
       amount0: result[2] as BN,
       amount1: result[3] as BN,
     };

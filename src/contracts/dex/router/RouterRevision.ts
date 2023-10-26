@@ -1,4 +1,4 @@
-import type { PoolRevision } from '@/contracts/pool/PoolRevision';
+import type { PoolRevision } from '../pool/PoolRevision';
 import type { Address, Cell, BN, AddressType, AmountType } from '@/types';
 
 import type { Router, RouterData } from './Router';

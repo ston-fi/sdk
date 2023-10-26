@@ -1,8 +1,8 @@
 import TonWeb from 'tonweb';
 import { describe, it, expect, vi } from 'vitest';
 
-import { LpAccountRevisionV1 } from '@/contracts/lp-account/LpAccountRevisionV1';
-import { createMockObj } from '@/test';
+import { LpAccountRevisionV1 } from '../lp-account/LpAccountRevisionV1';
+import { createMockObj } from '@/tests/utils';
 
 import type { Pool } from './Pool';
 import { PoolRevisionV1 } from './PoolRevisionV1';

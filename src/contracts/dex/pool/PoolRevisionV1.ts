@@ -1,8 +1,8 @@
 import TonWeb from 'tonweb';
 
-import { LpAccountRevisionV1 } from '@/contracts/lp-account/LpAccountRevisionV1';
-import { parseAddressFromCell } from '@/utils/parseAddressFromCell';
-import { OP_CODES } from '@/constants';
+import { LpAccountRevisionV1 } from '../lp-account/LpAccountRevisionV1';
+import { parseAddress } from '@/utils/parseAddress';
+import { DEX_OP_CODES } from '../constants';
 import type { Address, Cell, BN } from '@/types';
 
 import type { PoolRevision } from './PoolRevision';
@@ -27,7 +27,7 @@ export class PoolRevisionV1 implements PoolRevision {
   ) => {
     const message = new Cell();
 
-    message.bits.writeUint(OP_CODES.COLLECT_FEES, 32);
+    message.bits.writeUint(DEX_OP_CODES.COLLECT_FEES, 32);
     message.bits.writeUint(params?.queryId ?? 0, 64);
 
     return message;
@@ -39,7 +39,7 @@ export class PoolRevisionV1 implements PoolRevision {
   ) => {
     const message = new Cell();
 
-    message.bits.writeUint(OP_CODES.REQUEST_BURN, 32);
+    message.bits.writeUint(DEX_OP_CODES.REQUEST_BURN, 32);
     message.bits.writeUint(params.queryId ?? 0, 64);
     message.bits.writeCoins(new BN(params.amount));
     message.bits.writeAddress(new Address(params.responseAddress));
@@ -125,7 +125,7 @@ export class PoolRevisionV1 implements PoolRevision {
       [['tvm.Slice', slice]],
     );
 
-    return parseAddressFromCell(result);
+    return parseAddress(result);
   };
 
   public constructLpAccountRevision: PoolRevision['constructLpAccountRevision'] =
@@ -142,12 +142,12 @@ export class PoolRevisionV1 implements PoolRevision {
     return {
       reserve0: result[0] as BN,
       reserve1: result[1] as BN,
-      token0WalletAddress: parseAddressFromCell(result[2]),
-      token1WalletAddress: parseAddressFromCell(result[3]),
+      token0WalletAddress: parseAddress(result[2]),
+      token1WalletAddress: parseAddress(result[3]),
       lpFee: result[4] as BN,
       protocolFee: result[5] as BN,
       refFee: result[6] as BN,
-      protocolFeeAddress: parseAddressFromCell(result[7]),
+      protocolFeeAddress: parseAddress(result[7]),
       collectedToken0ProtocolFee: result[8] as BN,
       collectedToken1ProtocolFee: result[9] as BN,
     };

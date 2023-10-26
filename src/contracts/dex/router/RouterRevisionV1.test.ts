@@ -1,9 +1,9 @@
 import TonWeb from 'tonweb';
 import { describe, it, expect, vi, afterEach } from 'vitest';
 
-import { Router } from '@/contracts/router/Router';
-import { PoolRevisionV1 } from '@/contracts/pool/PoolRevisionV1';
-import { createMockObj } from '@/test';
+import { Router } from '../router/Router';
+import { PoolRevisionV1 } from '../pool/PoolRevisionV1';
+import { createMockObj } from '@/tests/utils';
 
 import { RouterRevisionV1 } from './RouterRevisionV1';
 

@@ -1,7 +1,7 @@
 import TonWeb from 'tonweb';
 import { describe, it, expect, vi } from 'vitest';
 
-import { createMockObj } from '@/test';
+import { createMockObj } from '@/tests/utils';
 
 import type { LpAccount } from './LpAccount';
 import { LpAccountRevisionV1 } from './LpAccountRevisionV1';

@@ -1,6 +1,5 @@
 import TonWeb from 'tonweb';
 
-import { OP_CODES } from '@/constants';
 import type { AddressType, QueryIdType, AmountType, Cell } from '@/types';
 
 const {
@@ -28,7 +27,7 @@ export function createJettonTransferMessage(params: {
 }) {
   const message = new Cell();
 
-  message.bits.writeUint(OP_CODES.REQUEST_TRANSFER, 32);
+  message.bits.writeUint(0xf8a7ea5, 32);
   message.bits.writeUint(params.queryId, 64);
   message.bits.writeCoins(new BN(params.amount));
   message.bits.writeAddress(new Address(params.destination));

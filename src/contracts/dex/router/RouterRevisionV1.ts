@@ -1,8 +1,8 @@
 import TonWeb from 'tonweb';
 
-import { PoolRevisionV1 } from '@/contracts/pool/PoolRevisionV1';
-import { parseAddressFromCell } from '@/utils/parseAddressFromCell';
-import { OP_CODES } from '@/constants';
+import { PoolRevisionV1 } from '../pool/PoolRevisionV1';
+import { parseAddress } from '@/utils/parseAddress';
+import { DEX_OP_CODES } from '../constants';
 import type { Cell, BN } from '@/types';
 import { parseBoolean } from '@/utils/parseBoolean';
 
@@ -30,7 +30,7 @@ export class RouterRevisionV1 implements RouterRevision {
   ) => {
     const payload = new Cell();
 
-    payload.bits.writeUint(OP_CODES.SWAP, 32);
+    payload.bits.writeUint(DEX_OP_CODES.SWAP, 32);
     payload.bits.writeAddress(new Address(params.askJettonWalletAddress));
     payload.bits.writeCoins(new BN(params.minAskAmount));
     payload.bits.writeAddress(new Address(params.userWalletAddress));
@@ -49,7 +49,7 @@ export class RouterRevisionV1 implements RouterRevision {
     async (_router, params) => {
       const payload = new Cell();
 
-      payload.bits.writeUint(OP_CODES.PROVIDE_LIQUIDITY, 32);
+      payload.bits.writeUint(DEX_OP_CODES.PROVIDE_LIQUIDITY, 32);
       payload.bits.writeAddress(new Address(params.routerWalletAddress));
       payload.bits.writeCoins(new BN(params.minLpOut));
 
@@ -79,7 +79,7 @@ export class RouterRevisionV1 implements RouterRevision {
       ],
     );
 
-    return parseAddressFromCell(result);
+    return parseAddress(result);
   };
 
   public getData: RouterRevision['getData'] = async (router) => {
@@ -92,7 +92,7 @@ export class RouterRevisionV1 implements RouterRevision {
 
     return {
       isLocked: parseBoolean(result[0]),
-      adminAddress: parseAddressFromCell(result[1] as Cell),
+      adminAddress: parseAddress(result[1] as Cell),
       tempUpgrade: result[2] as Cell,
       poolCode: result[3] as Cell,
       jettonLpWalletCode: result[4] as Cell,

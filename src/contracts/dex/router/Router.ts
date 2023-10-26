@@ -1,7 +1,7 @@
 import TonWeb from 'tonweb';
 
-import { Pool } from '@/contracts/pool/Pool';
-import { ROUTER_REVISION } from '@/constants';
+import { Pool } from '../pool/Pool';
+import { ROUTER_REVISION } from '../constants';
 import { createJettonTransferMessage } from '@/utils/createJettonTransferMessage';
 import type {
   Address,

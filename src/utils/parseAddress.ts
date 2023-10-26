@@ -19,7 +19,7 @@ const readIntFromBitString = (
   return n;
 };
 
-export const parseAddressFromCell = (cell: Cell): Address | null => {
+export const parseAddress = (cell: Cell): Address | null => {
   try {
     let n = readIntFromBitString(cell.bits, 3, 8);
 
