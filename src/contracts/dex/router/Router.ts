@@ -18,6 +18,7 @@ import type {
 
 import type { RouterGasConstants, RouterRevision } from './RouterRevision';
 import { RouterRevisionV1 } from './RouterRevisionV1';
+import { sleep } from '@/utils';
 
 const {
   Address,
@@ -317,6 +318,9 @@ export class Router extends Contract {
     const proxyTonWalletAddress = await proxyTonMinter.getJettonWalletAddress(
       await this.getAddress(),
     );
+
+      await sleep(1500);
+
     const askJettonWalletAddress = await askJettonMinter.getJettonWalletAddress(
       await this.getAddress(),
     );

@@ -3,6 +3,7 @@ export { createSbtDestroyMessage } from './createSbtDestroyMessage';
 export { parseAddress } from './parseAddress';
 export { parseBoolean } from './parseBoolean';
 export { parseString } from './parseString';
+export * from "./time"
 
 import { parseAddress } from './parseAddress';
 
