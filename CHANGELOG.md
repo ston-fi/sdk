@@ -7,11 +7,12 @@
 
 ### Added
 
-- Farms v1 contracts
-- Farms v3 contracts
-- SDK package now tree shakable
-- pTON v1 constant
+- Farm v1 contract
+- Farm v3 contract
+- pTON v1 contract
 - If excess gas was defined in DEX operation, it will now be returned to the user's wallet address
+- All SDK transactions now use bounceable addresses for `to` tx parameter
+- SDK package now tree shakable
 
 ### Changed
 
