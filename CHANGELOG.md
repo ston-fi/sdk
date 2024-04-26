@@ -3,7 +3,7 @@
 ## [0.5.0]
 
 > **Breaking changes**
-> Please look at the **Changed** section or at the migration guide
+> Please look at the **Changed** section or at the [step-by-step migration guide](https://docs.ston.fi/docs/developer-section/sdk/0.4-migration-guide)
 
 ### Added
 
