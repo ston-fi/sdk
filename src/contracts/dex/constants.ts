@@ -9,13 +9,8 @@ export const DEX_OP_CODES = {
   REQUEST_BURN: 0x595f07bc,
 } as const;
 
-export const ROUTER_REVISION = {
-  V1: 'V1',
+export const DEX_VERSION = {
+  v1: "v1",
 } as const;
 
-export const ROUTER_REVISION_ADDRESS: Record<
-  keyof typeof ROUTER_REVISION,
-  string
-> = {
-  [ROUTER_REVISION.V1]: 'EQB3ncyBUTjZUA5EnFKR5_EnOMI9V1tTEAAPaiU71gc4TiUt',
-} as const;
+export type DEX_VERSION = (typeof DEX_VERSION)[keyof typeof DEX_VERSION];

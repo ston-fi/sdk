@@ -1,6 +1,6 @@
-import TonWeb from 'tonweb';
+import TonWeb from "tonweb";
 
-import type { AddressType, QueryIdType, AmountType, Cell } from '@/types';
+import type { AddressType, QueryIdType, AmountType, Cell } from "@/types";
 
 const {
   utils: { BN },

@@ -1,15 +1,15 @@
-import TonWeb from 'tonweb';
-import { describe, it, expect } from 'vitest';
+import TonWeb from "tonweb";
+import { describe, it, expect } from "vitest";
 
-import { createSbtDestroyMessage } from './createSbtDestroyMessage';
+import { createSbtDestroyMessage } from "./createSbtDestroyMessage";
 
 const {
   utils: { bytesToBase64 },
   boc: { Cell },
 } = TonWeb;
 
-describe('createSbtDestroyMessage', () => {
-  it('should create message', async () => {
+describe("createSbtDestroyMessage", () => {
+  it("should create message", async () => {
     const message = await createSbtDestroyMessage();
 
     expect(message).toBeInstanceOf(Cell);
@@ -18,7 +18,7 @@ describe('createSbtDestroyMessage', () => {
     );
   });
 
-  it('should create message when queryId is defined', async () => {
+  it("should create message when queryId is defined", async () => {
     const queryId = 12345;
 
     const message = await createSbtDestroyMessage({

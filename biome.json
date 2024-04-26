@@ -1,0 +1,26 @@
+{
+  "$schema": "https://biomejs.dev/schemas/1.6.1/schema.json",
+  "files": {
+    "ignoreUnknown": true,
+    "include": ["./src/*"]
+  },
+  "organizeImports": {
+    "enabled": false
+  },
+  "formatter": {
+    "enabled": true,
+    "indentStyle": "space"
+  },
+  "linter": {
+    "enabled": true,
+    "rules": {
+      "recommended": true,
+      "suspicious": {
+        "noRedeclare": "warn"
+      },
+      "style": {
+        "useImportType": "warn"
+      }
+    }
+  }
+}

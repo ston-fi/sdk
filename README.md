@@ -14,10 +14,20 @@ Documentation on this SDK is available at [docs.ston.fi](https://docs.ston.fi/do
 
 ## Installation
 
-To install SDK via NPM use
+### NPM
 
 ```bash
 npm install tonweb @ston-fi/sdk
+```
 
+### Yarn
+
+```bash
 yarn add tonweb @ston-fi/sdk
+```
+
+### PNPM
+
+```bash
+pnpm install tonweb @ston-fi/sdk
 ```

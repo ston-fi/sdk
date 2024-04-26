@@ -1,11 +1,11 @@
-import TonWeb from 'tonweb';
+import TonWeb from "tonweb";
 
-import type { Address, Cell } from '@/types';
+import type { Address, Cell } from "@/types";
 
 const { Address } = TonWeb;
 
 const readIntFromBitString = (
-  bs: Cell['bits'],
+  bs: Cell["bits"],
   cursor: number,
   bits: number,
 ) => {
@@ -29,14 +29,24 @@ export const parseAddress = (cell: Cell): Address | null => {
 
     const hashPart = readIntFromBitString(cell.bits, 3 + 8, 256);
 
-    if (n.toString(10) + ':' + hashPart.toString(16) === '0:0') {
+    if (`${n.toString(10)}:${hashPart.toString(16)}` === "0:0") {
       return null;
     }
 
-    const s = n.toString(10) + ':' + hashPart.toString(16).padStart(64, '0');
+    const s = `${n.toString(10)}:${hashPart.toString(16).padStart(64, "0")}`;
 
     return new Address(s);
   } catch {
     return null;
   }
+};
+
+export const parseAddressNotNull = (cell: Cell): Address => {
+  const address = parseAddress(cell);
+
+  if (!address) {
+    throw new Error(`Failed to parse address from cell: ${cell}`);
+  }
+
+  return address;
 };

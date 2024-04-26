@@ -1,6 +1,6 @@
-import TonWeb from 'tonweb';
+import TonWeb from "tonweb";
 
-import type { QueryIdType, Cell } from '@/types';
+import type { QueryIdType } from "@/types";
 
 const {
   boc: { Cell },

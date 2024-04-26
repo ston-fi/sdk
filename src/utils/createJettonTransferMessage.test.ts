@@ -1,7 +1,7 @@
-import TonWeb from 'tonweb';
-import { describe, it, expect } from 'vitest';
+import TonWeb from "tonweb";
+import { describe, it, expect } from "vitest";
 
-import { createJettonTransferMessage } from './createJettonTransferMessage';
+import { createJettonTransferMessage } from "./createJettonTransferMessage";
 
 const {
   utils: { BN, bytesToBase64 },
@@ -9,13 +9,13 @@ const {
   Address,
 } = TonWeb;
 
-describe('createJettonTransferMessage', () => {
+describe("createJettonTransferMessage", () => {
   const queryId = 1;
   const amount = new BN(1000000000);
-  const destination = 'EQB3YmWW5ZLhe2gPUAw550e2doyWnkj5hzv3TXp2ekpAWe7v';
+  const destination = "EQB3YmWW5ZLhe2gPUAw550e2doyWnkj5hzv3TXp2ekpAWe7v";
   const forwardTonAmount = new BN(500000000);
 
-  it('should create message with expected content with all required fields', async () => {
+  it("should create message with expected content with all required fields", async () => {
     const message = await createJettonTransferMessage({
       queryId,
       amount,
@@ -32,7 +32,7 @@ describe('createJettonTransferMessage', () => {
   const customPayload = new Cell();
   customPayload.bits.writeUint(1, 32);
 
-  it('should create message with expected content when customPayload is defined', async () => {
+  it("should create message with expected content when customPayload is defined", async () => {
     const message = await createJettonTransferMessage({
       queryId,
       amount,
@@ -50,7 +50,7 @@ describe('createJettonTransferMessage', () => {
   const forwardPayload = new Cell();
   forwardPayload.bits.writeUint(2, 32);
 
-  it('should create message with expected content when forwardPayload is defined', async () => {
+  it("should create message with expected content when forwardPayload is defined", async () => {
     const message = await createJettonTransferMessage({
       queryId,
       amount,
@@ -66,10 +66,10 @@ describe('createJettonTransferMessage', () => {
   });
 
   const responseDestination = new Address(
-    'EQAQnxLqlX2B6w4jQzzzPWA8eyWZVZBz6Y0D_8noARLOaB3i',
+    "EQAQnxLqlX2B6w4jQzzzPWA8eyWZVZBz6Y0D_8noARLOaB3i",
   );
 
-  it('should create message with expected content when responseDestination is defined', async () => {
+  it("should create message with expected content when responseDestination is defined", async () => {
     const message = await createJettonTransferMessage({
       queryId,
       amount,
@@ -84,7 +84,7 @@ describe('createJettonTransferMessage', () => {
     );
   });
 
-  it('should create message with expected content when all fields are defined', async () => {
+  it("should create message with expected content when all fields are defined", async () => {
     const message = await createJettonTransferMessage({
       queryId,
       amount,

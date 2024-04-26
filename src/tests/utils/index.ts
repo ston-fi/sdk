@@ -1,1 +1,0 @@
-export { createMockObj } from './createMockObj';
