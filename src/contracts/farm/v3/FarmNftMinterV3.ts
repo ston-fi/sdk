@@ -123,7 +123,7 @@ export class FarmNftMinterV3 extends NftCollection {
    * @param {Address | string} params.userWalletAddress - User's address
    * @param {Address | string} params.jettonAddress - Jetton address of token to be staked
    * @param {BN | number} params.jettonAmount - Amount of tokens to be staked (in basic token units)
-   * @param {number} params.poolCount - Number of deployed farm reward pools
+   * @param {number | undefined} params.poolCount - Optional; Number of deployed farm reward pools; If undefined value will get onchain
    * @param {Address | string} params.ownerAddress - Optional; custom owner of stake; if undefined stake owner is sender address
    * @param {BN | number | undefined} params.queryId - Optional; query id
    *
@@ -133,26 +133,28 @@ export class FarmNftMinterV3 extends NftCollection {
     userWalletAddress: AddressType;
     jettonAddress: AddressType;
     jettonAmount: AmountType;
-    poolCount: number;
+    poolCount?: number;
     ownerAddress?: AddressType;
     queryId?: QueryIdType;
   }): Promise<MessageData> {
-    const [jettonWalletAddress, forwardPayload, address] = await Promise.all([
-      (async () =>
-        new Address(
-          await this.stonApiClient.getJettonWalletAddress({
-            jettonAddress: params.jettonAddress.toString(),
-            ownerAddress: params.userWalletAddress.toString(),
-          }),
-        ))(),
-      this.createStakeBody({
-        ownerAddress: params.ownerAddress,
-      }),
-      this.getAddress(),
-    ]);
+    const [jettonWalletAddress, forwardPayload, address, poolCount] =
+      await Promise.all([
+        (async () =>
+          new Address(
+            await this.stonApiClient.getJettonWalletAddress({
+              jettonAddress: params.jettonAddress.toString(),
+              ownerAddress: params.userWalletAddress.toString(),
+            }),
+          ))(),
+        this.createStakeBody({
+          ownerAddress: params.ownerAddress,
+        }),
+        this.getAddress(),
+        (async () => params.poolCount ?? (await this.getData()).poolCount)(),
+      ]);
 
     const forwardTonAmount = this.gasConstants.stakeFwdBase.add(
-      this.gasConstants.stakeFwdPerPool.muln(params.poolCount + 1),
+      this.gasConstants.stakeFwdPerPool.muln(poolCount + 1),
     );
 
     const payload = createJettonTransferMessage({

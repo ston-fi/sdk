@@ -1,5 +1,11 @@
 # Changelog
 
+## [0.5.1]
+
+### Changed
+
+- `poolCount` in `FarmNftMinterV3.buildStakeTxParams` is now optional
+
 ## [0.5.0]
 
 > **Breaking changes**
