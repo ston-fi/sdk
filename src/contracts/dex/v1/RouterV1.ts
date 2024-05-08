@@ -87,7 +87,7 @@ export class RouterV1 extends Contract {
     };
   }
 
-  protected async createSwapBody(params: {
+  public async createSwapBody(params: {
     userWalletAddress: AddressType;
     minAskAmount: AmountType;
     askJettonWalletAddress: AddressType;
@@ -297,7 +297,7 @@ export class RouterV1 extends Contract {
     };
   }
 
-  protected async createProvideLiquidityBody(params: {
+  public async createProvideLiquidityBody(params: {
     routerWalletAddress: AddressType;
     minLpOut: AmountType;
   }): Promise<Cell> {
@@ -516,8 +516,14 @@ export class RouterV1 extends Contract {
     const contractAddress = await this.getAddress();
 
     const [jetton0WalletAddress, jetton1WalletAddress] = await Promise.all([
-      jetton0.getJettonWalletAddress(contractAddress),
-      jetton1.getJettonWalletAddress(contractAddress),
+      this.stonApiClient.getJettonWalletAddress({
+        jettonAddress: (await jetton0.getAddress()).toString(),
+        ownerAddress: contractAddress.toString(),
+      }),
+      this.stonApiClient.getJettonWalletAddress({
+        jettonAddress: (await jetton1.getAddress()).toString(),
+        ownerAddress: contractAddress.toString(),
+      }),
     ]);
 
     const poolAddress = await this.getPoolAddress({

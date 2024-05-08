@@ -65,7 +65,7 @@ export class PoolV1 extends JettonMinter {
     };
   }
 
-  protected async createCollectFeesBody(params?: {
+  public async createCollectFeesBody(params?: {
     queryId?: QueryIdType;
   }): Promise<Cell> {
     const message = new Cell();
@@ -105,7 +105,7 @@ export class PoolV1 extends JettonMinter {
     };
   }
 
-  protected async createBurnBody(params: {
+  public async createBurnBody(params: {
     amount: AmountType;
     responseAddress: AddressType;
     queryId?: QueryIdType;
@@ -279,9 +279,10 @@ export class PoolV1 extends JettonMinter {
    * @returns a JettonWallet object for an address returned by getJettonWalletAddress
    */
   public async getJettonWallet(params: { ownerAddress: AddressType }) {
-    const poolWalletAddress = await this.getJettonWalletAddress(
-      new Address(params.ownerAddress),
-    );
+    const poolWalletAddress = await this.stonApiClient.getJettonWalletAddress({
+      jettonAddress: (await this.getAddress()).toString(),
+      ownerAddress: params.ownerAddress.toString(),
+    });
 
     return new JettonWallet(this.provider, { address: poolWalletAddress });
   }

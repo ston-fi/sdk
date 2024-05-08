@@ -82,7 +82,6 @@ describe("FarmNftItemV1", () => {
         ...DEPENDENCIES,
       });
 
-      // @ts-expect-error - method is protected
       const body = await contract.createClaimRewardsBody({
         ...txArguments,
       });
@@ -98,7 +97,6 @@ describe("FarmNftItemV1", () => {
         ...DEPENDENCIES,
       });
 
-      // @ts-expect-error - method is protected
       const body = await contract.createClaimRewardsBody({
         ...txArguments,
         queryId: 12345,
@@ -173,7 +171,6 @@ describe("FarmNftItemV1", () => {
         ...DEPENDENCIES,
       });
 
-      // @ts-expect-error - method is protected
       const body = await contract.createUnstakeBody({
         ...txArguments,
       });
@@ -189,7 +186,6 @@ describe("FarmNftItemV1", () => {
         ...DEPENDENCIES,
       });
 
-      // @ts-expect-error - method is protected
       const body = await contract.createUnstakeBody({
         ...txArguments,
         queryId: 12345,

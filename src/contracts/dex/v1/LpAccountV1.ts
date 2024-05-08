@@ -60,7 +60,7 @@ export class LpAccountV1 extends Contract {
     };
   }
 
-  protected async createRefundBody(params?: {
+  public async createRefundBody(params?: {
     queryId?: QueryIdType;
   }): Promise<Cell> {
     const message = new Cell();
@@ -96,7 +96,7 @@ export class LpAccountV1 extends Contract {
     };
   }
 
-  protected async createDirectAddLiquidityBody(params: {
+  public async createDirectAddLiquidityBody(params: {
     amount0: AmountType;
     amount1: AmountType;
     minimumLpToMint?: AmountType;
@@ -149,7 +149,7 @@ export class LpAccountV1 extends Contract {
     };
   }
 
-  protected async createResetGasBody(params?: {
+  public async createResetGasBody(params?: {
     queryId?: QueryIdType;
   }): Promise<Cell> {
     const message = new Cell();

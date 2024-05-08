@@ -79,7 +79,6 @@ describe("PoolV1", () => {
         ...DEPENDENCIES,
       });
 
-      // @ts-expect-error - method is protected
       const body = await contract.createCollectFeesBody();
 
       expect(body).toBeInstanceOf(Cell);
@@ -93,7 +92,6 @@ describe("PoolV1", () => {
         ...DEPENDENCIES,
       });
 
-      // @ts-expect-error - method is protected
       const body = await contract.createCollectFeesBody({
         queryId: 12345,
       });
@@ -170,7 +168,6 @@ describe("PoolV1", () => {
         ...DEPENDENCIES,
       });
 
-      // @ts-expect-error - method is protected
       const body = await contract.createBurnBody({
         ...txParams,
       });
@@ -186,7 +183,6 @@ describe("PoolV1", () => {
         ...DEPENDENCIES,
       });
 
-      // @ts-expect-error - method is protected
       const body = await contract.createBurnBody({
         ...txParams,
         queryId: 12345,

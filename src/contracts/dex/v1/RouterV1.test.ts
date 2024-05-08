@@ -136,7 +136,6 @@ describe("RouterV1", () => {
         ...DEPENDENCIES,
       });
 
-      // @ts-expect-error - method is protected
       const body = await contract.createSwapBody({
         ...txArguments,
       });
@@ -152,7 +151,6 @@ describe("RouterV1", () => {
         ...DEPENDENCIES,
       });
 
-      // @ts-expect-error - method is protected
       const body = await contract.createSwapBody({
         ...txArguments,
         referralAddress: USER_WALLET_ADDRESS,
@@ -591,7 +589,6 @@ describe("RouterV1", () => {
         ...DEPENDENCIES,
       });
 
-      // @ts-expect-error - method is protected
       const body = await contract.createProvideLiquidityBody({
         ...txArguments,
       });

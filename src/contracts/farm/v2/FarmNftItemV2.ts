@@ -16,7 +16,7 @@ export interface FarmNftItemV2Options extends FarmNftItemV1Options {}
 export class FarmNftItemV2 extends FarmNftItemV1 {
   public static version = FARM_VERSION.v2;
 
-  protected async createDestroyBody(params?: {
+  public async createDestroyBody(params?: {
     queryId?: QueryIdType;
   }): Promise<Cell> {
     return createSbtDestroyMessage({

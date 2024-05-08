@@ -1,5 +1,16 @@
 # Changelog
 
+## [0.5.2]
+
+### Changed
+
+- contracts `create*Body` methods is public now
+- jetton wallet address request in the `PoolV1.getJettonWallet` and `RouterV1.getPool` methods was changed from TonAPI to StonAPI
+
+### Fixed
+
+- Correct type for `FarmNftMinterV3.getVersion` `major` and `minor` fields. It was typed as a `number` but, in fact, was `BN`.
+
 ## [0.5.1]
 
 ### Changed

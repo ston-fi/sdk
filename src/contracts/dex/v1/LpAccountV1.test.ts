@@ -80,7 +80,6 @@ describe("LpAccountV1", () => {
         ...DEPENDENCIES,
       });
 
-      // @ts-expect-error - method is protected
       const body = await contract.createRefundBody();
 
       expect(body).toBeInstanceOf(Cell);
@@ -94,7 +93,6 @@ describe("LpAccountV1", () => {
         ...DEPENDENCIES,
       });
 
-      // @ts-expect-error - method is protected
       const body = await contract.createRefundBody({
         queryId: 12345,
       });
@@ -167,7 +165,6 @@ describe("LpAccountV1", () => {
         ...DEPENDENCIES,
       });
 
-      // @ts-expect-error - method is protected
       const body = await contract.createDirectAddLiquidityBody({
         ...txParams,
       });
@@ -183,7 +180,6 @@ describe("LpAccountV1", () => {
         ...DEPENDENCIES,
       });
 
-      // @ts-expect-error - method is protected
       const body = await contract.createDirectAddLiquidityBody({
         ...txParams,
         queryId: 12345,
@@ -200,7 +196,6 @@ describe("LpAccountV1", () => {
         ...DEPENDENCIES,
       });
 
-      // @ts-expect-error - method is protected
       const body = await contract.createDirectAddLiquidityBody({
         ...txParams,
         minimumLpToMint: new BN("300"),
@@ -295,7 +290,6 @@ describe("LpAccountV1", () => {
         ...DEPENDENCIES,
       });
 
-      // @ts-expect-error - method is protected
       const body = await contract.createResetGasBody();
 
       expect(body).toBeInstanceOf(Cell);
@@ -309,7 +303,6 @@ describe("LpAccountV1", () => {
         ...DEPENDENCIES,
       });
 
-      // @ts-expect-error - method is protected
       const body = await contract.createResetGasBody({
         queryId: 12345,
       });

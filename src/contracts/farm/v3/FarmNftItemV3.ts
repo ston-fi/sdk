@@ -60,7 +60,7 @@ export class FarmNftItemV3 extends NftItem {
     };
   }
 
-  protected async createClaimRewardsBody(
+  public async createClaimRewardsBody(
     params: {
       queryId?: QueryIdType;
     } & (
@@ -124,7 +124,7 @@ export class FarmNftItemV3 extends NftItem {
     };
   }
 
-  protected async createUnstakeBody(params?: {
+  public async createUnstakeBody(params?: {
     queryId?: QueryIdType;
   }): Promise<Cell> {
     const message = new Cell();
@@ -166,7 +166,7 @@ export class FarmNftItemV3 extends NftItem {
     };
   }
 
-  protected async createDestroyBody(params?: {
+  public async createDestroyBody(params?: {
     queryId?: QueryIdType;
   }): Promise<Cell> {
     return createSbtDestroyMessage({
@@ -234,7 +234,7 @@ export class FarmNftItemV3 extends NftItem {
     };
   }
 
-  protected async getPoolCount() {
+  public async getPoolCount() {
     const { collectionAddress: minterAddress } = await this.getData();
 
     const minter = new FarmNftMinterV3({

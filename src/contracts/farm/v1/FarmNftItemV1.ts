@@ -55,7 +55,7 @@ export class FarmNftItemV1 extends NftItem {
     };
   }
 
-  protected async createClaimRewardsBody(params?: {
+  public async createClaimRewardsBody(params?: {
     queryId?: QueryIdType;
   }): Promise<Cell> {
     const message = new Cell();
@@ -95,7 +95,7 @@ export class FarmNftItemV1 extends NftItem {
     };
   }
 
-  protected async createUnstakeBody(params?: {
+  public async createUnstakeBody(params?: {
     queryId?: QueryIdType;
   }): Promise<Cell> {
     const message = new Cell();

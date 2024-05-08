@@ -82,7 +82,6 @@ describe("FarmNftItemV3", () => {
         ...DEPENDENCIES,
       });
 
-      // @ts-expect-error - method is protected
       const payload = await contract.createClaimRewardsBody({
         claimAll: true,
       });
@@ -98,7 +97,6 @@ describe("FarmNftItemV3", () => {
         ...DEPENDENCIES,
       });
 
-      // @ts-expect-error - method is protected
       const payload = await contract.createClaimRewardsBody({
         claimAll: false,
         poolIndex: 0,
@@ -115,7 +113,6 @@ describe("FarmNftItemV3", () => {
         ...DEPENDENCIES,
       });
 
-      // @ts-expect-error - method is protected
       const payload = await contract.createClaimRewardsBody({
         queryId: 12345,
         claimAll: true,
@@ -216,7 +213,6 @@ describe("FarmNftItemV3", () => {
         ...DEPENDENCIES,
       });
 
-      // @ts-expect-error - method is protected
       const payload = await contract.createUnstakeBody();
 
       expect(payload).toBeInstanceOf(Cell);
@@ -230,7 +226,6 @@ describe("FarmNftItemV3", () => {
         ...DEPENDENCIES,
       });
 
-      // @ts-expect-error - method is protected
       const payload = await contract.createUnstakeBody({
         queryId: 12345,
       });
@@ -312,7 +307,6 @@ describe("FarmNftItemV3", () => {
         ...DEPENDENCIES,
       });
 
-      // @ts-expect-error - method is protected
       const payload = await contract.createDestroyBody();
 
       expect(payload).toBeInstanceOf(Cell);
@@ -326,7 +320,6 @@ describe("FarmNftItemV3", () => {
         ...DEPENDENCIES,
       });
 
-      // @ts-expect-error - method is protected
       const payload = await contract.createDestroyBody({
         queryId: 12345,
       });
@@ -533,7 +526,6 @@ describe("FarmNftItemV3", () => {
         tonApiClient,
       });
 
-      // @ts-expect-error - method is protected
       const poolCount = await contract.getPoolCount();
 
       expect(poolCount).toEqual(3);

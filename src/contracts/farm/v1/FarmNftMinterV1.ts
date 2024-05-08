@@ -58,7 +58,7 @@ export class FarmNftMinterV1 extends NftCollection {
     };
   }
 
-  protected async createStakeBody(): Promise<Cell> {
+  public async createStakeBody(): Promise<Cell> {
     const payload = new Cell();
 
     payload.bits.writeUint(FARM_OP_CODES.STAKE, 32);

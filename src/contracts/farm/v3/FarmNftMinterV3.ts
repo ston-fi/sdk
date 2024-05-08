@@ -104,7 +104,7 @@ export class FarmNftMinterV3 extends NftCollection {
     };
   }
 
-  protected async createStakeBody(params?: {
+  public async createStakeBody(params?: {
     ownerAddress?: AddressType;
   }): Promise<Cell> {
     const payload = new Cell();
@@ -236,8 +236,8 @@ export class FarmNftMinterV3 extends NftCollection {
     );
 
     return {
-      major: result[0] as number,
-      minor: result[1] as number,
+      major: (result[0] as BN).toNumber(),
+      minor: (result[1] as BN).toNumber(),
       development: parseString(result[2]),
     };
   }

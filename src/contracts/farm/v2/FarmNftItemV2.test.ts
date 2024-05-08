@@ -82,7 +82,6 @@ describe("FarmNftItemV2", () => {
         ...DEPENDENCIES,
       });
 
-      // @ts-expect-error - method is protected
       const body = await contract.createDestroyBody({
         ...txArguments,
       });
@@ -98,7 +97,6 @@ describe("FarmNftItemV2", () => {
         ...DEPENDENCIES,
       });
 
-      // @ts-expect-error - method is protected
       const body = await contract.createDestroyBody({
         queryId: 12345,
       });

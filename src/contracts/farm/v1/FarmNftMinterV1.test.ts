@@ -80,7 +80,6 @@ describe("FarmNftMinterV1", () => {
         ...DEPENDENCIES,
       });
 
-      // @ts-expect-error - method is protected
       const body = await contract.createStakeBody();
 
       expect(body).toBeInstanceOf(Cell);

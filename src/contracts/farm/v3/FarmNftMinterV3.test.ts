@@ -80,7 +80,6 @@ describe("FarmNftMinterV3", () => {
         ...DEPENDENCIES,
       });
 
-      // @ts-expect-error - method is protected
       const payload = await contract.createStakeBody();
 
       expect(payload).toBeInstanceOf(Cell);
@@ -94,7 +93,6 @@ describe("FarmNftMinterV3", () => {
         ...DEPENDENCIES,
       });
 
-      // @ts-expect-error - method is protected
       const payload = await contract.createStakeBody({
         ownerAddress: "EQAQnxLqlX2B6w4jQzzzPWA8eyWZVZBz6Y0D_8noARLOaB3i",
       });
@@ -222,6 +220,33 @@ describe("FarmNftMinterV3", () => {
           }),
         ),
       ).toEqual(poolsToGasMap.map(([_, gasAmount]) => gasAmount));
+    });
+  });
+
+  describe("getVersion", () => {
+    const snapshot = [
+      new BN("3"),
+      new BN("0"),
+      Cell.oneFromBoc(base64ToBytes("te6ccsEBAQEACQAAAA5yZWxlYXNlKoIKQw==")),
+    ];
+
+    const tonApiClient = createMockObj<
+      InstanceType<typeof TonWeb.HttpProvider>
+    >({
+      call2: vi.fn().mockResolvedValue(snapshot),
+    });
+
+    it("should make on-chain request and return parsed response", async () => {
+      const contract = new FarmNftMinterV3({
+        ...DEPENDENCIES,
+        tonApiClient,
+      });
+
+      const data = await contract.getVersion();
+
+      expect(data.major).toStrictEqual(3);
+      expect(data.minor).toStrictEqual(0);
+      expect(data.development).toStrictEqual("release");
     });
   });
 
