@@ -25,8 +25,9 @@ export default defineConfig({
       ],
     },
     lib: {
-      fileName: "index",
-      entry: resolve(__dirname, "src/index.ts"),
+      entry: [
+        resolve(__dirname, "./src/index.ts")
+      ],
       formats: ["es", "cjs"],
     },
     minify: true,

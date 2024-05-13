@@ -1,5 +1,19 @@
 # Changelog
 
+## [0.5.3]
+
+### Added
+
+- Direct exports of `DEX` & `FARM` contracts of a specific version were added. If you are only interested in using, for example Farm v3 contracts specifically, now you can import only this version instead of an object with all versions.
+
+```diff
+- import { FARM } from "@ston-fi/sdk";
++ import { FARM } from "@ston-fi/sdk/farm/v3";
+
+- const farm = new FARM.v3.NftMinter(/** */);
++ const farm = new FARM.NftMinter(/** */);
+```
+
 ## [0.5.2]
 
 ### Changed
