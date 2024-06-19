@@ -1,26 +1,24 @@
-import TonWeb from "tonweb";
-import { describe, it, expect, vi } from "vitest";
+import { beforeAll, describe, expect, it, vi } from "vitest";
+import type { Sender } from "@ton/ton";
 
-import { createMockObj } from "@/test-utils";
+import {
+  createMockProvider,
+  createMockObj,
+  createMockProviderFromSnapshot,
+  createProviderSnapshot,
+  setup,
+} from "@/test-utils";
 
 import { FARM_VERSION } from "../constants";
 
 import { FarmNftItemV2 } from "./FarmNftItemV2";
 
-const {
-  utils: { BN, bytesToBase64 },
-  boc: { Cell },
-} = TonWeb;
-
 const FARM_NFT_ITEM_ADDRESS =
   "EQBInadPyW_tbmZUcIX8swDdm_N9X3WeF9PLENhzdm1nDqI_"; // ston/ton v2 farm nft
 
-const DEPENDENCIES = {
-  address: FARM_NFT_ITEM_ADDRESS,
-  tonApiClient: createMockObj<InstanceType<typeof TonWeb.HttpProvider>>(),
-};
-
 describe("FarmNftItemV2", () => {
+  beforeAll(setup);
+
   describe("version", () => {
     it("should have expected static value", () => {
       expect(FarmNftItemV2.version).toBe(FARM_VERSION.v2);
@@ -29,42 +27,45 @@ describe("FarmNftItemV2", () => {
 
   describe("gasConstants", () => {
     it("should have expected static value", () => {
-      expect(FarmNftItemV2.gasConstants).toMatchInlineSnapshot(
-        `
-        {
-          "claimRewards": "11e1a300",
-          "destroy": "02faf080",
-          "unstake": "17d78400",
-        }
-      `,
+      expect(FarmNftItemV2.gasConstants.claimRewards).toMatchInlineSnapshot(
+        "300000000n",
       );
+      expect(FarmNftItemV2.gasConstants.unstake).toMatchInlineSnapshot(
+        "400000000n",
+      );
+      expect(FarmNftItemV2.gasConstants.destroy).toMatchInlineSnapshot(
+        "50000000n",
+      );
+    });
+  });
+
+  describe("create", () => {
+    it("should create an instance of FarmNftItemV2 from address", () => {
+      const contract = FarmNftItemV2.create(FARM_NFT_ITEM_ADDRESS);
+
+      expect(contract).toBeInstanceOf(FarmNftItemV2);
     });
   });
 
   describe("constructor", () => {
     it("should create an instance of FarmNftItemV2", () => {
-      const contract = new FarmNftItemV2({
-        ...DEPENDENCIES,
-      });
+      const contract = FarmNftItemV2.create(FARM_NFT_ITEM_ADDRESS);
 
       expect(contract).toBeInstanceOf(FarmNftItemV2);
     });
 
     it("should create an instance of FarmNftItemV2 with default gasConstants", () => {
-      const contract = new FarmNftItemV2({
-        ...DEPENDENCIES,
-      });
+      const contract = FarmNftItemV2.create(FARM_NFT_ITEM_ADDRESS);
 
       expect(contract.gasConstants).toEqual(FarmNftItemV2.gasConstants);
     });
 
     it("should create an instance of FarmNftItemV2 with given gasConstants", () => {
       const gasConstants: Partial<FarmNftItemV2["gasConstants"]> = {
-        destroy: new BN("1"),
+        destroy: BigInt("1"),
       };
 
-      const contract = new FarmNftItemV2({
-        ...DEPENDENCIES,
+      const contract = new FarmNftItemV2(FARM_NFT_ITEM_ADDRESS, {
         gasConstants,
       });
 
@@ -75,121 +76,128 @@ describe("FarmNftItemV2", () => {
   });
 
   describe("createDestroyBody", () => {
-    const txArguments = {};
-
     it("should build expected tx body", async () => {
-      const contract = new FarmNftItemV2({
-        ...DEPENDENCIES,
-      });
+      const contract = FarmNftItemV2.create(FARM_NFT_ITEM_ADDRESS);
 
-      const body = await contract.createDestroyBody({
-        ...txArguments,
-      });
+      const body = await contract.createDestroyBody();
 
-      expect(body).toBeInstanceOf(Cell);
-      expect(bytesToBase64(await body.toBoc())).toMatchInlineSnapshot(
-        '"te6ccsEBAQEADgAAABgfBFN6AAAAAAAAAAAxk9G9"',
+      expect(body.toBoc().toString("base64")).toMatchInlineSnapshot(
+        '"te6cckEBAQEADgAAGB8EU3oAAAAAAAAAAOpSrEg="',
       );
     });
 
     it("should build expected tx body when queryId is defined", async () => {
-      const contract = new FarmNftItemV2({
-        ...DEPENDENCIES,
-      });
+      const contract = FarmNftItemV2.create(FARM_NFT_ITEM_ADDRESS);
 
       const body = await contract.createDestroyBody({
         queryId: 12345,
       });
 
-      expect(body).toBeInstanceOf(Cell);
-      expect(bytesToBase64(await body.toBoc())).toMatchInlineSnapshot(
-        '"te6ccsEBAQEADgAAABgfBFN6AAAAAAAAMDnPE861"',
+      expect(body.toBoc().toString("base64")).toMatchInlineSnapshot(
+        '"te6cckEBAQEADgAAGB8EU3oAAAAAAAAwORTSs0A="',
       );
     });
   });
 
-  describe("buildDestroyTxParams", () => {
-    const txParams = {};
+  describe("getDestroyTxParams", () => {
+    const provider = createMockProvider();
 
     it("should build expected tx params", async () => {
-      const contract = new FarmNftItemV2({
-        ...DEPENDENCIES,
-      });
-
-      const params = await contract.buildDestroyTxParams({
-        ...txParams,
-      });
-
-      expect(params.to.toString()).toBe(FARM_NFT_ITEM_ADDRESS);
-      expect(bytesToBase64(await params.payload.toBoc())).toMatchInlineSnapshot(
-        '"te6ccsEBAQEADgAAABgfBFN6AAAAAAAAAAAxk9G9"',
+      const contract = provider.open(
+        FarmNftItemV2.create(FARM_NFT_ITEM_ADDRESS),
       );
-      expect(params.gasAmount).toBe(contract.gasConstants.destroy);
+
+      const txParams = await contract.getDestroyTxParams();
+
+      expect(txParams.to.toString()).toBe(FARM_NFT_ITEM_ADDRESS);
+      expect(txParams.body?.toBoc().toString("base64")).toMatchInlineSnapshot(
+        '"te6cckEBAQEADgAAGB8EU3oAAAAAAAAAAOpSrEg="',
+      );
+      expect(txParams.value).toBe(contract.gasConstants.destroy);
     });
 
     it("should build expected tx params when queryId is defined", async () => {
-      const contract = new FarmNftItemV2({
-        ...DEPENDENCIES,
-      });
+      const contract = provider.open(
+        FarmNftItemV2.create(FARM_NFT_ITEM_ADDRESS),
+      );
 
-      const params = await contract.buildDestroyTxParams({
-        ...txParams,
+      const txParams = await contract.getDestroyTxParams({
         queryId: 12345,
       });
 
-      expect(params.to.toString()).toBe(FARM_NFT_ITEM_ADDRESS);
-      expect(bytesToBase64(await params.payload.toBoc())).toMatchInlineSnapshot(
-        '"te6ccsEBAQEADgAAABgfBFN6AAAAAAAAMDnPE861"',
+      expect(txParams.to.toString()).toBe(FARM_NFT_ITEM_ADDRESS);
+      expect(txParams.body?.toBoc().toString("base64")).toMatchInlineSnapshot(
+        '"te6cckEBAQEADgAAGB8EU3oAAAAAAAAwORTSs0A="',
       );
-      expect(params.gasAmount).toBe(contract.gasConstants.destroy);
+      expect(txParams.value).toBe(contract.gasConstants.destroy);
     });
 
     it("should build expected tx params when custom gasAmount is defined", async () => {
-      const contract = new FarmNftItemV2({
-        ...DEPENDENCIES,
-      });
-
-      const params = await contract.buildDestroyTxParams({
-        ...txParams,
-        gasAmount: new BN("1"),
-      });
-
-      expect(params.to.toString()).toBe(FARM_NFT_ITEM_ADDRESS);
-      expect(bytesToBase64(await params.payload.toBoc())).toMatchInlineSnapshot(
-        '"te6ccsEBAQEADgAAABgfBFN6AAAAAAAAAAAxk9G9"',
+      const contract = provider.open(
+        FarmNftItemV2.create(FARM_NFT_ITEM_ADDRESS),
       );
-      expect(params.gasAmount).toEqual(new BN("1"));
+
+      const txParams = await contract.getDestroyTxParams({
+        gasAmount: "1",
+      });
+
+      expect(txParams.to.toString()).toBe(FARM_NFT_ITEM_ADDRESS);
+      expect(txParams.body?.toBoc().toString("base64")).toMatchInlineSnapshot(
+        '"te6cckEBAQEADgAAGB8EU3oAAAAAAAAAAOpSrEg="',
+      );
+      expect(txParams.value).toMatchInlineSnapshot("1n");
+    });
+  });
+
+  describe("sendDestroy", () => {
+    it("should call getDestroyTxParams and pass the result to the sender", async () => {
+      const txArgs = {} as Parameters<FarmNftItemV2["sendDestroy"]>[2];
+
+      const contract = FarmNftItemV2.create(FARM_NFT_ITEM_ADDRESS);
+
+      const getDestroyTxParams = vi.spyOn(contract, "getDestroyTxParams");
+
+      const txParams = {} as Awaited<
+        ReturnType<typeof contract.getDestroyTxParams>
+      >;
+
+      getDestroyTxParams.mockResolvedValue(txParams);
+
+      const provider = createMockProvider();
+      const sender = createMockObj<Sender>({
+        send: vi.fn(),
+      });
+
+      await contract.sendDestroy(provider, sender, txArgs);
+
+      expect(getDestroyTxParams).toHaveBeenCalledWith(provider, txArgs);
+      expect(sender.send).toHaveBeenCalledWith(txParams);
     });
   });
 
   describe("getFarmingData", () => {
-    const snapshot = [
-      new BN("1"),
-      new BN("0"),
-      new BN("10000"),
-      new BN("843078788640"),
-      new BN("1711040142"),
-    ];
-
-    const tonApiClient = createMockObj<
-      InstanceType<typeof TonWeb.HttpProvider>
-    >({
-      call2: vi.fn().mockResolvedValue(snapshot),
-    });
+    const snapshot = createProviderSnapshot()
+      .number("1")
+      .number("0")
+      .number("10000")
+      .number("843078788640")
+      .number("1711040142");
+    const provider = createMockProviderFromSnapshot(snapshot);
 
     it("should make on-chain request and return parsed response", async () => {
-      const contract = new FarmNftItemV2({
-        ...DEPENDENCIES,
-        tonApiClient,
-      });
+      const contract = provider.open(
+        FarmNftItemV2.create(FARM_NFT_ITEM_ADDRESS),
+      );
 
       const data = await contract.getFarmingData();
 
       expect(data.status).toBe(1);
-      expect(data.revokeTime).toStrictEqual(new BN("0"));
-      expect(data.stakedTokens.toString()).toBe("10000");
-      expect(data.claimedPerUnitNanorewards.toString()).toBe("843078788640");
-      expect(data.stakeDate.toString()).toBe("1711040142");
+      expect(data.revokeTime).toMatchInlineSnapshot("0n");
+      expect(data.stakedTokens).toMatchInlineSnapshot("10000n");
+      expect(data.claimedPerUnitNanorewards).toMatchInlineSnapshot(
+        "843078788640n",
+      );
+      expect(data.stakeDate).toMatchInlineSnapshot("1711040142n");
     });
   });
 });

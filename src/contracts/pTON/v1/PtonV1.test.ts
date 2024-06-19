@@ -1,15 +1,8 @@
-import type TonWeb from "tonweb";
-import { describe, it, expect, vi } from "vitest";
-
-import { createMockObj } from "@/test-utils";
+import { describe, expect, it } from "vitest";
 
 import { pTON_VERSION } from "../constants";
 
 import { PtonV1 } from "./PtonV1";
-
-const DEPENDENCIES = {
-  tonApiClient: createMockObj<InstanceType<typeof TonWeb.HttpProvider>>(),
-};
 
 describe("PtonV1", () => {
   describe("version", () => {
@@ -26,13 +19,33 @@ describe("PtonV1", () => {
     });
   });
 
-  describe("constructor", () => {
+  describe("create", () => {
     it("should create an instance of PtonV1", () => {
-      const contract = new PtonV1({
-        ...DEPENDENCIES,
-      });
+      const contract = PtonV1.create(PtonV1.address);
 
       expect(contract).toBeInstanceOf(PtonV1);
+    });
+  });
+
+  describe("constructor", () => {
+    it("should create an instance of PtonV1", () => {
+      const contract = new PtonV1();
+
+      expect(contract).toBeInstanceOf(PtonV1);
+    });
+
+    it("should create an instance of PtonV1 with default address", () => {
+      const contract = new PtonV1();
+
+      expect(contract.address).toEqual(PtonV1.address);
+    });
+
+    it("should create an instance of RouterV1 with given address", () => {
+      const address = "EQAQnxLqlX2B6w4jQzzzPWA8eyWZVZBz6Y0D_8noARLOaB3i"; // just an address, not a real pTON v1 contract
+
+      const contract = new PtonV1(address);
+
+      expect(contract.address.toString()).toEqual(address);
     });
   });
 });

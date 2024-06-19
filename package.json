@@ -1,6 +1,6 @@
 {
   "name": "@ston-fi/sdk",
-  "version": "0.5.3",
+  "version": "1.0.0",
   "description": "Typescript SDK to interact with the Ston.fi DEX",
   "license": "MIT",
   "type": "module",
@@ -65,19 +65,18 @@
     "format:biome": "biome format ./* --write",
     "lint": "pnpm run /^lint:.*/",
     "lint:tsc": "tsc --noEmit --pretty",
-    "lint:biome": "biome check ./*",
+    "lint:biome": "biome lint ./*",
     "test": "vitest",
     "dev": "vite build --watch",
     "build": "vite build",
-    "prepublishOnly": "pnpm i && pnpm run format && pnpm run lint && pnpm run test --run && pnpm run build"
+    "prepublishOnly": "pnpm i && biome check ./* && pnpm run test --run && pnpm run build"
   },
   "peerDependencies": {
     "@ston-fi/api": "^0.7.0",
-    "tonweb": "~0.0.60"
+    "@ton/ton": "^13.9.0"
   },
   "devDependencies": {
-    "@biomejs/biome": "^1.6.1",
-    "@types/bn.js": "5.1.1",
+    "@biomejs/biome": "^1.7.3",
     "@vitest/coverage-c8": "^0.25.8",
     "lefthook": "^1.6.10",
     "rollup-plugin-visualizer": "^5.11.0",

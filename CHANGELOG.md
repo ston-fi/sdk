@@ -1,5 +1,139 @@
 # Changelog
 
+## [1.0.0]
+
+During the development of the DEX v2 contracts, we identified several feature gaps in the [tonweb](https://github.com/toncenter/tonweb) package, which our SDK relied on. Additionally, a survey within the DEV community revealed that most developers use the [ton-org](https://github.com/ton-org) packages in their projects. Consequently, we have decided to migrate from [tonweb](https://github.com/toncenter/tonweb) to [ton-org](https://github.com/ton-org) packages as our core dependency.
+
+We understand that this change may be unexpected and require additional work for some of you. However, we believe this move is necessary and beneficial in the long run. Our team has already completed this migration in our product, and it was a smooth transition. Moreover, projects already using the ton-center package will benefit from a significant reduction in dependencies.
+
+This release is functionally fully equivalent to the previous stable release, `0.5.3`
+
+### Changed
+
+- The contract constructor interface signature was changed
+
+Address now is the first parameter for the contract constructor instead of the named field in the configuration object
+
+```diff
+const router = new DEX.v1.Router(
+- {
+-   address: "EQB3ncyBUTjZUA5EnFKR5_EnOMI9V1tTEAAPaiU71gc4TiUt",
+- }
++ "EQB3ncyBUTjZUA5EnFKR5_EnOMI9V1tTEAAPaiU71gc4TiUt"
+);
+```
+
+SDK contracts no longer require `tonApiClient` to be passed in each contract constructor.
+By design of the ton-core library, contracts should be opened with a provider to make on-chain requests.
+
+```diff
+const router = new DEX.v1.Router(
+- {
+-   tonApiClient: new TonWeb.HttpProvider('https://ton-api.ston.fi/jsonRPC'),
+- }
+);
+```
+
+Custom `gasConstants` could be specified in the contract configuration object that could be passed as the second argument to the constructor.
+
+```diff
+const router = new DEX.v1.Router(
+- {
+-   address: "EQB3ncyBUTjZUA5EnFKR5_EnOMI9V1tTEAAPaiU71gc4TiUt",
+-   gasConstants: { /** */ }
+- }
++ "EQB3ncyBUTjZUA5EnFKR5_EnOMI9V1tTEAAPaiU71gc4TiUt",
++ { gasConstants: { /** */ } }
+);
+```
+
+- `build*TxParams` methods was renamed to `get*TxParams`
+
+```diff
+- const txParams = await router.buildSwapTonToJettonTxParams({ /** */ });
+
++ const txParams = await router.getSwapTonToJettonTxParams({ /** */ });
+```
+
+- Amount is now represented in native js `BigInt` instead of `BN` from [bn.js](https://github.com/indutny/bn.js)
+
+You can replace `BN` usage with `BigInt` OR use strings, and SDK will wrap them in BigInt under the hood.
+
+```diff
+const txParams = await router.getSwapTonToJettonTxParams({
+-  offerAmount: new TonWeb.utils.BN("1000000000"),
++  offerAmount: BigInt("1000000000"),
+  // ...
+});
+```
+
+- Operations with proxyTon now require an instance of pTON contract instead of just an address.
+
+```diff
+const txParams = await router.getSwapTonToJettonTxParams({
+-  proxyTonAddress: pTON.v1.address,
++  proxyTon: new pTON.v1(),
+  // ...
+});
+```
+
+- The `get*TxParams` methods now return objects with the type `SenderArguments` instead of `MessageData`. The purpose and shape of those objects almost identical, but these changes allow us to fit ton-core notation better and implement `send*`
+methods
+
+Before
+```js
+const txParams = await router.getSwapTonToJettonTxParams({ /** */ }); // { to, payload, gasAmount }
+```
+
+After
+```js
+const txParams = await router.getSwapTonToJettonTxParams({ /** */ }); // { to, body, value }
+```
+
+- `RouterV1.getData` method was renamed to `RouterV1.getRouterData` to match contract API
+- `PoolV1.getData` method was renamed to `PoolV1.getPoolData` to match contract API
+- `LpAccountV1.getData` method was renamed to `LpAccountV1.getLpAccountData` to match contract API
+- `gasConstants` for swap using Router v1 has been decreased
+
+### Added
+
+- Contracts now have static `create` method to simplify instance creation.
+
+```js
+import { FARM } from '@ston-fi/sdk/farm/v3';
+
+const nft = FARM.NftItem.create('EQ...');
+```
+
+- Contracts now have `send*` methods to simplify transaction sending with the @ton-core package
+
+```js
+const wallet = client.open(WalletContractV4.create({ workchain, publicKey: keyPair.publicKey }));
+const router = client.open(new DEX.v1.Router());
+
+await router.sendSwapTonToJetton(
+  wallet.sender(keyPair.secretKey),
+  {
+    // tx arguments for `getSwapTonToJettonTxParams` method to build tx params
+  },
+);
+```
+
+- `RouterV1.getPoolAddressByJettonMinters` method was added to simplify pool address determination by jetton minter addresses. Not router jetton wallet addresses as required in `RouterV1.getPoolAddress` method.
+
+```js
+const pool = openedRouter.getPoolAddressByJettonMinters({
+  token0: 'EQA2kCVNwVsil2EM2mB0SkXytxCqQjS4mttjDpnXmwG9T6bO', // STON minter
+  token1: 'EQBX6K9aXVl3nXINCyPPL86C4ONVmQ8vK360u6dykFKXpHCa', // GEMSTON minter
+})
+```
+
+### Removed
+
+- `MessageData` has been replaced with `SenderArguments` type
+- `*_OP_CODES` enum exports was removed
+- `parse*` util functions exports was removed
+
 ## [0.5.3]
 
 ### Added

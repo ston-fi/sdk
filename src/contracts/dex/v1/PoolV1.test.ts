@@ -1,27 +1,27 @@
-import TonWeb from "tonweb";
-import { describe, it, expect, vi } from "vitest";
+import { beforeAll, describe, expect, it, vi } from "vitest";
+import type { Sender } from "@ton/ton";
 
-import { createMockObj } from "@/test-utils";
+import {
+  createMockObj,
+  createMockProvider,
+  createMockProviderFromSnapshot,
+  createProviderSnapshot,
+  setup,
+} from "@/test-utils";
+import { toAddress } from "@/utils/toAddress";
+import { JettonWallet } from "@/contracts/core/JettonWallet";
+import { LpAccountV1 } from "@/contracts/dex/v1/LpAccountV1";
 
 import { DEX_VERSION } from "../constants";
 
 import { PoolV1 } from "./PoolV1";
 
-const {
-  utils: { BN, bytesToBase64, base64ToBytes },
-  boc: { Cell },
-  Address,
-} = TonWeb;
-
 const POOL_ADDRESS = "EQCl-ax-5QC06ub096s2bqTbhYZWigZ1-FkJm2IVIMSazp7U"; // STON/GEMSTON pool
 const USER_WALLET_ADDRESS = "UQAQnxLqlX2B6w4jQzzzPWA8eyWZVZBz6Y0D_8noARLOaEAn";
 
-const DEPENDENCIES = {
-  address: POOL_ADDRESS,
-  tonApiClient: createMockObj<InstanceType<typeof TonWeb.HttpProvider>>(),
-};
-
 describe("PoolV1", () => {
+  beforeAll(setup);
+
   describe("version", () => {
     it("should have expected static value", () => {
       expect(PoolV1.version).toBe(DEX_VERSION.v1);
@@ -30,40 +30,41 @@ describe("PoolV1", () => {
 
   describe("gasConstants", () => {
     it("should have expected static value", () => {
-      expect(PoolV1.gasConstants).toMatchInlineSnapshot(`
-        {
-          "burn": "1dcd6500",
-          "collectFees": "4190ab00",
-        }
-      `);
+      expect(PoolV1.gasConstants.burn).toMatchInlineSnapshot("500000000n");
+      expect(PoolV1.gasConstants.collectFees).toMatchInlineSnapshot(
+        "1100000000n",
+      );
+    });
+  });
+
+  describe("create", () => {
+    it("should create an instance of PoolV1 from address", () => {
+      const contract = PoolV1.create(POOL_ADDRESS);
+
+      expect(contract).toBeInstanceOf(PoolV1);
     });
   });
 
   describe("constructor", () => {
     it("should create an instance of PoolV1", () => {
-      const contract = new PoolV1({
-        ...DEPENDENCIES,
-      });
+      const contract = PoolV1.create(POOL_ADDRESS);
 
       expect(contract).toBeInstanceOf(PoolV1);
     });
 
     it("should create an instance of PoolV1 with default gasConstants", () => {
-      const contract = new PoolV1({
-        ...DEPENDENCIES,
-      });
+      const contract = PoolV1.create(POOL_ADDRESS);
 
       expect(contract.gasConstants).toEqual(PoolV1.gasConstants);
     });
 
     it("should create an instance of PoolV1 with given gasConstants", () => {
       const gasConstants: Partial<PoolV1["gasConstants"]> = {
-        burn: new BN("1"),
-        collectFees: new BN("2"),
+        burn: BigInt("1"),
+        collectFees: BigInt("2"),
       };
 
-      const contract = new PoolV1({
-        ...DEPENDENCIES,
+      const contract = new PoolV1(POOL_ADDRESS, {
         gasConstants,
       });
 
@@ -75,374 +76,402 @@ describe("PoolV1", () => {
 
   describe("createCollectFeesBody", () => {
     it("should build expected tx body", async () => {
-      const contract = new PoolV1({
-        ...DEPENDENCIES,
-      });
+      const contract = PoolV1.create(POOL_ADDRESS);
 
       const body = await contract.createCollectFeesBody();
 
-      expect(body).toBeInstanceOf(Cell);
-      expect(bytesToBase64(await body.toBoc())).toMatchInlineSnapshot(
-        '"te6ccsEBAQEADgAAABgfy309AAAAAAAAAAA6Ha+R"',
+      expect(body.toBoc().toString("base64")).toMatchInlineSnapshot(
+        '"te6cckEBAQEADgAAGB/LfT0AAAAAAAAAAOHc0mQ="',
       );
     });
 
     it("should build expected tx body when queryId is defined", async () => {
-      const contract = new PoolV1({
-        ...DEPENDENCIES,
-      });
+      const contract = PoolV1.create(POOL_ADDRESS);
 
       const body = await contract.createCollectFeesBody({
         queryId: 12345,
       });
 
-      expect(body).toBeInstanceOf(Cell);
-      expect(bytesToBase64(await body.toBoc())).toMatchInlineSnapshot(
-        '"te6ccsEBAQEADgAAABgfy309AAAAAAAAMDnEnbCZ"',
+      expect(body.toBoc().toString("base64")).toMatchInlineSnapshot(
+        '"te6cckEBAQEADgAAGB/LfT0AAAAAAAAwOR9czWw="',
       );
     });
   });
 
-  describe("buildCollectFeeTxParams", () => {
+  describe("getCollectFeeTxParams", () => {
+    const provider = createMockProvider();
+
     it("should build expected tx params", async () => {
-      const contract = new PoolV1({
-        ...DEPENDENCIES,
-      });
+      const contract = provider.open(PoolV1.create(POOL_ADDRESS));
 
-      const params = await contract.buildCollectFeeTxParams();
+      const txParams = await contract.getCollectFeeTxParams();
 
-      expect(params.to.toString()).toMatchInlineSnapshot(
+      expect(txParams.to).toMatchInlineSnapshot(
         '"EQCl-ax-5QC06ub096s2bqTbhYZWigZ1-FkJm2IVIMSazp7U"',
       );
-      expect(bytesToBase64(await params.payload.toBoc())).toMatchInlineSnapshot(
-        `"te6ccsEBAQEADgAAABgfy309AAAAAAAAAAA6Ha+R"`,
+      expect(txParams.body?.toBoc().toString("base64")).toMatchInlineSnapshot(
+        '"te6cckEBAQEADgAAGB/LfT0AAAAAAAAAAOHc0mQ="',
       );
-      expect(params.gasAmount).toMatchInlineSnapshot('"4190ab00"');
+      expect(txParams.value).toMatchInlineSnapshot("1100000000n");
     });
 
     it("should build expected tx params when queryId is defined", async () => {
-      const contract = new PoolV1({
-        ...DEPENDENCIES,
-      });
+      const contract = provider.open(PoolV1.create(POOL_ADDRESS));
 
-      const params = await contract.buildCollectFeeTxParams({
+      const txParams = await contract.getCollectFeeTxParams({
         queryId: 12345,
       });
 
-      expect(params.to.toString()).toMatchInlineSnapshot(
+      expect(txParams.to).toMatchInlineSnapshot(
         '"EQCl-ax-5QC06ub096s2bqTbhYZWigZ1-FkJm2IVIMSazp7U"',
       );
-      expect(bytesToBase64(await params.payload.toBoc())).toMatchInlineSnapshot(
-        `"te6ccsEBAQEADgAAABgfy309AAAAAAAAMDnEnbCZ"`,
+      expect(txParams.body?.toBoc().toString("base64")).toMatchInlineSnapshot(
+        '"te6cckEBAQEADgAAGB/LfT0AAAAAAAAwOR9czWw="',
       );
-      expect(params.gasAmount).toMatchInlineSnapshot('"4190ab00"');
+      expect(txParams.value).toMatchInlineSnapshot("1100000000n");
     });
 
     it("should build expected tx params when custom gasAmount is defined", async () => {
-      const contract = new PoolV1({
-        ...DEPENDENCIES,
+      const contract = provider.open(PoolV1.create(POOL_ADDRESS));
+
+      const txParams = await contract.getCollectFeeTxParams({
+        gasAmount: "1",
       });
 
-      const params = await contract.buildCollectFeeTxParams({
-        gasAmount: new BN("1"),
-      });
-
-      expect(params.to.toString()).toMatchInlineSnapshot(
+      expect(txParams.to).toMatchInlineSnapshot(
         '"EQCl-ax-5QC06ub096s2bqTbhYZWigZ1-FkJm2IVIMSazp7U"',
       );
-      expect(bytesToBase64(await params.payload.toBoc())).toMatchInlineSnapshot(
-        '"te6ccsEBAQEADgAAABgfy309AAAAAAAAAAA6Ha+R"',
+      expect(txParams.body?.toBoc().toString("base64")).toMatchInlineSnapshot(
+        '"te6cckEBAQEADgAAGB/LfT0AAAAAAAAAAOHc0mQ="',
       );
-      expect(params.gasAmount).toMatchInlineSnapshot('"01"');
+      expect(txParams.value).toMatchInlineSnapshot("1n");
+    });
+  });
+
+  describe("sendCollectFees", () => {
+    it("should call getCollectFeeTxParams and pass the result to the sender", async () => {
+      const txArgs = {} as Parameters<PoolV1["sendCollectFees"]>[2];
+
+      const contract = PoolV1.create(POOL_ADDRESS);
+
+      const getCollectFeeTxParams = vi.spyOn(contract, "getCollectFeeTxParams");
+
+      const txParams = {} as Awaited<
+        ReturnType<(typeof contract)["getCollectFeeTxParams"]>
+      >;
+
+      getCollectFeeTxParams.mockResolvedValue(txParams);
+
+      const provider = createMockProvider();
+      const sender = createMockObj<Sender>({
+        send: vi.fn(),
+      });
+
+      await contract.sendCollectFees(provider, sender, txArgs);
+
+      expect(contract.getCollectFeeTxParams).toHaveBeenCalledWith(
+        provider,
+        txArgs,
+      );
+      expect(sender.send).toHaveBeenCalledWith(txParams);
     });
   });
 
   describe("createBurnBody", () => {
-    const txParams = {
-      amount: new BN("1000000000"),
+    const txArgs = {
+      amount: "1000000000",
       responseAddress: USER_WALLET_ADDRESS,
     };
 
     it("should build expected tx body", async () => {
-      const contract = new PoolV1({
-        ...DEPENDENCIES,
-      });
+      const contract = PoolV1.create(POOL_ADDRESS);
 
       const body = await contract.createBurnBody({
-        ...txParams,
+        ...txArgs,
       });
 
-      expect(body).toBeInstanceOf(Cell);
-      expect(bytesToBase64(await body.toBoc())).toMatchInlineSnapshot(
-        '"te6ccsEBAQEANAAAAGNZXwe8AAAAAAAAAABDuaygCAAhPiXVKvsD1hxGhnnmesB49ksyqyDn0xoH/5PQAiWc0VbwhWI="',
+      expect(body.toBoc().toString("base64")).toMatchInlineSnapshot(
+        '"te6cckEBAQEANAAAY1lfB7wAAAAAAAAAAEO5rKAIACE+JdUq+wPWHEaGeeZ6wHj2SzKrIOfTGgf/k9ACJZzRhaz3TA=="',
       );
     });
 
     it("should build expected tx body when queryId is defined", async () => {
-      const contract = new PoolV1({
-        ...DEPENDENCIES,
-      });
+      const contract = PoolV1.create(POOL_ADDRESS);
 
       const body = await contract.createBurnBody({
-        ...txParams,
+        ...txArgs,
         queryId: 12345,
       });
 
-      expect(body).toBeInstanceOf(Cell);
-      expect(bytesToBase64(await body.toBoc())).toMatchInlineSnapshot(
-        '"te6ccsEBAQEANAAAAGNZXwe8AAAAAAAAMDlDuaygCAAhPiXVKvsD1hxGhnnmesB49ksyqyDn0xoH/5PQAiWc0cksg2o="',
+      expect(body.toBoc().toString("base64")).toMatchInlineSnapshot(
+        '"te6cckEBAQEANAAAY1lfB7wAAAAAAAAwOUO5rKAIACE+JdUq+wPWHEaGeeZ6wHj2SzKrIOfTGgf/k9ACJZzRGnDxRA=="',
       );
     });
   });
 
-  describe("buildBurnTxParams", () => {
-    const txParams = {
-      amount: new BN("1000000000"),
+  describe("getBurnTxParams", () => {
+    const txArgs = {
+      amount: "1000000000",
       responseAddress: USER_WALLET_ADDRESS,
     };
 
-    const tonApiClient = createMockObj<
-      InstanceType<typeof TonWeb.HttpProvider>
-    >({
-      call2: vi.fn(async (...args) => {
-        if (args[0] === POOL_ADDRESS && args[1] === "get_wallet_address") {
-          return Cell.oneFromBoc(
-            base64ToBytes(
-              "te6ccsEBAQEAJAAAAEOACstDZ3ATHWF//MUN1iK/rfVwlHFuhUxxdp3sB2jMtipQs2Cj5Q==",
-            ),
-          );
-        }
+    const getWalletAddressSnapshot = createProviderSnapshot().cell(
+      "te6ccsEBAQEAJAAAAEOACstDZ3ATHWF//MUN1iK/rfVwlHFuhUxxdp3sB2jMtipQs2Cj5Q==",
+    );
 
-        throw new Error(`Unexpected call2: ${args}`);
-      }),
+    const provider = createMockProviderFromSnapshot((address, method) => {
+      if (address === POOL_ADDRESS && method === "get_wallet_address")
+        return getWalletAddressSnapshot;
+
+      throw new Error(`Unexpected call: ${address} ${method}`);
     });
 
     it("should build expected tx params", async () => {
-      const contract = new PoolV1({
-        ...DEPENDENCIES,
-        tonApiClient,
+      const contract = provider.open(PoolV1.create(POOL_ADDRESS));
+
+      const txParams = await contract.getBurnTxParams({
+        ...txArgs,
       });
 
-      const params = await contract.buildBurnTxParams({
-        ...txParams,
-      });
-
-      expect(params.to.toString()).toMatchInlineSnapshot(
+      expect(txParams.to).toMatchInlineSnapshot(
         '"EQBWWhs7gJjrC__mKG6xFf1vq4Sji3QqY4u072A7RmWxUoT1"',
       );
-      expect(bytesToBase64(await params.payload.toBoc())).toMatchInlineSnapshot(
-        '"te6ccsEBAQEANAAAAGNZXwe8AAAAAAAAAABDuaygCAAhPiXVKvsD1hxGhnnmesB49ksyqyDn0xoH/5PQAiWc0VbwhWI="',
+      expect(txParams.body?.toBoc().toString("base64")).toMatchInlineSnapshot(
+        '"te6cckEBAQEANAAAY1lfB7wAAAAAAAAAAEO5rKAIACE+JdUq+wPWHEaGeeZ6wHj2SzKrIOfTGgf/k9ACJZzRhaz3TA=="',
       );
-      expect(params.gasAmount).toMatchInlineSnapshot('"1dcd6500"');
+      expect(txParams.value).toMatchInlineSnapshot("500000000n");
     });
 
     it("should build expected tx params when queryId is defined", async () => {
-      const contract = new PoolV1({
-        ...DEPENDENCIES,
-        tonApiClient,
-      });
+      const contract = provider.open(PoolV1.create(POOL_ADDRESS));
 
-      const params = await contract.buildBurnTxParams({
-        ...txParams,
+      const txParams = await contract.getBurnTxParams({
+        ...txArgs,
         queryId: 12345,
       });
 
-      expect(params.to.toString()).toMatchInlineSnapshot(
+      expect(txParams.to).toMatchInlineSnapshot(
         '"EQBWWhs7gJjrC__mKG6xFf1vq4Sji3QqY4u072A7RmWxUoT1"',
       );
-      expect(bytesToBase64(await params.payload.toBoc())).toMatchInlineSnapshot(
-        '"te6ccsEBAQEANAAAAGNZXwe8AAAAAAAAMDlDuaygCAAhPiXVKvsD1hxGhnnmesB49ksyqyDn0xoH/5PQAiWc0cksg2o="',
+      expect(txParams.body?.toBoc().toString("base64")).toMatchInlineSnapshot(
+        '"te6cckEBAQEANAAAY1lfB7wAAAAAAAAwOUO5rKAIACE+JdUq+wPWHEaGeeZ6wHj2SzKrIOfTGgf/k9ACJZzRGnDxRA=="',
       );
-      expect(params.gasAmount).toMatchInlineSnapshot('"1dcd6500"');
+      expect(txParams.value).toMatchInlineSnapshot("500000000n");
     });
 
     it("should build expected tx params when custom gasAmount is defined", async () => {
-      const contract = new PoolV1({
-        ...DEPENDENCIES,
-        tonApiClient,
+      const contract = provider.open(PoolV1.create(POOL_ADDRESS));
+
+      const txParams = await contract.getBurnTxParams({
+        ...txArgs,
+        gasAmount: "1",
       });
 
-      const params = await contract.buildBurnTxParams({
-        ...txParams,
-        gasAmount: new BN("1"),
-      });
-
-      expect(params.to.toString()).toMatchInlineSnapshot(
+      expect(txParams.to).toMatchInlineSnapshot(
         '"EQBWWhs7gJjrC__mKG6xFf1vq4Sji3QqY4u072A7RmWxUoT1"',
       );
-      expect(bytesToBase64(await params.payload.toBoc())).toMatchInlineSnapshot(
-        '"te6ccsEBAQEANAAAAGNZXwe8AAAAAAAAAABDuaygCAAhPiXVKvsD1hxGhnnmesB49ksyqyDn0xoH/5PQAiWc0VbwhWI="',
+      expect(txParams.body?.toBoc().toString("base64")).toMatchInlineSnapshot(
+        '"te6cckEBAQEANAAAY1lfB7wAAAAAAAAAAEO5rKAIACE+JdUq+wPWHEaGeeZ6wHj2SzKrIOfTGgf/k9ACJZzRhaz3TA=="',
       );
-      expect(params.gasAmount).toMatchInlineSnapshot('"01"');
+      expect(txParams.value).toMatchInlineSnapshot("1n");
+    });
+  });
+
+  describe("sendBurn", () => {
+    it("should call getBurnTxParams and pass the result to the sender", async () => {
+      const txArgs = {} as Parameters<PoolV1["sendBurn"]>[2];
+
+      const contract = PoolV1.create(POOL_ADDRESS);
+
+      const getBurnTxParams = vi.spyOn(contract, "getBurnTxParams");
+
+      const txParams = {} as Awaited<
+        ReturnType<(typeof contract)["getBurnTxParams"]>
+      >;
+
+      getBurnTxParams.mockResolvedValue(txParams);
+
+      const provider = createMockProvider();
+      const sender = createMockObj<Sender>({
+        send: vi.fn(),
+      });
+
+      await contract.sendBurn(provider, sender, txArgs);
+
+      expect(contract.getBurnTxParams).toHaveBeenCalledWith(provider, txArgs);
+      expect(sender.send).toHaveBeenCalledWith(txParams);
     });
   });
 
   describe("getExpectedOutputs", () => {
-    const snapshot = [new BN("78555061853"), new BN("78633696"), new BN("0")];
-
-    const tonApiClient = createMockObj<
-      InstanceType<typeof TonWeb.HttpProvider>
-    >({
-      call2: vi.fn().mockResolvedValue(snapshot),
-    });
+    const snapshot = createProviderSnapshot()
+      .number("78555061853")
+      .number("78633696")
+      .number("0");
+    const provider = createMockProviderFromSnapshot(snapshot);
 
     it("should make on-chain request and return parsed response", async () => {
-      const contract = new PoolV1({
-        ...DEPENDENCIES,
-        tonApiClient,
-      });
+      const contract = provider.open(PoolV1.create(POOL_ADDRESS));
 
       const data = await contract.getExpectedOutputs({
-        amount: new BN("1000000000"),
+        amount: "1000000000",
         jettonWallet:
           "0:87b92241aa6a57df31271460c109c54dfd989a1aea032f6107d2c65d6e8879ce", // token0WalletAddress
       });
 
-      expect(data.jettonToReceive).toStrictEqual(snapshot[0]);
-      expect(data.protocolFeePaid).toStrictEqual(snapshot[1]);
-      expect(data.refFeePaid).toStrictEqual(snapshot[2]);
+      expect(data.jettonToReceive).toMatchInlineSnapshot("78555061853n");
+      expect(data.protocolFeePaid).toMatchInlineSnapshot("78633696n");
+      expect(data.refFeePaid).toMatchInlineSnapshot("0n");
     });
   });
 
   describe("getExpectedTokens", () => {
-    const snapshot = new BN("19");
-
-    const tonApiClient = createMockObj<
-      InstanceType<typeof TonWeb.HttpProvider>
-    >({
-      call2: vi.fn().mockResolvedValue(snapshot),
-    });
+    const snapshot = createProviderSnapshot().number("19");
+    const provider = createMockProviderFromSnapshot(snapshot);
 
     it("should make on-chain request and return parsed response", async () => {
-      const contract = new PoolV1({
-        ...DEPENDENCIES,
-        tonApiClient,
-      });
+      const contract = provider.open(PoolV1.create(POOL_ADDRESS));
 
       const data = await contract.getExpectedTokens({
-        amount0: new BN("100000"),
-        amount1: new BN("200000"),
+        amount0: "100000",
+        amount1: "200000",
       });
 
-      expect(data).toStrictEqual(snapshot);
+      expect(data).toMatchInlineSnapshot("19n");
     });
   });
 
   describe("getExpectedLiquidity", () => {
-    const snapshot = [new BN("128"), new BN("10128")];
-
-    const tonApiClient = createMockObj<
-      InstanceType<typeof TonWeb.HttpProvider>
-    >({
-      call2: vi.fn().mockResolvedValue(snapshot),
-    });
+    const snapshot = createProviderSnapshot().number("128").number("10128");
+    const provider = createMockProviderFromSnapshot(snapshot);
 
     it("should make on-chain request and return parsed response", async () => {
-      const contract = new PoolV1({
-        ...DEPENDENCIES,
-        tonApiClient,
-      });
+      const contract = provider.open(PoolV1.create(POOL_ADDRESS));
 
       const data = await contract.getExpectedLiquidity({
-        jettonAmount: new BN("1"),
+        jettonAmount: "1",
       });
 
-      expect(data.amount0).toStrictEqual(snapshot[0]);
-      expect(data.amount1).toStrictEqual(snapshot[1]);
+      expect(data.amount0).toMatchInlineSnapshot("128n");
+      expect(data.amount1).toMatchInlineSnapshot("10128n");
     });
   });
 
   describe("getLpAccountAddress", () => {
     const ownerAddress = "UQAQnxLqlX2B6w4jQzzzPWA8eyWZVZBz6Y0D_8noARLOaEAn";
 
-    const snapshot = Cell.oneFromBoc(
-      base64ToBytes(
-        "te6ccsEBAQEAJAAAAEOAH6VkyTu5g20HTCbGu1/OTfiBSIoSdeKMzW42GndI90LQv9OlMw==",
-      ),
+    const snapshot = createProviderSnapshot().cell(
+      "te6ccsEBAQEAJAAAAEOAH6VkyTu5g20HTCbGu1/OTfiBSIoSdeKMzW42GndI90LQv9OlMw==",
     );
-
-    const tonApiClient = createMockObj<
-      InstanceType<typeof TonWeb.HttpProvider>
-    >({
-      call2: vi.fn().mockResolvedValue(snapshot),
-    });
+    const provider = createMockProviderFromSnapshot(snapshot);
 
     it("should make on-chain request and return parsed response", async () => {
-      const contract = new PoolV1({
-        ...DEPENDENCIES,
-        tonApiClient,
-      });
+      const contract = provider.open(PoolV1.create(POOL_ADDRESS));
 
       const data = await contract.getLpAccountAddress({
         ownerAddress,
       });
 
-      expect(data).toStrictEqual(
-        new Address(
-          "0:fd2b2649ddcc1b683a613635dafe726fc40a445093af14666b71b0d3ba47ba16",
-        ),
+      expect(data).toMatchInlineSnapshot(
+        '"EQD9KyZJ3cwbaDphNjXa_nJvxApEUJOvFGZrcbDTuke6Fs7B"',
       );
     });
   });
 
-  describe("getData", () => {
-    const snapshot = [
-      new BN("14659241047997"),
-      new BN("1155098971931369"),
-      Cell.oneFromBoc(
-        base64ToBytes(
-          "te6ccsEBAQEAJAAAAEOAEPckSDVNSvvmJOKMGCE4qb+zE0NdQGXsIPpYy63RDznQToI/Aw==",
-        ),
-      ),
-      Cell.oneFromBoc(
-        base64ToBytes(
-          "te6ccsEBAQEAJAAAAEOAE+qvh8EqMXFOd5n96sMS0GVGtkQdC74+zQaWQuG2G/lwYlQIaw==",
-        ),
-      ),
-      new BN("20"),
-      new BN("10"),
-      new BN("10"),
-      Cell.oneFromBoc(
-        base64ToBytes(
-          "te6ccsEBAQEAJAAAAEOAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAQvWZ7LQ==",
-        ),
-      ),
-      new BN("71678297602"),
-      new BN("3371928931127"),
-    ];
+  describe("getJettonWallet", () => {
+    const userJettonWalletAddress =
+      "EQCvlCQ1FP0oaq_-8UK9HlkKeN88DIbJRSJ6BcPEXza9_ikZ"; // jetton wallet address of STON/GEMSTON pool jetton for USER_WALLET_ADDRESS
 
-    const tonApiClient = createMockObj<
-      InstanceType<typeof TonWeb.HttpProvider>
-    >({
-      call2: vi.fn().mockResolvedValue(snapshot),
-    });
+    it("should create JettonWallet contract instance for USER_WALLET_ADDRESS", async () => {
+      const contract = PoolV1.create(POOL_ADDRESS);
 
-    it("should make on-chain request and return parsed response", async () => {
-      const contract = new PoolV1({
-        ...DEPENDENCIES,
-        tonApiClient,
+      const getWalletAddress = vi.spyOn(contract, "getWalletAddress");
+      getWalletAddress.mockResolvedValue(toAddress(userJettonWalletAddress));
+
+      const provider = createMockProvider();
+
+      const jettonWallet = await contract.getJettonWallet(provider, {
+        ownerAddress: USER_WALLET_ADDRESS,
       });
 
-      const data = await contract.getData();
+      expect(getWalletAddress).toHaveBeenCalledWith(
+        provider,
+        USER_WALLET_ADDRESS,
+      );
+      expect(jettonWallet).toBeInstanceOf(JettonWallet);
+      expect(jettonWallet.address.toString()).toEqual(userJettonWalletAddress);
+    });
+  });
 
-      expect(data.reserve0).toStrictEqual(snapshot[0]);
-      expect(data.reserve1).toStrictEqual(snapshot[1]);
-      expect(data.token0WalletAddress).toStrictEqual(
-        new Address(
-          "0:87b92241aa6a57df31271460c109c54dfd989a1aea032f6107d2c65d6e8879ce",
-        ),
+  describe("getLpAccount", () => {
+    const userLpAccountAddress =
+      "EQD9KyZJ3cwbaDphNjXa_nJvxApEUJOvFGZrcbDTuke6Fs7B"; // lpAccount address of STON/GEMSTON pool jetton for USER_WALLET_ADDRESS
+
+    it("should create LpAccount contract instance with defined address", async () => {
+      const contract = PoolV1.create(POOL_ADDRESS);
+
+      const getLpAccountAddress = vi.spyOn(contract, "getLpAccountAddress");
+      getLpAccountAddress.mockResolvedValue(toAddress(userLpAccountAddress));
+
+      const params = {
+        ownerAddress: USER_WALLET_ADDRESS,
+      };
+
+      const provider = createMockProvider();
+
+      const lpAccount = await contract.getLpAccount(provider, params);
+
+      expect(getLpAccountAddress).toHaveBeenCalledWith(provider, params);
+      expect(lpAccount).toBeInstanceOf(LpAccountV1);
+      expect(lpAccount.address.toString()).toEqual(userLpAccountAddress);
+    });
+  });
+
+  describe("getPoolData", () => {
+    const snapshot = createProviderSnapshot()
+      .number("14659241047997")
+      .number("1155098971931369")
+      .cell(
+        "te6ccsEBAQEAJAAAAEOAEPckSDVNSvvmJOKMGCE4qb+zE0NdQGXsIPpYy63RDznQToI/Aw==",
+      )
+      .cell(
+        "te6ccsEBAQEAJAAAAEOAE+qvh8EqMXFOd5n96sMS0GVGtkQdC74+zQaWQuG2G/lwYlQIaw==",
+      )
+      .number("20")
+      .number("10")
+      .number("10")
+      .cell(
+        "te6ccsEBAQEAJAAAAEOAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAQvWZ7LQ==",
+      )
+      .number("71678297602")
+      .number("3371928931127");
+    const provider = createMockProviderFromSnapshot(snapshot);
+
+    it("should make on-chain request and return parsed response", async () => {
+      const contract = provider.open(PoolV1.create(POOL_ADDRESS));
+
+      const data = await contract.getPoolData();
+
+      expect(data.reserve0).toMatchInlineSnapshot("14659241047997n");
+      expect(data.reserve1).toMatchInlineSnapshot("1155098971931369n");
+      expect(data.token0WalletAddress).toMatchInlineSnapshot(
+        '"EQCHuSJBqmpX3zEnFGDBCcVN_ZiaGuoDL2EH0sZdboh5zkwy"',
       );
-      expect(data.token1WalletAddress).toStrictEqual(
-        new Address(
-          "0:9f557c3e09518b8a73bccfef561896832a35b220e85df1f66834b2170db0dfcb",
-        ),
+      expect(data.token1WalletAddress).toMatchInlineSnapshot(
+        '"EQCfVXw-CVGLinO8z-9WGJaDKjWyIOhd8fZoNLIXDbDfy2kw"',
       );
-      expect(data.lpFee).toStrictEqual(snapshot[4]);
-      expect(data.protocolFee).toStrictEqual(snapshot[5]);
-      expect(data.refFee).toStrictEqual(snapshot[6]);
-      expect(data.protocolFeeAddress).toBeNull();
-      expect(data.collectedToken0ProtocolFee).toStrictEqual(snapshot[8]);
-      expect(data.collectedToken1ProtocolFee).toStrictEqual(snapshot[9]);
+      expect(data.lpFee).toMatchInlineSnapshot("20n");
+      expect(data.protocolFee).toMatchInlineSnapshot("10n");
+      expect(data.refFee).toMatchInlineSnapshot("10n");
+      expect(data.protocolFeeAddress).toMatchInlineSnapshot(
+        '"EQAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAM9c"',
+      );
+      expect(data.collectedToken0ProtocolFee).toMatchInlineSnapshot(
+        "71678297602n",
+      );
+      expect(data.collectedToken1ProtocolFee).toMatchInlineSnapshot(
+        "3371928931127n",
+      );
     });
   });
 });

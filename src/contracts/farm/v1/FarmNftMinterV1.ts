@@ -1,69 +1,55 @@
-import TonWeb, { type NftCollectionOptions } from "tonweb";
+import {
+  type Address,
+  type Cell,
+  type ContractProvider,
+  type Sender,
+  type SenderArguments,
+  beginCell,
+  toNano,
+} from "@ton/ton";
 
-import type {
-  BN,
-  Cell,
-  Address,
-  AddressType,
-  QueryIdType,
-  MessageData,
-  AmountType,
-  SdkContractOptions,
-} from "@/types";
-import { StonApiClient } from "@/StonApiClient";
-import { parseAddressNotNull } from "@/utils/parseAddress";
-import { parseBoolean } from "@/utils/parseBoolean";
+import { Contract, type ContractOptions } from "@/contracts/core/Contract";
+import { JettonMinter } from "@/contracts/core/JettonMinter";
+import { JettonWallet } from "@/contracts/core/JettonWallet";
+import type { AddressType, AmountType, QueryIdType } from "@/types";
 import { createJettonTransferMessage } from "@/utils/createJettonTransferMessage";
 
 import { FARM_OP_CODES, FARM_VERSION } from "../constants";
 
-const {
-  boc: { Cell },
-  utils: { Address, BN },
-  token: {
-    nft: { NftCollection },
-    jetton: { JettonWallet },
-  },
-} = TonWeb;
-
-export interface FarmNftMinterV1Options
-  extends SdkContractOptions,
-    NftCollectionOptions {
+export interface FarmNftMinterV1Options extends ContractOptions {
   gasConstants?: Partial<typeof FarmNftMinterV1.gasConstants>;
 }
 
-export class FarmNftMinterV1 extends NftCollection {
+/**
+ * @deprecated `v1` version of the FarmNftMinter contracts is deprecated.
+ *
+ * Only use this version for get data contract calls.
+ * For all other operations, use the latest version of the contract.
+ */
+export class FarmNftMinterV1 extends Contract {
   public static readonly version: FARM_VERSION = FARM_VERSION.v1;
 
   public static readonly gasConstants = {
-    stake: new BN("300000000"),
-    stakeForward: new BN("250000000"),
+    stake: toNano("0.3"),
+    stakeForward: toNano("0.25"),
   };
-
-  protected readonly stonApiClient;
 
   public readonly gasConstants;
 
-  constructor({
-    tonApiClient,
-    stonApiClient,
-    ...options
-  }: FarmNftMinterV1Options) {
-    super(tonApiClient, options);
+  constructor(
+    address: AddressType,
+    { gasConstants, ...options }: FarmNftMinterV1Options = {},
+  ) {
+    super(address, options);
 
-    this.stonApiClient = stonApiClient ?? new StonApiClient(tonApiClient);
     this.gasConstants = {
       ...FarmNftMinterV1.gasConstants,
-      ...options.gasConstants,
+      ...gasConstants,
     };
   }
 
   public async createStakeBody(): Promise<Cell> {
-    const payload = new Cell();
-
-    payload.bits.writeUint(FARM_OP_CODES.STAKE, 32);
-
-    return payload;
+    return beginCell().storeUint(FARM_OP_CODES.STAKE, 32).endCell();
   }
 
   /**
@@ -71,111 +57,115 @@ export class FarmNftMinterV1 extends NftCollection {
    *
    * @param {Address | string} params.userWalletAddress - User's address
    * @param {Address | string} params.jettonAddress - Jetton address of token to be staked
-   * @param {BN | number} params.jettonAmount - Amount of tokens to be staked (in basic token units)
-   * @param {BN | number | string | undefined} params.gasAmount - Optional; Custom transaction gas amount (in nanoTons)
-   * @param {BN | number | string | undefined} params.forwardGasAmount - Optional; Custom transaction forward gas amount (in nanoTons)
-   * @param {BN | number | undefined} params.queryId - Optional; query id
+   * @param {bigint | number} params.jettonAmount - Amount of tokens to be staked (in basic token units)
+   * @param {bigint | number | string | undefined} params.gasAmount - Optional; Custom transaction gas amount (in nanoTons)
+   * @param {bigint | number | string | undefined} params.forwardGasAmount - Optional; Custom transaction forward gas amount (in nanoTons)
+   * @param {bigint | number | undefined} params.queryId - Optional; query id
    *
-   * @returns {MessageData} containing all data required to execute a jetton `stake` transaction
+   * @returns {SenderArguments} containing all data required to execute a jetton `stake` transaction
    */
-  public async buildStakeTxParams(params: {
-    userWalletAddress: AddressType;
-    jettonAddress: AddressType;
-    jettonAmount: AmountType;
-    gasAmount?: AmountType;
-    forwardGasAmount?: AmountType;
-    queryId?: QueryIdType;
-  }): Promise<MessageData> {
-    const [jettonWalletAddress, forwardPayload, address] = await Promise.all([
-      (async () =>
-        new Address(
-          await this.stonApiClient.getJettonWalletAddress({
-            jettonAddress: params.jettonAddress.toString(),
-            ownerAddress: params.userWalletAddress.toString(),
-          }),
-        ))(),
+  public async getStakeTxParams(
+    provider: ContractProvider,
+    params: {
+      userWalletAddress: AddressType;
+      jettonAddress: AddressType;
+      jettonAmount: AmountType;
+      gasAmount?: AmountType;
+      forwardGasAmount?: AmountType;
+      queryId?: QueryIdType;
+    },
+  ): Promise<SenderArguments> {
+    const [jettonWalletAddress, forwardPayload] = await Promise.all([
+      provider
+        .open(JettonMinter.create(params.jettonAddress))
+        .getWalletAddress(params.userWalletAddress),
       this.createStakeBody(),
-      this.getAddress(),
     ]);
 
-    const forwardTonAmount = new BN(
+    const forwardTonAmount = BigInt(
       params.forwardGasAmount ?? this.gasConstants.stakeForward,
     );
 
-    const payload = createJettonTransferMessage({
+    const body = createJettonTransferMessage({
       queryId: params.queryId ?? 0,
       amount: params.jettonAmount,
-      destination: address,
+      destination: this.address,
       responseDestination: params.userWalletAddress,
       forwardTonAmount,
       forwardPayload,
     });
 
-    const gasAmount = new BN(params.gasAmount ?? this.gasConstants.stake);
+    const value = BigInt(params.gasAmount ?? this.gasConstants.stake);
 
     return {
-      to: new Address(jettonWalletAddress.toString(true, true, true)),
-      payload,
-      gasAmount,
+      to: jettonWalletAddress,
+      value,
+      body,
     };
+  }
+
+  public async sendStake(
+    provider: ContractProvider,
+    via: Sender,
+    params: Parameters<FarmNftMinterV1["getStakeTxParams"]>[1],
+  ) {
+    const txParams = await this.getStakeTxParams(provider, params);
+
+    return via.send(txParams);
   }
 
   /**
    * @returns structure containing current state of the minter
    *
-   * @property {BN} nextItemIndex - Index of the next nft in this collection
-   * @property {BN} lastUpdateTime - Last time farming values were updated
+   * @property {bigint} nextItemIndex - Index of the next nft in this collection
+   * @property {bigint} lastUpdateTime - Last time farming values were updated
    * @property {number} status - Status of the contract: uninitialized `0`, active `1`, paused `3`
-   * @property {BN} depositedNanorewards - Deposited rewards in nanounits
-   * @property {BN} currentStakedTokens - Number of staked tokens in basic token units
-   * @property {BN} accruedPerUnitNanorewards - Number of accrued nanorewards per basic stake token unit
-   * @property {BN} accruedNanorewards - Total number of accrued rewards in nanounits
-   * @property {BN} claimedNanorewards - Number of claimed rewards in nanounits
-   * @property {BN} contractUniqueId - Minter id
-   * @property {BN} nanorewardsPer24h - Total number of accrued rewards per 24h in nanounits
+   * @property {bigint} depositedNanorewards - Deposited rewards in nanounits
+   * @property {bigint} currentStakedTokens - Number of staked tokens in basic token units
+   * @property {bigint} accruedPerUnitNanorewards - Number of accrued nanorewards per basic stake token unit
+   * @property {bigint} accruedNanorewards - Total number of accrued rewards in nanounits
+   * @property {bigint} claimedNanorewards - Number of claimed rewards in nanounits
+   * @property {bigint} contractUniqueId - Minter id
+   * @property {bigint} nanorewardsPer24h - Total number of accrued rewards per 24h in nanounits
    * @property {boolean} soulboundItems - Whether minted NFTs are soulbound
-   * @property {BN} minStakeTime - Minimum staking time
+   * @property {bigint} minStakeTime - Minimum staking time
    * @property {Address} stakingTokenWallet - Minter's staking jetton wallet
    * @property {Address} rewardTokenWallet - Minter's reward jetton wallet
    */
-  public async getData() {
-    const contractAddress = await this.getAddress();
-
-    const result = await this.provider.call2(
-      contractAddress.toString(),
-      "get_farming_minter_data",
-    );
+  public async getFarmingMinterData(provider: ContractProvider) {
+    const result = await provider.get("get_farming_minter_data", []);
 
     return {
-      nextItemIndex: result[0] as BN,
-      lastUpdateTime: result[1] as BN,
-      status: (result[2] as BN).toNumber(),
-      depositedNanorewards: result[3] as BN,
-      currentStakedTokens: result[4] as BN,
-      accruedPerUnitNanorewards: result[5] as BN,
-      accruedNanorewards: result[6] as BN,
-      claimedNanorewards: result[7] as BN,
-      contractUniqueId: result[8] as BN,
-      nanorewardsPer24h: result[9] as BN,
-      soulboundItems: parseBoolean(result[10]),
-      minStakeTime: result[11] as BN,
-      stakingTokenWallet: parseAddressNotNull(result[12]),
-      rewardTokenWallet: parseAddressNotNull(result[13]),
+      nextItemIndex: result.stack.readBigNumber(),
+      lastUpdateTime: result.stack.readBigNumber(),
+      status: result.stack.readNumber(),
+      depositedNanorewards: result.stack.readBigNumber(),
+      currentStakedTokens: result.stack.readBigNumber(),
+      accruedPerUnitNanorewards: result.stack.readBigNumber(),
+      accruedNanorewards: result.stack.readBigNumber(),
+      claimedNanorewards: result.stack.readBigNumber(),
+      contractUniqueId: result.stack.readBigNumber(),
+      nanorewardsPer24h: result.stack.readBigNumber(),
+      soulboundItems: result.stack.readBoolean(),
+      minStakeTime: result.stack.readBigNumber(),
+      stakingTokenWallet: result.stack.readAddress(),
+      rewardTokenWallet: result.stack.readAddress(),
     };
   }
 
   /**
    * @returns {Address} address of minter for staking jetton that is used for farming
    */
-  public async getStakingJettonAddress(): Promise<Address> {
-    const { stakingTokenWallet } = await this.getData();
+  public async getStakingJettonAddress(
+    provider: ContractProvider,
+  ): Promise<Address> {
+    const { stakingTokenWallet: stakingTokenWalletAddress } =
+      await this.getFarmingMinterData(provider);
 
-    const jettonWallet = new JettonWallet(this.provider, {
-      address: stakingTokenWallet,
-    });
+    const { jettonMasterAddress } = await provider
+      .open(JettonWallet.create(stakingTokenWalletAddress))
+      .getWalletData();
 
-    const { jettonMinterAddress } = await jettonWallet.getData();
-
-    return jettonMinterAddress;
+    return jettonMasterAddress;
   }
 }

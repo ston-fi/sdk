@@ -1,12 +1,7 @@
-import TonWeb from "tonweb";
+import { beginCell, type Cell } from "@ton/ton";
 
-import type { AddressType, QueryIdType, AmountType, Cell } from "@/types";
-
-const {
-  utils: { BN },
-  boc: { Cell },
-  Address,
-} = TonWeb;
+import type { AddressType, QueryIdType, AmountType } from "@/types";
+import { toAddress } from "@/utils/toAddress";
 
 /**
  * Implements `transfer` function from Jettons Standard.
@@ -25,33 +20,33 @@ export function createJettonTransferMessage(params: {
   forwardTonAmount: AmountType;
   forwardPayload?: Cell;
 }) {
-  const message = new Cell();
+  const builder = beginCell();
 
-  message.bits.writeUint(0xf8a7ea5, 32);
-  message.bits.writeUint(params.queryId, 64);
-  message.bits.writeCoins(new BN(params.amount));
-  message.bits.writeAddress(new Address(params.destination));
-  message.bits.writeAddress(
+  builder.storeUint(0xf8a7ea5, 32);
+  builder.storeUint(params.queryId, 64);
+  builder.storeCoins(BigInt(params.amount));
+  builder.storeAddress(toAddress(params.destination));
+  builder.storeAddress(
     params.responseDestination
-      ? new Address(params.responseDestination)
+      ? toAddress(params.responseDestination)
       : undefined,
   );
 
   if (params.customPayload) {
-    message.refs.push(params.customPayload);
-    message.bits.writeBit(true);
+    builder.storeBit(true);
+    builder.storeRef(params.customPayload);
   } else {
-    message.bits.writeBit(false);
+    builder.storeBit(false);
   }
 
-  message.bits.writeCoins(new BN(params.forwardTonAmount));
+  builder.storeCoins(BigInt(params.forwardTonAmount));
 
   if (params.forwardPayload) {
-    message.refs.push(params.forwardPayload);
-    message.bits.writeBit(true);
+    builder.storeBit(true);
+    builder.storeRef(params.forwardPayload);
   } else {
-    message.bits.writeBit(false);
+    builder.storeBit(false);
   }
 
-  return message;
+  return builder.endCell();
 }

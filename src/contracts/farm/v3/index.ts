@@ -1,7 +1,7 @@
-import { FarmNftMinterV3 } from "./FarmNftMinterV3";
 import { FarmNftItemV3 } from "./FarmNftItemV3";
+import { FarmNftMinterV3 } from "./FarmNftMinterV3";
 
 export const FARM = {
-  NftMinter: FarmNftMinterV3,
   NftItem: FarmNftItemV3,
+  NftMinter: FarmNftMinterV3,
 } as const;

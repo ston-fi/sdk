@@ -1,54 +1,44 @@
-import TonWeb, { type NftItemOptions } from "tonweb";
+import {
+  type Cell,
+  type ContractProvider,
+  type Sender,
+  type SenderArguments,
+  beginCell,
+  toNano,
+} from "@ton/ton";
 
-import type {
-  BN,
-  Cell,
-  QueryIdType,
-  MessageData,
-  SdkContractOptions,
-  AmountType,
-} from "@/types";
-import { StonApiClient } from "@/StonApiClient";
-import { parseBoolean } from "@/utils/parseBoolean";
+import { Contract, type ContractOptions } from "@/contracts/core/Contract";
+import type { AddressType, AmountType, QueryIdType } from "@/types";
 
 import { FARM_OP_CODES, FARM_VERSION } from "../constants";
 
-const {
-  boc: { Cell },
-  utils: { BN, Address },
-  token: {
-    nft: { NftItem },
-  },
-} = TonWeb;
-
-export interface FarmNftItemV1Options
-  extends SdkContractOptions,
-    NftItemOptions {
+export interface FarmNftItemV1Options extends ContractOptions {
   gasConstants?: Partial<typeof FarmNftItemV1.gasConstants>;
 }
 
-export class FarmNftItemV1 extends NftItem {
+/**
+ * @deprecated `v1` version of the FarmNftItem contracts is deprecated.
+ *
+ * Only use this version to claim rewards and unstake tokens from the contract.
+ * For all other operations, use the latest version of the contract.
+ */
+export class FarmNftItemV1 extends Contract {
   public static readonly version: FARM_VERSION = FARM_VERSION.v1;
 
   public static readonly gasConstants = {
-    claimRewards: new BN("300000000"),
-    unstake: new BN("400000000"),
-    destroy: new BN("50000000"),
+    claimRewards: toNano("0.3"),
+    unstake: toNano("0.4"),
+    destroy: toNano("0.05"),
   };
-
-  protected readonly stonApiClient;
 
   public readonly gasConstants;
 
-  constructor({
-    tonApiClient,
-    stonApiClient,
-    gasConstants,
-    ...options
-  }: FarmNftItemV1Options) {
-    super(tonApiClient, options);
+  constructor(
+    address: AddressType,
+    { gasConstants, ...options }: FarmNftItemV1Options = {},
+  ) {
+    super(address, options);
 
-    this.stonApiClient = stonApiClient ?? new StonApiClient(tonApiClient);
     this.gasConstants = {
       ...FarmNftItemV1.gasConstants,
       ...gasConstants,
@@ -58,80 +48,91 @@ export class FarmNftItemV1 extends NftItem {
   public async createClaimRewardsBody(params?: {
     queryId?: QueryIdType;
   }): Promise<Cell> {
-    const message = new Cell();
-
-    message.bits.writeUint(FARM_OP_CODES.CLAIM_REWARDS, 32);
-    message.bits.writeUint(params?.queryId ?? 0, 64);
-
-    return message;
+    return beginCell()
+      .storeUint(FARM_OP_CODES.CLAIM_REWARDS, 32)
+      .storeUint(BigInt(params?.queryId ?? 0), 64)
+      .endCell();
   }
 
   /**
    * Build all data required to execute a `claim_rewards` transaction.
    *
-   * @param {BN | number | string | undefined} params.gasAmount - Optional; Custom transaction gas amount (in nanoTons)
-   * @param {BN | number | undefined} params.queryId - Optional; query id
+   * @param {bigint | number | string | undefined} params.gasAmount - Optional; Custom transaction gas amount (in nanoTons)
+   * @param {bigint | number | undefined} params.queryId - Optional; query id
    *
-   * @returns {MessageData} all data required to execute a `claim_rewards` transaction.
+   * @returns {SenderArguments} all data required to execute a `claim_rewards` transaction.
    */
-  public async buildClaimRewardsTxParams(params?: {
-    gasAmount?: AmountType;
-    queryId?: QueryIdType;
-  }): Promise<MessageData> {
-    const to = await this.getAddress();
+  public async getClaimRewardsTxParams(
+    provider: ContractProvider,
+    params?: {
+      gasAmount?: AmountType;
+      queryId?: QueryIdType;
+    },
+  ): Promise<SenderArguments> {
+    const to = this.address;
 
-    const payload = await this.createClaimRewardsBody({
+    const body = await this.createClaimRewardsBody({
       queryId: params?.queryId,
     });
 
-    const gasAmount = new BN(
-      params?.gasAmount ?? this.gasConstants.claimRewards,
-    );
+    const value = BigInt(params?.gasAmount ?? this.gasConstants.claimRewards);
 
-    return {
-      to: new Address(to.toString(true, true, true)),
-      payload,
-      gasAmount,
-    };
+    return { to, value, body };
+  }
+
+  public async sendClaimRewards(
+    provider: ContractProvider,
+    via: Sender,
+    params: Parameters<FarmNftItemV1["getClaimRewardsTxParams"]>[1],
+  ) {
+    const txParams = await this.getClaimRewardsTxParams(provider, params);
+
+    return via.send(txParams);
   }
 
   public async createUnstakeBody(params?: {
     queryId?: QueryIdType;
   }): Promise<Cell> {
-    const message = new Cell();
-
-    message.bits.writeUint(FARM_OP_CODES.UNSTAKE, 32);
-    message.bits.writeUint(params?.queryId ?? 0, 64);
-
-    return message;
+    return beginCell()
+      .storeUint(FARM_OP_CODES.UNSTAKE, 32)
+      .storeUint(BigInt(params?.queryId ?? 0), 64)
+      .endCell();
   }
 
   /**
    * Build all data required to execute a `unstake` transaction.
    *
-   * @param {BN | number | string | undefined} params.gasAmount - Optional; Custom transaction gas amount (in nanoTons)
-   * @param {BN | number | undefined} params.queryId - Optional; query id
+   * @param {bigint | number | string | undefined} params.gasAmount - Optional; Custom transaction gas amount (in nanoTons)
+   * @param {bigint | number | undefined} params.queryId - Optional; query id
    *
-   * @returns {MessageData} all data required to execute a `unstake` transaction.
+   * @returns {SenderArguments} all data required to execute a `unstake` transaction.
    */
-  public async buildUnstakeTxParams(params?: {
-    gasAmount?: AmountType;
-    queryId?: QueryIdType;
-  }): Promise<MessageData> {
-    const to = await this.getAddress();
+  public async getUnstakeTxParams(
+    provider: ContractProvider,
+    params?: {
+      gasAmount?: AmountType;
+      queryId?: QueryIdType;
+    },
+  ): Promise<SenderArguments> {
+    const to = this.address;
 
-    const payload = await this.createUnstakeBody({
+    const body = await this.createUnstakeBody({
       queryId: params?.queryId,
     });
 
-    const gasAmount = new BN(params?.gasAmount ?? this.gasConstants.unstake);
+    const value = BigInt(params?.gasAmount ?? this.gasConstants.unstake);
 
-    return {
-      to: new Address(to.toString(true, true, true)),
+    return { to, value, body };
+  }
 
-      payload,
-      gasAmount,
-    };
+  public async sendUnstake(
+    provider: ContractProvider,
+    via: Sender,
+    params: Parameters<FarmNftItemV1["getUnstakeTxParams"]>[1],
+  ) {
+    const txParams = await this.getUnstakeTxParams(provider, params);
+
+    return via.send(txParams);
   }
 
   /**
@@ -139,22 +140,17 @@ export class FarmNftItemV1 extends NftItem {
    *
    * @property {number} status Status of the contract: uninitialized `0`, active `1`, unstaked `2`, claiming `3`
    * @property {boolean} isSoulbound If nft is soulbound
-   * @property {BN} stakedTokens Amount of staked tokens
-   * @property {BN} claimedPerUnitNanorewards `accrued_per_unit_nanorewards` at the time the user made the stake or last claimed rewards
+   * @property {bigint} stakedTokens Amount of staked tokens
+   * @property {bigint} claimedPerUnitNanorewards `accrued_per_unit_nanorewards` at the time the user made the stake or last claimed rewards
    */
-  public async getFarmingData() {
-    const contractAddress = await this.getAddress();
-
-    const result = await this.provider.call2(
-      contractAddress.toString(),
-      "get_farming_data",
-    );
+  public async getFarmingData(provider: ContractProvider) {
+    const result = await provider.get("get_farming_data", []);
 
     return {
-      status: (result[0] as BN).toNumber(),
-      isSoulbound: parseBoolean(result[1]),
-      stakedTokens: result[2] as BN,
-      claimedPerUnitNanorewards: result[3] as BN,
+      status: result.stack.readNumber(),
+      isSoulbound: result.stack.readBoolean(),
+      stakedTokens: result.stack.readBigNumber(),
+      claimedPerUnitNanorewards: result.stack.readBigNumber(),
     };
   }
 }

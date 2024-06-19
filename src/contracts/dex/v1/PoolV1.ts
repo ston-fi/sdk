@@ -1,31 +1,22 @@
-import TonWeb, { type ContractOptions } from "tonweb";
+import {
+  type Cell,
+  type ContractProvider,
+  type Sender,
+  type SenderArguments,
+  beginCell,
+  toNano,
+} from "@ton/ton";
 
-import type {
-  BN,
-  Cell,
-  MessageData,
-  AddressType,
-  QueryIdType,
-  AmountType,
-  SdkContractOptions,
-} from "@/types";
-import { StonApiClient } from "@/StonApiClient";
-import { parseAddress, parseAddressNotNull } from "@/utils/parseAddress";
+import type { ContractOptions } from "@/contracts/core/Contract";
+import { JettonMinter } from "@/contracts/core/JettonMinter";
+import { JettonWallet } from "@/contracts/core/JettonWallet";
+import type { AddressType, AmountType, QueryIdType } from "@/types";
+import { toAddress } from "@/utils/toAddress";
 
-import { DEX_VERSION, DEX_OP_CODES } from "../constants";
+import { DEX_OP_CODES, DEX_VERSION } from "../constants";
 import { LpAccountV1 } from "./LpAccountV1";
 
-const {
-  utils: { BN, bytesToBase64 },
-  boc: { Cell },
-  Address,
-  token: {
-    jetton: { JettonMinter, JettonWallet },
-  },
-} = TonWeb;
-
-export interface PoolV1Options extends SdkContractOptions, ContractOptions {
-  address: Required<ContractOptions>["address"];
+export interface PoolV1Options extends ContractOptions {
   gasConstants?: Partial<typeof PoolV1.gasConstants>;
 }
 
@@ -38,27 +29,18 @@ export interface PoolV1Options extends SdkContractOptions, ContractOptions {
 export class PoolV1 extends JettonMinter {
   public static readonly version = DEX_VERSION.v1;
   public static readonly gasConstants = {
-    collectFees: new BN("1100000000"),
-    burn: new BN("500000000"),
+    collectFees: toNano("1.1"),
+    burn: toNano("0.5"),
   };
-
-  protected readonly stonApiClient;
 
   public readonly gasConstants;
 
-  constructor({
-    tonApiClient,
-    stonApiClient,
-    gasConstants,
-    ...options
-  }: PoolV1Options) {
-    super(
-      tonApiClient,
-      // @ts-expect-error - not all parameters are really required here
-      options,
-    );
+  constructor(
+    address: AddressType,
+    { gasConstants, ...options }: PoolV1Options = {},
+  ) {
+    super(address, options);
 
-    this.stonApiClient = stonApiClient ?? new StonApiClient(tonApiClient);
     this.gasConstants = {
       ...PoolV1.gasConstants,
       ...gasConstants,
@@ -68,41 +50,46 @@ export class PoolV1 extends JettonMinter {
   public async createCollectFeesBody(params?: {
     queryId?: QueryIdType;
   }): Promise<Cell> {
-    const message = new Cell();
-
-    message.bits.writeUint(DEX_OP_CODES.COLLECT_FEES, 32);
-    message.bits.writeUint(params?.queryId ?? 0, 64);
-
-    return message;
+    return beginCell()
+      .storeUint(DEX_OP_CODES.COLLECT_FEES, 32)
+      .storeUint(params?.queryId ?? 0, 64)
+      .endCell();
   }
 
   /**
    * Build all data required to execute a `collect_fees` transaction.
    *
-   * @param {BN | number | string | undefined} params.gasAmount - Optional; Custom transaction gas amount (in nanoTons)
-   * @param {BN | number | undefined} params.queryId - Optional; query id
+   * @param {bigint | number | string | undefined} params.gasAmount - Optional; Custom transaction gas amount (in nanoTons)
+   * @param {bigint | number | undefined} params.queryId - Optional; query id
    *
-   * @returns {MessageData} all data required to execute a `collect_fees` transaction.
+   * @returns {SenderArguments} all data required to execute a `collect_fees` transaction.
    */
-  public async buildCollectFeeTxParams(params?: {
-    gasAmount?: AmountType;
-    queryId?: QueryIdType;
-  }): Promise<MessageData> {
-    const to = await this.getAddress();
+  public async getCollectFeeTxParams(
+    provider: ContractProvider,
+    params?: {
+      gasAmount?: AmountType;
+      queryId?: QueryIdType;
+    },
+  ): Promise<SenderArguments> {
+    const to = this.address;
 
-    const payload = await this.createCollectFeesBody({
+    const body = await this.createCollectFeesBody({
       queryId: params?.queryId,
     });
 
-    const gasAmount = new BN(
-      params?.gasAmount ?? this.gasConstants.collectFees,
-    );
+    const value = BigInt(params?.gasAmount ?? this.gasConstants.collectFees);
 
-    return {
-      to: new Address(to.toString(true, true, true)),
-      payload,
-      gasAmount,
-    };
+    return { to, value, body };
+  }
+
+  public async sendCollectFees(
+    provider: ContractProvider,
+    via: Sender,
+    params: Parameters<PoolV1["getCollectFeeTxParams"]>[1],
+  ) {
+    const txParams = await this.getCollectFeeTxParams(provider, params);
+
+    return via.send(txParams);
   }
 
   public async createBurnBody(params: {
@@ -110,42 +97,35 @@ export class PoolV1 extends JettonMinter {
     responseAddress: AddressType;
     queryId?: QueryIdType;
   }): Promise<Cell> {
-    const message = new Cell();
-
-    message.bits.writeUint(DEX_OP_CODES.REQUEST_BURN, 32);
-    message.bits.writeUint(params.queryId ?? 0, 64);
-    message.bits.writeCoins(new BN(params.amount));
-    message.bits.writeAddress(new Address(params.responseAddress));
-
-    return message;
+    return beginCell()
+      .storeUint(DEX_OP_CODES.REQUEST_BURN, 32)
+      .storeUint(params?.queryId ?? 0, 64)
+      .storeCoins(BigInt(params.amount))
+      .storeAddress(toAddress(params.responseAddress))
+      .endCell();
   }
 
   /**
    * Build all data required to execute a `burn` transaction.
    *
-   * @param {BN | number} params.amount - Amount of lp tokens to burn (in basic token units)
+   * @param {bigint | number} params.amount - Amount of lp tokens to burn (in basic token units)
    * @param {Address | string} params.responseAddress - Address of a user
-   * @param {BN | number | string | undefined} params.gasAmount - Optional; Custom transaction gas amount (in nanoTons)
-   * @param {BN | number | undefined} params.queryId - Optional; query id
+   * @param {bigint | number | string | undefined} params.gasAmount - Optional; Custom transaction gas amount (in nanoTons)
+   * @param {bigint | number | undefined} params.queryId - Optional; query id
    *
-   * @returns {MessageData} all data required to execute a `burn` transaction.
+   * @returns {SenderArguments} all data required to execute a `burn` transaction.
    */
-  public async buildBurnTxParams(params: {
-    amount: AmountType;
-    responseAddress: AddressType;
-    gasAmount?: AmountType;
-    queryId?: QueryIdType;
-  }): Promise<MessageData> {
-    const contractAddress = await this.getAddress();
-
-    const [to, payload] = await Promise.all([
-      (async () =>
-        new Address(
-          await this.stonApiClient.getJettonWalletAddress({
-            jettonAddress: contractAddress.toString(),
-            ownerAddress: params.responseAddress.toString(),
-          }),
-        ))(),
+  public async getBurnTxParams(
+    provider: ContractProvider,
+    params: {
+      amount: AmountType;
+      responseAddress: AddressType;
+      gasAmount?: AmountType;
+      queryId?: QueryIdType;
+    },
+  ): Promise<SenderArguments> {
+    const [to, body] = await Promise.all([
+      this.getWalletAddress(provider, params.responseAddress),
       this.createBurnBody({
         amount: params.amount,
         responseAddress: params.responseAddress,
@@ -153,162 +133,158 @@ export class PoolV1 extends JettonMinter {
       }),
     ]);
 
-    const gasAmount = new BN(params.gasAmount ?? this.gasConstants.burn);
+    const value = BigInt(params.gasAmount ?? this.gasConstants.burn);
 
-    return {
-      to: new Address(to.toString(true, true, true)),
-      payload,
-      gasAmount,
-    };
+    return { to, value, body };
+  }
+
+  public async sendBurn(
+    provider: ContractProvider,
+    via: Sender,
+    params: Parameters<PoolV1["getBurnTxParams"]>[1],
+  ) {
+    const txParams = await this.getBurnTxParams(provider, params);
+
+    return via.send(txParams);
   }
 
   /**
    * Estimate expected result of the amount of jettonWallet tokens swapped to the other type of tokens of the pool
    *
-   * @param {BN | number} params.amount - Amount of tokens to swap (in basic token units)
+   * @param {bigint | number} params.amount - Amount of tokens to swap (in basic token units)
    * @param {Address | string} params.jettonWallet - Token Jetton address (must be equal to one of the Jetton addresses of the pool)
    *
-   * @returns {ExpectedOutputsData} structure with expected result of a token swap
+   * @returns structure with expected result of a token swap
    */
-  public async getExpectedOutputs(params: {
-    amount: AmountType;
-    jettonWallet: AddressType;
-  }) {
-    const cell = new Cell();
-
-    cell.bits.writeAddress(new Address(params.jettonWallet));
-
-    const slice = bytesToBase64(await cell.toBoc(false));
-
-    const poolAddress = await this.getAddress();
-
-    const result = await this.provider.call2(
-      poolAddress.toString(),
-      "get_expected_outputs",
-      [
-        ["int", params.amount.toString()],
-        ["tvm.Slice", slice],
-      ],
-    );
+  public async getExpectedOutputs(
+    provider: ContractProvider,
+    params: {
+      amount: AmountType;
+      jettonWallet: AddressType;
+    },
+  ) {
+    const result = await provider.get("get_expected_outputs", [
+      { type: "int", value: BigInt(params.amount) },
+      {
+        type: "slice",
+        cell: beginCell()
+          .storeAddress(toAddress(params.jettonWallet))
+          .endCell(),
+      },
+    ]);
 
     return {
-      jettonToReceive: result[0] as BN,
-      protocolFeePaid: result[1] as BN,
-      refFeePaid: result[2] as BN,
+      jettonToReceive: result.stack.readBigNumber(),
+      protocolFeePaid: result.stack.readBigNumber(),
+      refFeePaid: result.stack.readBigNumber(),
     };
   }
 
   /**
    * Estimate an expected amount of lp tokens minted when providing liquidity.
    *
-   * @param {BN | number} params.amount0 - Amount of tokens for the first Jetton (in basic token units)
-   * @param {BN | number} params.amount1 - Amount of tokens for the second Jetton (in basic token units)
+   * @param {bigint | number} params.amount0 - Amount of tokens for the first Jetton (in basic token units)
+   * @param {bigint | number} params.amount1 - Amount of tokens for the second Jetton (in basic token units)
    *
-   * @returns {BN} an estimated amount of liquidity tokens to be minted
+   * @returns {bigint} an estimated amount of liquidity tokens to be minted
    */
-  public async getExpectedTokens(params: {
-    amount0: AmountType;
-    amount1: AmountType;
-  }) {
-    const poolAddress = await this.getAddress();
+  public async getExpectedTokens(
+    provider: ContractProvider,
+    params: {
+      amount0: AmountType;
+      amount1: AmountType;
+    },
+  ) {
+    const result = await provider.get("get_expected_tokens", [
+      { type: "int", value: BigInt(params.amount0) },
+      { type: "int", value: BigInt(params.amount1) },
+    ]);
 
-    const result = await this.provider.call2(
-      poolAddress.toString(),
-      "get_expected_tokens",
-      [
-        ["int", params.amount0.toString()],
-        ["int", params.amount1.toString()],
-      ],
-    );
-
-    return result as BN;
+    return result.stack.readBigNumber();
   }
 
   /**
    * Estimate expected liquidity freed upon burning liquidity tokens.
    *
-   * @param {BN | number} params.jettonAmount - Amount of liquidity tokens (in basic token units)
+   * @param {bigint | number} params.jettonAmount - Amount of liquidity tokens (in basic token units)
    *
-   * @returns {PoolAmountsData} structure with expected freed liquidity
+   * @returns structure with expected freed liquidity
    */
-  public async getExpectedLiquidity(params: {
-    jettonAmount: AmountType;
-  }) {
-    const poolAddress = await this.getAddress();
-
-    const result = await this.provider.call2(
-      poolAddress.toString(),
-      "get_expected_liquidity",
-      [["int", params.jettonAmount.toString()]],
-    );
+  public async getExpectedLiquidity(
+    provider: ContractProvider,
+    params: {
+      jettonAmount: AmountType;
+    },
+  ) {
+    const result = await provider.get("get_expected_liquidity", [
+      { type: "int", value: BigInt(params.jettonAmount) },
+    ]);
 
     return {
-      amount0: result[0] as BN,
-      amount1: result[1] as BN,
+      amount0: result.stack.readBigNumber(),
+      amount1: result.stack.readBigNumber(),
     };
   }
 
   /**
    * @param {Address | string} params.ownerAddress - Address of a user
    *
-   * @returns the lp account address of a user
+   * @returns {Address} the lp account address of a user
    */
-  public async getLpAccountAddress(params: {
-    ownerAddress: AddressType;
-  }) {
-    const cell = new Cell();
+  public async getLpAccountAddress(
+    provider: ContractProvider,
+    params: {
+      ownerAddress: AddressType;
+    },
+  ) {
+    const result = await provider.get("get_lp_account_address", [
+      {
+        type: "slice",
+        cell: beginCell()
+          .storeAddress(toAddress(params.ownerAddress))
+          .endCell(),
+      },
+    ]);
 
-    cell.bits.writeAddress(new Address(params.ownerAddress));
-
-    const slice = bytesToBase64(await cell.toBoc(false));
-
-    const poolAddress = await this.getAddress();
-
-    const result = await this.provider.call2(
-      poolAddress.toString(),
-      "get_lp_account_address",
-      [["tvm.Slice", slice]],
-    );
-
-    return parseAddress(result);
+    return result.stack.readAddress();
   }
 
   /**
    * @param {Address | string} params.ownerAddress - Address of a user
    *
-   * @returns a JettonWallet object for an address returned by getJettonWalletAddress
+   * @returns {JettonWallet} a JettonWallet instance with address returned by getJettonWalletAddress
    */
-  public async getJettonWallet(params: { ownerAddress: AddressType }) {
-    const poolWalletAddress = await this.stonApiClient.getJettonWalletAddress({
-      jettonAddress: (await this.getAddress()).toString(),
-      ownerAddress: params.ownerAddress.toString(),
-    });
+  public async getJettonWallet(
+    provider: ContractProvider,
+    params: {
+      ownerAddress: AddressType;
+    },
+  ) {
+    const jettonWalletAddress = await this.getWalletAddress(
+      provider,
+      params.ownerAddress,
+    );
 
-    return new JettonWallet(this.provider, { address: poolWalletAddress });
+    return JettonWallet.create(jettonWalletAddress);
   }
 
   /**
    * @returns structure containing current state of the pool.
    */
-  public async getData() {
-    const contractAddress = await this.getAddress();
-
-    const result = await this.provider.call2(
-      contractAddress.toString(),
-      "get_pool_data",
-    );
+  public async getPoolData(provider: ContractProvider) {
+    const result = await provider.get("get_pool_data", []);
 
     return {
-      reserve0: result[0] as BN,
-      reserve1: result[1] as BN,
-      token0WalletAddress: parseAddressNotNull(result[2] as Cell),
-      token1WalletAddress: parseAddressNotNull(result[3] as Cell),
-      lpFee: result[4] as BN,
-      protocolFee: result[5] as BN,
-      refFee: result[6] as BN,
-      protocolFeeAddress: parseAddress(result[7]),
-      collectedToken0ProtocolFee: result[8] as BN,
-      collectedToken1ProtocolFee: result[9] as BN,
+      reserve0: result.stack.readBigNumber(),
+      reserve1: result.stack.readBigNumber(),
+      token0WalletAddress: result.stack.readAddress(),
+      token1WalletAddress: result.stack.readAddress(),
+      lpFee: result.stack.readBigNumber(),
+      protocolFee: result.stack.readBigNumber(),
+      refFee: result.stack.readBigNumber(),
+      protocolFeeAddress: result.stack.readAddress(),
+      collectedToken0ProtocolFee: result.stack.readBigNumber(),
+      collectedToken1ProtocolFee: result.stack.readBigNumber(),
     };
   }
 
@@ -317,17 +293,14 @@ export class PoolV1 extends JettonMinter {
    *
    * @returns {LpAccount} object for address returned by getLpAccountAddress
    */
-  public async getLpAccount(params: {
-    ownerAddress: AddressType;
-  }) {
-    const accountAddress = await this.getLpAccountAddress(params);
+  public async getLpAccount(
+    provider: ContractProvider,
+    params: {
+      ownerAddress: AddressType;
+    },
+  ) {
+    const lpAccountAddress = await this.getLpAccountAddress(provider, params);
 
-    if (!accountAddress) return null;
-
-    return new LpAccountV1({
-      tonApiClient: this.provider,
-      stonApiClient: this.stonApiClient,
-      address: accountAddress,
-    });
+    return LpAccountV1.create(lpAccountAddress);
   }
 }

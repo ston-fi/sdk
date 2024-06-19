@@ -1,19 +1,13 @@
-import TonWeb from "tonweb";
+import { address, beginCell } from "@ton/ton";
 import { describe, it, expect } from "vitest";
 
 import { createJettonTransferMessage } from "./createJettonTransferMessage";
 
-const {
-  utils: { BN, bytesToBase64 },
-  boc: { Cell },
-  Address,
-} = TonWeb;
-
 describe("createJettonTransferMessage", () => {
   const queryId = 1;
-  const amount = new BN(1000000000);
+  const amount = BigInt("1000000000");
   const destination = "EQB3YmWW5ZLhe2gPUAw550e2doyWnkj5hzv3TXp2ekpAWe7v";
-  const forwardTonAmount = new BN(500000000);
+  const forwardTonAmount = BigInt("500000000");
 
   it("should create message with expected content with all required fields", async () => {
     const message = await createJettonTransferMessage({
@@ -23,14 +17,12 @@ describe("createJettonTransferMessage", () => {
       forwardTonAmount,
     });
 
-    expect(message).toBeInstanceOf(Cell);
-    expect(bytesToBase64(await message.toBoc())).toMatchInlineSnapshot(
-      '"te6ccsEBAQEAOQAAAG0Pin6lAAAAAAAAAAFDuaygCADuxMstyyXC9tAeoBhzzo9s7RktPJHzDnfumvTs9JSAshB3NZQBUGLNgw=="',
+    expect(message.toBoc().toString("base64")).toMatchInlineSnapshot(
+      '"te6cckEBAQEAOQAAbQ+KfqUAAAAAAAAAAUO5rKAIAO7Eyy3LJcL20B6gGHPOj2ztGS08kfMOd+6a9Oz0lICyEHc1lAGwz8AH"',
     );
   });
 
-  const customPayload = new Cell();
-  customPayload.bits.writeUint(1, 32);
+  const customPayload = beginCell().storeUint(1, 32).endCell();
 
   it("should create message with expected content when customPayload is defined", async () => {
     const message = await createJettonTransferMessage({
@@ -41,14 +33,12 @@ describe("createJettonTransferMessage", () => {
       customPayload,
     });
 
-    expect(message).toBeInstanceOf(Cell);
-    expect(bytesToBase64(await message.toBoc())).toMatchInlineSnapshot(
-      '"te6ccsEBAgEAQAAAOgFtD4p+pQAAAAAAAAABQ7msoAgA7sTLLcslwvbQHqAYc86PbO0ZLTyR8w537pr07PSUgLJQdzWUAQEACAAAAAHNYDxa"',
+    expect(message.toBoc().toString("base64")).toMatchInlineSnapshot(
+      '"te6cckEBAgEAQAABbQ+KfqUAAAAAAAAAAUO5rKAIAO7Eyy3LJcL20B6gGHPOj2ztGS08kfMOd+6a9Oz0lICyUHc1lAEBAAgAAAABFDJIHA=="',
     );
   });
 
-  const forwardPayload = new Cell();
-  forwardPayload.bits.writeUint(2, 32);
+  const forwardPayload = beginCell().storeUint(2, 32).endCell();
 
   it("should create message with expected content when forwardPayload is defined", async () => {
     const message = await createJettonTransferMessage({
@@ -59,13 +49,12 @@ describe("createJettonTransferMessage", () => {
       forwardPayload,
     });
 
-    expect(message).toBeInstanceOf(Cell);
-    expect(bytesToBase64(await message.toBoc())).toMatchInlineSnapshot(
-      '"te6ccsEBAgEAQAAAOgFtD4p+pQAAAAAAAAABQ7msoAgA7sTLLcslwvbQHqAYc86PbO0ZLTyR8w537pr07PSUgLIQdzWUAwEACAAAAAI7CbO/"',
+    expect(message.toBoc().toString("base64")).toMatchInlineSnapshot(
+      '"te6cckEBAgEAQAABbQ+KfqUAAAAAAAAAAUO5rKAIAO7Eyy3LJcL20B6gGHPOj2ztGS08kfMOd+6a9Oz0lICyEHc1lAMBAAgAAAAC4lvH+Q=="',
     );
   });
 
-  const responseDestination = new Address(
+  const responseDestination = address(
     "EQAQnxLqlX2B6w4jQzzzPWA8eyWZVZBz6Y0D_8noARLOaB3i",
   );
 
@@ -78,9 +67,8 @@ describe("createJettonTransferMessage", () => {
       responseDestination,
     });
 
-    expect(message).toBeInstanceOf(Cell);
-    expect(bytesToBase64(await message.toBoc())).toMatchInlineSnapshot(
-      '"te6ccsEBAQEAWgAAALAPin6lAAAAAAAAAAFDuaygCADuxMstyyXC9tAeoBhzzo9s7RktPJHzDnfumvTs9JSAswAEJ8S6pV9gesOI0M88z1gPHslmVWQc+mNA//J6AESzmgg7msoAPPnA8g=="',
+    expect(message.toBoc().toString("base64")).toMatchInlineSnapshot(
+      '"te6cckEBAQEAWgAAsA+KfqUAAAAAAAAAAUO5rKAIAO7Eyy3LJcL20B6gGHPOj2ztGS08kfMOd+6a9Oz0lICzAAQnxLqlX2B6w4jQzzzPWA8eyWZVZBz6Y0D/8noARLOaCDuaygBjL74c"',
     );
   });
 
@@ -95,9 +83,8 @@ describe("createJettonTransferMessage", () => {
       forwardPayload,
     });
 
-    expect(message).toBeInstanceOf(Cell);
-    expect(bytesToBase64(await message.toBoc())).toMatchInlineSnapshot(
-      '"te6ccsEBAwEAaAAAXGICsA+KfqUAAAAAAAAAAUO5rKAIAO7Eyy3LJcL20B6gGHPOj2ztGS08kfMOd+6a9Oz0lICzAAQnxLqlX2B6w4jQzzzPWA8eyWZVZBz6Y0D/8noARLOaKDuaygEBAgAIAAAAAQAIAAAAAmQoBQo="',
+    expect(message.toBoc().toString("base64")).toMatchInlineSnapshot(
+      '"te6cckEBAwEAaAACsA+KfqUAAAAAAAAAAUO5rKAIAO7Eyy3LJcL20B6gGHPOj2ztGS08kfMOd+6a9Oz0lICzAAQnxLqlX2B6w4jQzzzPWA8eyWZVZBz6Y0D/8noARLOaKDuaygEBAgAIAAAAAQAIAAAAAiWo6pY="',
     );
   });
 });

@@ -30,7 +30,7 @@ export default defineConfig({
       ],
       formats: ["es", "cjs"],
     },
-    minify: true,
+    minify: false,
     sourcemap: true,
   },
 });
