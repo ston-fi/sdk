@@ -2,6 +2,9 @@
 
 ## [1.0.0]
 
+> **Breaking changes**
+> Please look at the **Changed** section or at the [step-by-step migration guide](https://docs.ston.fi/docs/developer-section/sdk/0.5-migration-guide)
+
 During the development of the DEX v2 contracts, we identified several feature gaps in the [tonweb](https://github.com/toncenter/tonweb) package, which our SDK relied on. Additionally, a survey within the DEV community revealed that most developers use the [ton-org](https://github.com/ton-org) packages in their projects. Consequently, we have decided to migrate from [tonweb](https://github.com/toncenter/tonweb) to [ton-org](https://github.com/ton-org) packages as our core dependency.
 
 We understand that this change may be unexpected and require additional work for some of you. However, we believe this move is necessary and beneficial in the long run. Our team has already completed this migration in our product, and it was a smooth transition. Moreover, projects already using the ton-center package will benefit from a significant reduction in dependencies.
