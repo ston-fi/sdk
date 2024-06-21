@@ -46,7 +46,7 @@ npm install @ston-fi/sdk@next
 
 ## Next steps
 
-- [DEX guide](https://docs.ston.fi/docs/developer-section/sdk/dex)
+- [DEX guide](https://docs.ston.fi/docs/developer-section/sdk/dex-v1)
 - [Transaction setting guide](https://docs.ston.fi/docs/developer-section/sdk/transaction-sending)
-- [Swap](https://docs.ston.fi/docs/developer-section/sdk/dex/swap)
-- [Provide liquidity](https://docs.ston.fi/docs/developer-section/sdk/dex/lp_provide)
+- [Swap](https://docs.ston.fi/docs/developer-section/sdk/dex-v1/swap)
+- [Provide liquidity](https://docs.ston.fi/docs/developer-section/sdk/dex-v1/lp_provide)
