@@ -1,5 +1,14 @@
 # Changelog
 
+## [2.0.0-rc.0]
+
+### Added
+
+- DEX v2 contracts (`Router`, `Pool`, `LpAccount`, `Vault`);
+You can find a full list of DEX  v2 features in our [DOCS](https://docs.ston.fi/docs/developer-section/api-reference-v2)
+
+- pTON v2 contract
+
 ## [1.0.0]
 
 > **Breaking changes**

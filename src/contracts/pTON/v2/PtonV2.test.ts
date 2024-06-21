@@ -11,51 +11,45 @@ import {
 
 import { pTON_VERSION } from "../constants";
 
-import { PtonV1 } from "./PtonV1";
-import { toAddress } from "@/utils/toAddress";
+import { PtonV2 } from "./PtonV2";
 
 const USER_WALLET_ADDRESS = "EQAQnxLqlX2B6w4jQzzzPWA8eyWZVZBz6Y0D_8noARLOaB3i";
+const PROXY_TON_ADDRESS = "EQDwpyxrmYQlGDViPk-oqP4XK6J11I-bx7fJAlQCWmJB4tVy";
 
-describe("PtonV1", () => {
+describe("PtonV2", () => {
   beforeAll(setup);
 
   describe("version", () => {
     it("should have expected static value", () => {
-      expect(PtonV1.version).toBe(pTON_VERSION.v1);
+      expect(PtonV2.version).toBe(pTON_VERSION.v2);
     });
   });
 
-  describe("address", () => {
+  describe("gasConstants", () => {
     it("should have expected static value", () => {
-      expect(PtonV1.address.toString()).toMatchInlineSnapshot(
-        '"EQCM3B12QK1e4yZSf8GtBRT0aLMNyEsBc_DhVfRRtOEffLez"',
+      expect(PtonV2.gasConstants.tonTransfer).toMatchInlineSnapshot(
+        "10000000n",
       );
     });
   });
 
   describe("create", () => {
-    it("should create an instance of PtonV1", () => {
-      const contract = PtonV1.create(PtonV1.address);
+    it("should create an instance of PtonV2", () => {
+      const contract = PtonV2.create(PtonV2.address);
 
-      expect(contract).toBeInstanceOf(PtonV1);
+      expect(contract).toBeInstanceOf(PtonV2);
     });
   });
 
   describe("constructor", () => {
-    it("should create an instance of PtonV1", () => {
-      const contract = new PtonV1();
+    it("should create an instance of PtonV2", () => {
+      const contract = new PtonV2(PROXY_TON_ADDRESS);
 
-      expect(contract).toBeInstanceOf(PtonV1);
-    });
-
-    it("should create an instance of PtonV1 with default address", () => {
-      const contract = new PtonV1();
-
-      expect(contract.address).toEqual(PtonV1.address);
+      expect(contract).toBeInstanceOf(PtonV2);
     });
 
     it("should create an instance of RouterV1 with given address", () => {
-      const contract = new PtonV1(USER_WALLET_ADDRESS);
+      const contract = new PtonV2(USER_WALLET_ADDRESS); // just an address, not a real pTON v2 contract
 
       expect(contract.address.toString()).toEqual(USER_WALLET_ADDRESS);
     });
@@ -69,52 +63,32 @@ describe("PtonV1", () => {
     };
 
     const getWalletAddressSnapshot = createProviderSnapshot().cell(
-      "te6cckEBAQEAJAAAQ4ANNPwBsCJlaV4Is5qsUUPuPdEGsgv4gpjyE/tn9VHWnzAClbSC",
+      "te6cckEBAQEAJAAAQ4AInphPXsxLvV8GYIv91ynjTlgXyM3PUU8BZds8WqBZJbCdAP60",
     );
 
     const provider = createMockProviderFromSnapshot((address, method) => {
-      if (
-        toAddress(address).equals(PtonV1.address) &&
-        method === "get_wallet_address"
-      )
+      if (address === PROXY_TON_ADDRESS && method === "get_wallet_address")
         return getWalletAddressSnapshot;
 
       throw new Error(`Unexpected call: ${address} ${method}`);
     });
 
     it("should build expected tx params", async () => {
-      const contract = provider.open(new PtonV1());
+      const contract = provider.open(new PtonV2(PROXY_TON_ADDRESS));
 
       const txParams = await contract.getTonTransferTxParams(txArgs);
 
       expect(txParams.to).toMatchInlineSnapshot(
-        '"EQBpp-ANgRMrSvBFnNViih9x7og1kF_EFMeQn9s_qo60-eML"',
+        '"EQBE9MJ69mJd6vgzBF_uuU8acsC-Rm56ingLLtni1QLJLbEL"',
       );
       expect(txParams.body?.toBoc().toString("base64")).toMatchInlineSnapshot(
-        '"te6cckEBAQEANQAAZQ+KfqUAAAAAAAAAAEO5rKAIAO87mQKicbKgHIk4pSPP4k5xhHqutqYgAB7USnesDnCcAdFEo1U="',
+        '"te6cckEBAQEANAAAYwHzg10AAAAAAAAAAEO5rKAIACE+JdUq+wPWHEaGeeZ6wHj2SzKrIOfTGgf/k9ACJZzRRFUPGw=="',
       );
-      expect(txParams.value).toMatchInlineSnapshot("1000000000n");
-    });
-
-    it("should build expected tx params when queryId is defined", async () => {
-      const contract = provider.open(new PtonV1());
-
-      const txParams = await contract.getTonTransferTxParams({
-        ...txArgs,
-        queryId: 12345,
-      });
-
-      expect(txParams.to).toMatchInlineSnapshot(
-        '"EQBpp-ANgRMrSvBFnNViih9x7og1kF_EFMeQn9s_qo60-eML"',
-      );
-      expect(txParams.body?.toBoc().toString("base64")).toMatchInlineSnapshot(
-        '"te6cckEBAQEANQAAZQ+KfqUAAAAAAAAwOUO5rKAIAO87mQKicbKgHIk4pSPP4k5xhHqutqYgAB7USnesDnCcAT6CEJk="',
-      );
-      expect(txParams.value).toMatchInlineSnapshot("1000000000n");
+      expect(txParams.value).toMatchInlineSnapshot("1010000000n");
     });
 
     it("should build expected tx params when forwardPayload is defined", async () => {
-      const contract = provider.open(new PtonV1());
+      const contract = provider.open(new PtonV2(PROXY_TON_ADDRESS));
 
       const txParams = await contract.getTonTransferTxParams({
         ...txArgs,
@@ -123,20 +97,37 @@ describe("PtonV1", () => {
       });
 
       expect(txParams.to).toMatchInlineSnapshot(
-        '"EQBpp-ANgRMrSvBFnNViih9x7og1kF_EFMeQn9s_qo60-eML"',
+        '"EQBE9MJ69mJd6vgzBF_uuU8acsC-Rm56ingLLtni1QLJLbEL"',
       );
       expect(txParams.body?.toBoc().toString("base64")).toMatchInlineSnapshot(
-        '"te6cckEBAgEAPAABbQ+KfqUAAAAAAAAAAEO5rKAIAO87mQKicbKgHIk4pSPP4k5xhHqutqYgAB7USnesDnCcEBfXhAMBAACDD/1r"',
+        '"te6cckEBAgEANwABZAHzg10AAAAAAAAAAEO5rKAIACE+JdUq+wPWHEaGeeZ6wHj2SzKrIOfTGgf/k9ACJZzRAQAAEQ6zpA=="',
       );
-      expect(txParams.value).toMatchInlineSnapshot("1100000000n");
+      expect(txParams.value).toMatchInlineSnapshot("1110000000n");
+    });
+
+    it("should build expected tx params when queryId is defined", async () => {
+      const contract = provider.open(new PtonV2(PROXY_TON_ADDRESS));
+
+      const txParams = await contract.getTonTransferTxParams({
+        ...txArgs,
+        queryId: 12345,
+      });
+
+      expect(txParams.to).toMatchInlineSnapshot(
+        '"EQBE9MJ69mJd6vgzBF_uuU8acsC-Rm56ingLLtni1QLJLbEL"',
+      );
+      expect(txParams.body?.toBoc().toString("base64")).toMatchInlineSnapshot(
+        '"te6cckEBAQEANAAAYwHzg10AAAAAAAAwOUO5rKAIACE+JdUq+wPWHEaGeeZ6wHj2SzKrIOfTGgf/k9ACJZzR24kJEw=="',
+      );
+      expect(txParams.value).toMatchInlineSnapshot("1010000000n");
     });
   });
 
   describe("sendTonTransfer", () => {
     it("should call getTonTransferTxParams and pass the result to the sender", async () => {
-      const txArgs = {} as Parameters<PtonV1["sendTonTransfer"]>[2];
+      const txArgs = {} as Parameters<PtonV2["sendTonTransfer"]>[2];
 
-      const contract = new PtonV1();
+      const contract = new PtonV2(PROXY_TON_ADDRESS);
 
       const getTonTransferTxParams = vi.spyOn(
         contract,

@@ -10,7 +10,7 @@ import {
 
 import { Contract, type ContractOptions } from "@/contracts/core/Contract";
 import { JettonMinter } from "@/contracts/core/JettonMinter";
-import type { PtonV1 } from "@/contracts/pTON/v1/PtonV1";
+import type { Pton } from "@/contracts/pTON/types";
 import type { AddressType, AmountType, QueryIdType } from "@/types";
 import { createJettonTransferMessage } from "@/utils/createJettonTransferMessage";
 import { toAddress } from "@/utils/toAddress";
@@ -194,7 +194,7 @@ export class RouterV1 extends Contract {
     params: {
       userWalletAddress: AddressType;
       offerJettonAddress: AddressType;
-      proxyTon: PtonV1;
+      proxyTon: Pton;
       offerAmount: AmountType;
       minAskAmount: AmountType;
       referralAddress?: AddressType;
@@ -242,7 +242,7 @@ export class RouterV1 extends Contract {
     provider: ContractProvider,
     params: {
       userWalletAddress: AddressType;
-      proxyTon: PtonV1;
+      proxyTon: Pton;
       askJettonAddress: AddressType;
       offerAmount: AmountType;
       minAskAmount: AmountType;
@@ -251,12 +251,9 @@ export class RouterV1 extends Contract {
       queryId?: QueryIdType;
     },
   ): Promise<SenderArguments> {
-    const [proxyTonWalletAddress, askJettonWalletAddress] = await Promise.all([
-      provider.open(params.proxyTon).getWalletAddress(this.address),
-      provider
-        .open(JettonMinter.create(params.askJettonAddress))
-        .getWalletAddress(this.address),
-    ]);
+    const askJettonWalletAddress = await provider
+      .open(JettonMinter.create(params.askJettonAddress))
+      .getWalletAddress(this.address);
 
     const forwardPayload = await this.createSwapBody({
       userWalletAddress: params.userWalletAddress,
@@ -270,21 +267,14 @@ export class RouterV1 extends Contract {
         this.gasConstants.swapTonToJetton.forwardGasAmount,
     );
 
-    const body = createJettonTransferMessage({
+    return await provider.open(params.proxyTon).getTonTransferTxParams({
       queryId: params.queryId ?? 0,
-      amount: params.offerAmount,
-      destination: this.address,
-      forwardTonAmount,
+      tonAmount: params.offerAmount,
+      destinationAddress: this.address,
+      refundAddress: params.userWalletAddress,
       forwardPayload,
+      forwardTonAmount,
     });
-
-    const value = BigInt(params.offerAmount) + forwardTonAmount;
-
-    return {
-      to: proxyTonWalletAddress,
-      value,
-      body,
-    };
   }
 
   public async sendSwapTonToJetton(
@@ -404,7 +394,7 @@ export class RouterV1 extends Contract {
     provider: ContractProvider,
     params: {
       userWalletAddress: AddressType;
-      proxyTon: PtonV1;
+      proxyTon: Pton;
       otherTokenAddress: AddressType;
       sendAmount: AmountType;
       minLpOut: AmountType;
@@ -412,12 +402,9 @@ export class RouterV1 extends Contract {
       queryId?: QueryIdType;
     },
   ): Promise<SenderArguments> {
-    const [proxyTonWalletAddress, routerWalletAddress] = await Promise.all([
-      provider.open(params.proxyTon).getWalletAddress(this.address),
-      provider
-        .open(JettonMinter.create(params.otherTokenAddress))
-        .getWalletAddress(this.address),
-    ]);
+    const routerWalletAddress = await provider
+      .open(JettonMinter.create(params.otherTokenAddress))
+      .getWalletAddress(this.address);
 
     const forwardPayload = await this.createProvideLiquidityBody({
       routerWalletAddress: routerWalletAddress,
@@ -429,21 +416,14 @@ export class RouterV1 extends Contract {
         this.gasConstants.provideLpTon.forwardGasAmount,
     );
 
-    const body = createJettonTransferMessage({
+    return await provider.open(params.proxyTon).getTonTransferTxParams({
       queryId: params.queryId ?? 0,
-      amount: params.sendAmount,
-      destination: this.address,
-      forwardTonAmount,
+      tonAmount: params.sendAmount,
+      destinationAddress: this.address,
+      refundAddress: params.userWalletAddress,
       forwardPayload,
+      forwardTonAmount,
     });
-
-    const value = BigInt(params.sendAmount) + forwardTonAmount;
-
-    return {
-      to: proxyTonWalletAddress,
-      value,
-      body,
-    };
   }
 
   public async sendProvideLiquidityTon(
