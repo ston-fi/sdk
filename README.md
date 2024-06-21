@@ -5,6 +5,8 @@
 [![TON](https://img.shields.io/badge/based%20on-TON-blue)](https://ton.org/)
 [![License](https://img.shields.io/npm/l/@ston-fi/sdk)](https://img.shields.io/npm/l/@ston-fi/sdk)
 [![npm version](https://img.shields.io/npm/v/@ston-fi/sdk/latest.svg)](https://www.npmjs.com/package/@ston-fi/sdk/v/latest)
+[![npm version](https://img.shields.io/npm/v/@ston-fi/sdk/next.svg)](https://www.npmjs.com/package/@ston-fi/sdk/v/next)
+
 
 The SDK is written in TypeScript and designed to be a thin wrapper on top of the [STON.fi](https://ston.fi/) contracts, which will help STON.fi protocol to be used more easily in JS/TS projects
 
@@ -32,6 +34,14 @@ yarn add @ston-fi/sdk
 
 ```bash
 pnpm install @ston-fi/sdk
+```
+
+### Installation of release candidate version
+
+Sometimes, we publish a release candidate version of the SDK package to give you early access to the next version. To install this version, you need to expressly specify that you are interested in the next version during the installation.
+
+```bash
+npm install @ston-fi/sdk@next
 ```
 
 ## Next steps
