@@ -13,7 +13,7 @@ import { DEX_VERSION } from "../../constants";
 import { LpAccountV2 } from "./LpAccountV2";
 
 const USER_WALLET_ADDRESS = "UQAQnxLqlX2B6w4jQzzzPWA8eyWZVZBz6Y0D_8noARLOaEAn";
-const LP_ACCOUNT_ADDRESS = "EQD9KyZJ3cwbaDphNjXa_nJvxApEUJOvFGZrcbDTuke6Fs7B"; // LP account of `USER_WALLET_ADDRESS` wallet for STON/GEMSTON pool
+const LP_ACCOUNT_ADDRESS = "EQAAPP517U137Zx7xkNgzm662hGlxuL20iiQDRtwemhWTPLx"; // LP account of `USER_WALLET_ADDRESS` wallet for TestRED/TestBLUE pool
 
 describe("LpAccountV2", () => {
   beforeAll(setup);
@@ -270,7 +270,7 @@ describe("LpAccountV2", () => {
       });
 
       expect(params.to.toString()).toMatchInlineSnapshot(
-        '"EQD9KyZJ3cwbaDphNjXa_nJvxApEUJOvFGZrcbDTuke6Fs7B"',
+        '"EQAAPP517U137Zx7xkNgzm662hGlxuL20iiQDRtwemhWTPLx"',
       );
       expect(params.body?.toBoc().toString("base64")).toMatchInlineSnapshot(
         '"te6cckEBAgEAewABZUz4KAMAAAAAAAAAABARAhAQgAIT4l1Sr7A9YcRoZ55nrAePZLMqsg59MaB/+T0AIlnNCAEAhYACE+JdUq+wPWHEaGeeZ6wHj2SzKrIOfTGgf/k9ACJZzRAAQnxLqlX2B6w4jQzzzPWA8eyWZVZBz6Y0D/8noARLOaIG6kbG"',
@@ -391,6 +391,35 @@ describe("LpAccountV2", () => {
         txArgs,
       );
       expect(sender.send).toHaveBeenCalledWith(txParams);
+    });
+  });
+
+  describe("getLpAccountData", () => {
+    it("should make on-chain request and return parsed response", async () => {
+      const snapshot = createProviderSnapshot()
+        .cell(
+          "te6ccsEBAQEAJAAAAEOAAhPiXVKvsD1hxGhnnmesB49ksyqyDn0xoH/5PQAiWc0QY+4g6g==",
+        )
+        .cell(
+          "te6cckEBAQEAJAAAQ4AcWjZMMl4PnV4hXc0bTXOnmOCQPE08nma5bszegFth3FBjJd6+",
+        )
+        .number("0")
+        .number("0");
+
+      const provider = createMockProviderFromSnapshot(snapshot);
+
+      const contract = provider.open(LpAccountV2.create(LP_ACCOUNT_ADDRESS));
+
+      const data = await contract.getLpAccountData();
+
+      expect(data.userAddress).toMatchInlineSnapshot(
+        '"EQAQnxLqlX2B6w4jQzzzPWA8eyWZVZBz6Y0D_8noARLOaB3i"',
+      );
+      expect(data.poolAddress).toMatchInlineSnapshot(
+        '"EQDi0bJhkvB86vEK7mjaa508xwSB4mnk8zXLdmb0AtsO4iG7"',
+      );
+      expect(data.amount0).toMatchInlineSnapshot("0n");
+      expect(data.amount1).toMatchInlineSnapshot("0n");
     });
   });
 });

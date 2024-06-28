@@ -84,8 +84,50 @@ export class BaseRouterV2 extends Contract {
     referralAddress?: AddressType;
     referralValue?: AmountType;
   }): Promise<Cell> {
+    if (
+      params.referralValue &&
+      (BigInt(params.referralValue) < 0 || BigInt(params.referralValue) > 100)
+    ) {
+      throw Error(`'referralValue' should be in range (0, 100)`);
+    }
+
     return beginCell()
       .storeUint(DEX_OP_CODES.SWAP, 32)
+      .storeAddress(toAddress(params.askJettonWalletAddress))
+      .storeAddress(toAddress(params.refundAddress))
+      .storeAddress(toAddress(params.excessesAddress ?? params.refundAddress))
+      .storeRef(
+        beginCell()
+          .storeCoins(BigInt(params.minAskAmount))
+          .storeAddress(toAddress(params.receiverAddress))
+          .storeCoins(BigInt(params.customPayloadForwardGasAmount ?? 0))
+          .storeMaybeRef(params.customPayload)
+          .storeCoins(BigInt(params.refundForwardGasAmount ?? 0))
+          .storeMaybeRef(params.refundPayload)
+          .storeUint(BigInt(params.referralValue ?? 10), 16)
+          .storeAddress(
+            params.referralAddress ? toAddress(params.referralAddress) : null,
+          )
+          .endCell(),
+      )
+      .endCell();
+  }
+
+  public async createCrossSwapBody(params: {
+    askJettonWalletAddress: AddressType;
+    receiverAddress: AddressType;
+    minAskAmount: AmountType;
+    refundAddress: AddressType;
+    excessesAddress?: AddressType;
+    customPayload?: Cell;
+    customPayloadForwardGasAmount?: AmountType;
+    refundPayload?: Cell;
+    refundForwardGasAmount?: AmountType;
+    referralAddress?: AddressType;
+    referralValue?: AmountType;
+  }): Promise<Cell> {
+    return beginCell()
+      .storeUint(DEX_OP_CODES.CROSS_SWAP, 32)
       .storeAddress(toAddress(params.askJettonWalletAddress))
       .storeAddress(toAddress(params.refundAddress))
       .storeAddress(toAddress(params.excessesAddress ?? params.refundAddress))
@@ -306,7 +348,34 @@ export class BaseRouterV2 extends Contract {
     customPayloadForwardGasAmount?: AmountType;
   }): Promise<Cell> {
     return beginCell()
-      .storeUint(DEX_OP_CODES.PROVIDE_LIQUIDITY, 32)
+      .storeUint(DEX_OP_CODES.PROVIDE_LP, 32)
+      .storeAddress(toAddress(params.routerWalletAddress))
+      .storeAddress(toAddress(params.refundAddress))
+      .storeAddress(toAddress(params.excessesAddress ?? params.refundAddress))
+      .storeRef(
+        beginCell()
+          .storeCoins(BigInt(params.minLpOut))
+          .storeAddress(toAddress(params.receiverAddress))
+          .storeUint(params.bothPositive ? 1 : 0, 1)
+          .storeCoins(BigInt(params.customPayloadForwardGasAmount ?? 0))
+          .storeMaybeRef(params.customPayload)
+          .endCell(),
+      )
+      .endCell();
+  }
+
+  public async createCrossProvideLiquidityBody(params: {
+    routerWalletAddress: AddressType;
+    minLpOut: AmountType;
+    receiverAddress: AddressType;
+    refundAddress: AddressType;
+    excessesAddress?: AddressType;
+    bothPositive: boolean;
+    customPayload?: Cell;
+    customPayloadForwardGasAmount?: AmountType;
+  }): Promise<Cell> {
+    return beginCell()
+      .storeUint(DEX_OP_CODES.CROSS_PROVIDE_LP, 32)
       .storeAddress(toAddress(params.routerWalletAddress))
       .storeAddress(toAddress(params.refundAddress))
       .storeAddress(toAddress(params.excessesAddress ?? params.refundAddress))
@@ -658,14 +727,14 @@ export class BaseRouterV2 extends Contract {
     provider: ContractProvider,
     params: {
       user: AddressType;
-      token: AddressType;
+      tokenMinter: AddressType;
     },
   ) {
-    const tokenMaster = provider.open(JettonMinter.create(params.token));
+    const tokenMinter = provider.open(JettonMinter.create(params.tokenMinter));
 
     const vaultAddress = await this.getVaultAddress(provider, {
       user: params.user,
-      tokenWallet: await tokenMaster.getWalletAddress(this.address),
+      tokenWallet: await tokenMinter.getWalletAddress(this.address),
     });
 
     return VaultV2.create(vaultAddress);

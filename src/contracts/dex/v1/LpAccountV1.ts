@@ -49,7 +49,7 @@ export class LpAccountV1 extends Contract {
     queryId?: QueryIdType;
   }): Promise<Cell> {
     return beginCell()
-      .storeUint(DEX_OP_CODES.REFUND, 32)
+      .storeUint(DEX_OP_CODES.REFUND_ME, 32)
       .storeUint(params?.queryId ?? 0, 64)
       .endCell();
   }

@@ -8,13 +8,16 @@ import {
   createProviderSnapshot,
   setup,
 } from "@/test-utils";
+import { toAddress } from "@/utils/toAddress";
+import { LpAccountV2 } from "../LpAccount/LpAccountV2";
+import { JettonWallet } from "@/contracts/core/JettonWallet";
 
-import { DEX_VERSION } from "../../constants";
+import { DEX_TYPE, DEX_VERSION } from "../../constants";
 
 import { BasePoolV2 } from "./BasePoolV2";
 
 const USER_WALLET_ADDRESS = "UQAQnxLqlX2B6w4jQzzzPWA8eyWZVZBz6Y0D_8noARLOaEAn";
-const POOL_ADDRESS = "EQA1RBeyynW3klroUF_n6hTRNySIbeUagf0H-FBnpGuwna3t"; // STON/GEMSTON pool
+const POOL_ADDRESS = "EQDi0bJhkvB86vEK7mjaa508xwSB4mnk8zXLdmb0AtsO4iG7"; // TestRED/TestBLUE pool
 
 describe("BasePoolV2", () => {
   beforeAll(setup);
@@ -96,7 +99,7 @@ describe("BasePoolV2", () => {
       const params = await contract.getCollectFeeTxParams();
 
       expect(params.to.toString()).toMatchInlineSnapshot(
-        '"EQA1RBeyynW3klroUF_n6hTRNySIbeUagf0H-FBnpGuwna3t"',
+        '"EQDi0bJhkvB86vEK7mjaa508xwSB4mnk8zXLdmb0AtsO4iG7"',
       );
       expect(params.body?.toBoc().toString("base64")).toMatchInlineSnapshot(
         '"te6cckEBAQEADgAAGB/LfT0AAAAAAAAAAOHc0mQ="',
@@ -112,7 +115,7 @@ describe("BasePoolV2", () => {
       });
 
       expect(params.to.toString()).toMatchInlineSnapshot(
-        '"EQA1RBeyynW3klroUF_n6hTRNySIbeUagf0H-FBnpGuwna3t"',
+        '"EQDi0bJhkvB86vEK7mjaa508xwSB4mnk8zXLdmb0AtsO4iG7"',
       );
       expect(params.body?.toBoc().toString("base64")).toMatchInlineSnapshot(
         '"te6cckEBAQEADgAAGB/LfT0AAAAAAAAwOR9czWw="',
@@ -128,7 +131,7 @@ describe("BasePoolV2", () => {
       });
 
       expect(params.to.toString()).toMatchInlineSnapshot(
-        '"EQA1RBeyynW3klroUF_n6hTRNySIbeUagf0H-FBnpGuwna3t"',
+        '"EQDi0bJhkvB86vEK7mjaa508xwSB4mnk8zXLdmb0AtsO4iG7"',
       );
       expect(params.body?.toBoc().toString("base64")).toMatchInlineSnapshot(
         '"te6cckEBAQEADgAAGB/LfT0AAAAAAAAAAOHc0mQ="',
@@ -286,6 +289,139 @@ describe("BasePoolV2", () => {
 
       expect(contract.getBurnTxParams).toHaveBeenCalledWith(provider, txArgs);
       expect(sender.send).toHaveBeenCalledWith(txParams);
+    });
+  });
+
+  describe("getLpAccountAddress", () => {
+    const ownerAddress = USER_WALLET_ADDRESS;
+
+    const snapshot = createProviderSnapshot().cell(
+      "te6cckEBAQEAJAAAQ4AAB5/Ovamu/bOPeMhsGc3XW0I0uNxe2kUSAaNuD00KyZBJLKC6",
+    );
+    const provider = createMockProviderFromSnapshot(snapshot);
+
+    it("should make on-chain request and return parsed response", async () => {
+      const contract = provider.open(BasePoolV2.create(POOL_ADDRESS));
+
+      const data = await contract.getLpAccountAddress({
+        ownerAddress,
+      });
+
+      expect(data).toMatchInlineSnapshot(
+        '"EQAAPP517U137Zx7xkNgzm662hGlxuL20iiQDRtwemhWTPLx"',
+      );
+    });
+  });
+
+  describe("getJettonWallet", () => {
+    const userJettonWalletAddress =
+      "EQD5SDeFVvz8HjVZiwgxLR6UugyJxrSzAGztgGokzVyOD5pV";
+
+    it("should create JettonWallet contract instance for USER_WALLET_ADDRESS", async () => {
+      const contract = BasePoolV2.create(POOL_ADDRESS);
+
+      const getWalletAddress = vi.spyOn(contract, "getWalletAddress");
+      getWalletAddress.mockResolvedValue(toAddress(userJettonWalletAddress));
+
+      const provider = createMockProvider();
+
+      const jettonWallet = await contract.getJettonWallet(provider, {
+        ownerAddress: USER_WALLET_ADDRESS,
+      });
+
+      expect(getWalletAddress).toHaveBeenCalledWith(
+        provider,
+        USER_WALLET_ADDRESS,
+      );
+      expect(jettonWallet).toBeInstanceOf(JettonWallet);
+      expect(jettonWallet.address.toString()).toEqual(userJettonWalletAddress);
+    });
+  });
+
+  describe("getLpAccount", () => {
+    const userLpAccountAddress =
+      "EQAAPP517U137Zx7xkNgzm662hGlxuL20iiQDRtwemhWTPLx";
+
+    it("should create LpAccount contract instance with defined address", async () => {
+      const contract = BasePoolV2.create(POOL_ADDRESS);
+
+      const getLpAccountAddress = vi.spyOn(contract, "getLpAccountAddress");
+      getLpAccountAddress.mockResolvedValue(toAddress(userLpAccountAddress));
+
+      const params = {
+        ownerAddress: USER_WALLET_ADDRESS,
+      };
+
+      const provider = createMockProvider();
+
+      const lpAccount = await contract.getLpAccount(provider, params);
+
+      expect(getLpAccountAddress).toHaveBeenCalledWith(provider, params);
+      expect(lpAccount).toBeInstanceOf(LpAccountV2);
+      expect(lpAccount.address.toString()).toEqual(userLpAccountAddress);
+    });
+  });
+
+  describe("getPoolType", () => {
+    const snapshot = createProviderSnapshot().cell(
+      "te6cckEBAQEAEgAAIGNvbnN0YW50X3Byb2R1Y3Svg+BE",
+    );
+    const provider = createMockProviderFromSnapshot(snapshot);
+
+    it("should make on-chain request and return parsed response", async () => {
+      const contract = provider.open(BasePoolV2.create(POOL_ADDRESS));
+
+      const type = await contract.getPoolType();
+
+      expect(type).toStrictEqual(DEX_TYPE.CPI);
+    });
+  });
+
+  describe("getPoolData", () => {
+    const snapshot = createProviderSnapshot()
+      .number("0")
+      .cell(
+        "te6cckEBAQEAJAAAQ4ATVm1Pu/oiWS5n4OYpObhD24wfKWlrcZIcfQgKs/yR9hAq9P4f",
+      )
+      .number("4986244178")
+      .number("4408450497")
+      .number("5646981229")
+      .cell(
+        "te6cckEBAQEAJAAAQ4AFImSaUo+dFf1OYl8dtYp9Zj6M0s4JKV4Dgg9WfZm54vCRWjIN",
+      )
+      .cell(
+        "te6cckEBAQEAJAAAQ4ATmaZ7TLWAsPlzzyZBHUychwiCFGUXrTsOROB1sQcwtxDOko/O",
+      )
+      .number("20")
+      .number("10")
+      .cell("te6cckEBAQEAAwAAASCUQYZV")
+      .number("2519317")
+      .number("514527");
+    const provider = createMockProviderFromSnapshot(snapshot);
+
+    it("should make on-chain request and return parsed response", async () => {
+      const contract = provider.open(BasePoolV2.create(POOL_ADDRESS));
+
+      const data = await contract.getPoolData();
+
+      expect(data.isLocked).toBe(false);
+      expect(data.routerAddress).toMatchInlineSnapshot(
+        '"EQCas2p939ESyXM_BzFJzcIe3GD5S0tbjJDj6EBVn-SPsPKH"',
+      );
+      expect(data.totalSupplyLP).toMatchInlineSnapshot("4986244178n");
+      expect(data.reserve0).toMatchInlineSnapshot("4408450497n");
+      expect(data.reserve1).toMatchInlineSnapshot("5646981229n");
+      expect(data.token0WalletAddress).toMatchInlineSnapshot(
+        '"EQApEyTSlHzor-pzEvjtrFPrMfRmlnBJSvAcEHqz7M3PF3Tb"',
+      );
+      expect(data.token1WalletAddress).toMatchInlineSnapshot(
+        '"EQCczTPaZawFh8ueeTII6mTkOEQQoyi9adhyJwOtiDmFuB9j"',
+      );
+      expect(data.lpFee).toMatchInlineSnapshot("20n");
+      expect(data.protocolFee).toMatchInlineSnapshot("10n");
+      expect(data.protocolFeeAddress).toMatchInlineSnapshot("null");
+      expect(data.collectedToken0ProtocolFee).toMatchInlineSnapshot("2519317n");
+      expect(data.collectedToken1ProtocolFee).toMatchInlineSnapshot("514527n");
     });
   });
 });

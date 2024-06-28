@@ -89,7 +89,7 @@ export class BasePoolV2 extends JettonMinter {
     queryId?: QueryIdType;
   }): Promise<Cell> {
     return beginCell()
-      .storeUint(DEX_OP_CODES.REQUEST_BURN, 32)
+      .storeUint(DEX_OP_CODES.BURN, 32)
       .storeUint(params?.queryId ?? 0, 64)
       .storeCoins(BigInt(params.amount))
       .storeAddress(null)

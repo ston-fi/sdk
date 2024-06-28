@@ -1,14 +1,20 @@
 import { beforeAll, describe, expect, it, vi } from "vitest";
 import type { Sender } from "@ton/ton";
 
-import { createMockObj, createMockProvider, setup } from "@/test-utils";
+import {
+  createMockObj,
+  createMockProvider,
+  createMockProviderFromSnapshot,
+  createProviderSnapshot,
+  setup,
+} from "@/test-utils";
 
 import { DEX_VERSION } from "../../constants";
 
 import { VaultV2 } from "./VaultV2";
 
 const USER_WALLET_ADDRESS = "UQAQnxLqlX2B6w4jQzzzPWA8eyWZVZBz6Y0D_8noARLOaEAn";
-const VAULT_ADDRESS = "EQAONDsor3bkNehoQdZZXI9zaULv2XeKanJgaqe5N7-OBruJ"; // Vault for `USER_WALLET_ADDRESS` wallet and GEMSTON token
+const VAULT_ADDRESS = "EQDIAOYrxwbAI1m3wUJlvJVRoZuxO_TZmavNVj-TBDe0LiLR"; // Vault for `USER_WALLET_ADDRESS` wallet and TestRED token
 
 describe("VaultV2", () => {
   beforeAll(setup);
@@ -152,6 +158,39 @@ describe("VaultV2", () => {
         txArgs,
       );
       expect(sender.send).toHaveBeenCalledWith(txParams);
+    });
+  });
+
+  describe("getVaultData", () => {
+    it("should make on-chain request and return parsed response", async () => {
+      const snapshot = createProviderSnapshot()
+        .cell(
+          "te6cckEBAQEAJAAAQ4ACE+JdUq+wPWHEaGeeZ6wHj2SzKrIOfTGgf/k9ACJZzRCUZNla",
+        )
+        .cell(
+          "te6cckEBAQEAJAAAQ4AZd9jNEu8dzORwCo3lq1hM9p2LwjKwjSwTbaUbDUiFNzBy9LMe",
+        )
+        .cell(
+          "te6cckEBAQEAJAAAQ4ATVm1Pu/oiWS5n4OYpObhD24wfKWlrcZIcfQgKs/yR9hAq9P4f",
+        )
+        .number("1");
+
+      const provider = createMockProviderFromSnapshot(snapshot);
+
+      const contract = provider.open(VaultV2.create(VAULT_ADDRESS));
+
+      const data = await contract.getVaultData();
+
+      expect(data.ownerAddress).toMatchInlineSnapshot(
+        '"EQAQnxLqlX2B6w4jQzzzPWA8eyWZVZBz6Y0D_8noARLOaB3i"',
+      );
+      expect(data.tokenAddress).toMatchInlineSnapshot(
+        '"EQDLvsZol3juZyOAVG8tWsJntOxeEZWEaWCbbSjYakQpuTjz"',
+      );
+      expect(data.routerAddress).toMatchInlineSnapshot(
+        '"EQCas2p939ESyXM_BzFJzcIe3GD5S0tbjJDj6EBVn-SPsPKH"',
+      );
+      expect(data.depositedAmount).toMatchInlineSnapshot("1n");
     });
   });
 });

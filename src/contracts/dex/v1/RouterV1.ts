@@ -292,7 +292,7 @@ export class RouterV1 extends Contract {
     minLpOut: AmountType;
   }): Promise<Cell> {
     return beginCell()
-      .storeUint(DEX_OP_CODES.PROVIDE_LIQUIDITY, 32)
+      .storeUint(DEX_OP_CODES.PROVIDE_LP, 32)
       .storeAddress(toAddress(params.routerWalletAddress))
       .storeCoins(BigInt(params.minLpOut))
       .endCell();

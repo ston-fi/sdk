@@ -1,5 +1,18 @@
 # Changelog
 
+## [2.0.0-rc.1]
+
+### Added
+
+- new Router v2 `createCrossSwapBody` method
+- new Router v2 `createCrossProvideLiquidityBody` method
+- add validation for optional `referralValue` argument in `createSwapBody`
+- DEX v2 contracts fully covered with tests
+
+### Changed
+
+- `token` parameter of the Router v2 `getVault` method was renamed to `tokenMinter`
+
 ## [2.0.0-rc.0]
 
 ### Added
