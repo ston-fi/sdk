@@ -241,10 +241,11 @@ export class FarmNftItemV3 extends Contract {
         for (const poolIndex of dict.keys()) {
           const accruedPerUnitNanorewards = dict.get(poolIndex);
 
-          if (!accruedPerUnitNanorewards)
+          if (accruedPerUnitNanorewards === undefined) {
             throw new Error(
               `Failed to parse claimedPerUnit from dict: ${dict}`,
             );
+          }
 
           claimedPerUnit.set(Number(poolIndex), accruedPerUnitNanorewards);
         }
