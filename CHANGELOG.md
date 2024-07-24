@@ -1,5 +1,11 @@
 # Changelog
 
+## [1.0.1]
+
+### Fixed
+
+- Correct parsing for a 0 `accruedPerUnitNanorewards` value in the `FarmNftItemV3.getFarmingData.claimedPerUnit` field.
+
 ## [1.0.0]
 
 > **Breaking changes**
