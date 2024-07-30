@@ -1,5 +1,15 @@
 # Changelog
 
+## [2.0.0-rc.2]
+
+### Added
+
+- add validation for optional `referralValue` argument in `BaseRouterV2.createCrossSwapBody` method
+
+### Fixed
+
+- correct range (in basis point) for custom `referralValue` argument in `BaseRouterV2`
+
 ## [2.0.0-rc.1]
 
 ### Added
