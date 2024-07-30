@@ -253,64 +253,70 @@ export class FarmNftMinterV3 extends Contract {
       canSendRawMsg: result.stack.readBoolean(),
       farmDataAccrued: (() => {
         const dict = result.stack
-          .readCell()
-          .asSlice()
+          .readCellOpt()
+          ?.asSlice()
           .loadDictDirect(Dictionary.Keys.Uint(8), Dictionary.Values.Cell());
 
         const farmDataAccrued = new Map<number, FarmDataAccrued>();
 
-        for (const poolIndex of dict.keys()) {
-          const cell = dict.get(poolIndex);
+        if (dict) {
+          for (const poolIndex of dict.keys()) {
+            const cell = dict.get(poolIndex);
 
-          if (!cell)
-            throw new Error(
-              `Failed to parse farmDataAccrued from dict: ${dict}`,
-            );
+            if (cell === undefined) {
+              throw new Error(
+                `Failed to parse farmDataAccrued from dict: ${dict}`,
+              );
+            }
 
-          const slice = cell.beginParse();
+            const slice = cell.beginParse();
 
-          const accruedData = {
-            depositedNanorewards: slice.loadUintBig(150),
-            accruedPerUnitNanorewards: slice.loadUintBig(150),
-            accruedFeeNanorewards: slice.loadUintBig(150),
-            claimedNanorewards: slice.loadUintBig(150),
-            claimedFeeNanorewards: slice.loadUintBig(150),
-            accruedNanorewards: slice.loadUintBig(150),
-            lastUpdateTime: slice.loadUintBig(64),
-          };
+            const accruedData = {
+              depositedNanorewards: slice.loadUintBig(150),
+              accruedPerUnitNanorewards: slice.loadUintBig(150),
+              accruedFeeNanorewards: slice.loadUintBig(150),
+              claimedNanorewards: slice.loadUintBig(150),
+              claimedFeeNanorewards: slice.loadUintBig(150),
+              accruedNanorewards: slice.loadUintBig(150),
+              lastUpdateTime: slice.loadUintBig(64),
+            };
 
-          farmDataAccrued.set(poolIndex, accruedData);
+            farmDataAccrued.set(poolIndex, accruedData);
+          }
         }
 
         return farmDataAccrued;
       })(),
       farmDataParameters: (() => {
         const dict = result.stack
-          .readCell()
-          .asSlice()
+          .readCellOpt()
+          ?.asSlice()
           .loadDictDirect(Dictionary.Keys.Uint(8), Dictionary.Values.Cell());
 
         const farmDataParameters = new Map<number, FarmDataParameters>();
 
-        for (const poolIndex of dict.keys()) {
-          const cell = dict.get(poolIndex);
+        if (dict) {
+          for (const poolIndex of dict.keys()) {
+            const cell = dict.get(poolIndex);
 
-          if (!cell)
-            throw new Error(
-              `Failed to parse farmDataParameters from dict: ${dict}`,
-            );
+            if (cell === undefined) {
+              throw new Error(
+                `Failed to parse farmDataParameters from dict: ${dict}`,
+              );
+            }
 
-          const slice = cell.beginParse();
+            const slice = cell.beginParse();
 
-          const parametersData = {
-            adminFee: slice.loadUintBig(16),
-            nanorewardsPer24h: slice.loadUintBig(150),
-            unrestrictedDepositRewards: slice.loadBit(),
-            rewardTokenWallet: slice.loadAddress(),
-            canChangeFee: slice.loadBit(),
-            status: slice.loadUint(8),
-          };
-          farmDataParameters.set(poolIndex, parametersData);
+            const parametersData = {
+              adminFee: slice.loadUintBig(16),
+              nanorewardsPer24h: slice.loadUintBig(150),
+              unrestrictedDepositRewards: slice.loadBit(),
+              rewardTokenWallet: slice.loadAddress(),
+              canChangeFee: slice.loadBit(),
+              status: slice.loadUint(8),
+            };
+            farmDataParameters.set(poolIndex, parametersData);
+          }
         }
 
         return farmDataParameters;

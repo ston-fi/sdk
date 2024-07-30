@@ -229,8 +229,8 @@ export class FarmNftItemV3 extends Contract {
       stakeDate: result.stack.readBigNumber(),
       claimedPerUnit: (() => {
         const dict = result.stack
-          .readCell()
-          .asSlice()
+          .readCellOpt()
+          ?.asSlice()
           .loadDictDirect(
             Dictionary.Keys.Uint(8),
             Dictionary.Values.BigUint(150),
@@ -238,16 +238,18 @@ export class FarmNftItemV3 extends Contract {
 
         const claimedPerUnit = new Map<number, bigint>();
 
-        for (const poolIndex of dict.keys()) {
-          const accruedPerUnitNanorewards = dict.get(poolIndex);
+        if (dict) {
+          for (const poolIndex of dict.keys()) {
+            const accruedPerUnitNanorewards = dict.get(poolIndex);
 
-          if (accruedPerUnitNanorewards === undefined) {
-            throw new Error(
-              `Failed to parse claimedPerUnit from dict: ${dict}`,
-            );
+            if (accruedPerUnitNanorewards === undefined) {
+              throw new Error(
+                `Failed to parse claimedPerUnit from dict: ${dict}`,
+              );
+            }
+
+            claimedPerUnit.set(Number(poolIndex), accruedPerUnitNanorewards);
           }
-
-          claimedPerUnit.set(Number(poolIndex), accruedPerUnitNanorewards);
         }
 
         return claimedPerUnit;

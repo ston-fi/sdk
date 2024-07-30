@@ -415,20 +415,20 @@ describe("FarmNftItemV3", () => {
   });
 
   describe("getFarmingData", () => {
-    const snapshot = createProviderSnapshot()
-      .number("1")
-      .number("0")
-      .number("57093")
-      .number("1712000198")
-      .cell(
-        "te6ccsEBBQEASgAABQofNAIBzQEEAgEgAgMAJgAAAAAAAAAAAAAAAAAAB+tvFgsAJgAAAAAAAAAAAAAAAAAABhzWPD8AJ0AAAAAAAAAAAAAAAAAAACce9JsgTlOb7Q==",
-      )
-      .cell(
-        "te6ccsEBAQEAJAAAAEOAAhPiXVKvsD1hxGhnnmesB49ksyqyDn0xoH/5PQAiWc0QY+4g6g==",
-      );
-    const provider = createMockProviderFromSnapshot(snapshot);
-
     it("should return data about the farm NFT contract state", async () => {
+      const snapshot = createProviderSnapshot()
+        .number("1")
+        .number("0")
+        .number("57093")
+        .number("1712000198")
+        .cell(
+          "te6ccsEBBQEASgAABQofNAIBzQEEAgEgAgMAJgAAAAAAAAAAAAAAAAAAB+tvFgsAJgAAAAAAAAAAAAAAAAAABhzWPD8AJ0AAAAAAAAAAAAAAAAAAACce9JsgTlOb7Q==",
+        )
+        .cell(
+          "te6ccsEBAQEAJAAAAEOAAhPiXVKvsD1hxGhnnmesB49ksyqyDn0xoH/5PQAiWc0QY+4g6g==",
+        );
+      const provider = createMockProviderFromSnapshot(snapshot);
+
       const contract = provider.open(FarmNftItemV3.create(ADDRESS));
 
       const data = await contract.getFarmingData();
@@ -453,6 +453,32 @@ describe("FarmNftItemV3", () => {
           ],
         ]
       `);
+      expect(data.ownerAddress).toMatchInlineSnapshot(
+        '"EQAQnxLqlX2B6w4jQzzzPWA8eyWZVZBz6Y0D_8noARLOaB3i"',
+      );
+    });
+
+    it("should correctly return data about the farm NFT contract state with null dictionaries", async () => {
+      const snapshot = createProviderSnapshot()
+        .number("1")
+        .number("0")
+        .number("57093")
+        .number("1712000198")
+        .null()
+        .cell(
+          "te6ccsEBAQEAJAAAAEOAAhPiXVKvsD1hxGhnnmesB49ksyqyDn0xoH/5PQAiWc0QY+4g6g==",
+        );
+      const provider = createMockProviderFromSnapshot(snapshot);
+
+      const contract = provider.open(FarmNftItemV3.create(ADDRESS));
+
+      const data = await contract.getFarmingData();
+
+      expect(data.status).toMatchInlineSnapshot("1");
+      expect(data.revokeTime).toMatchInlineSnapshot("0n");
+      expect(data.stakedTokens).toMatchInlineSnapshot("57093n");
+      expect(data.stakeDate).toMatchInlineSnapshot("1712000198n");
+      expect([...data.claimedPerUnit.entries()]).toMatchInlineSnapshot("[]");
       expect(data.ownerAddress).toMatchInlineSnapshot(
         '"EQAQnxLqlX2B6w4jQzzzPWA8eyWZVZBz6Y0D_8noARLOaB3i"',
       );
