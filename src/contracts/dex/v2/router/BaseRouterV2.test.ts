@@ -189,6 +189,24 @@ describe("BaseRouterV2", () => {
         '"te6cckEBAgEAuQAB0SWThWGAD+mcSkD3Vv8TNqd5ZpGULbUWJKyGfGAnZzcSNZdG5HnQAEJ8S6pV9gesOI0M88z1gPHslmVWQc+mNA//J6AESzmiAAhPiXVKvsD1hxGhnnmesB49ksyqyDn0xoH/5PQAiWc0QAEAlUNaTpAIACE+JdUq+wPWHEaGeeZ6wHj2SzKrIOfTGgf/k9ACJZzQAAAFQAEJ8S6pV9gesOI0M88z1gPHslmVWQc+mNA//J6AESzmiFTdty8="',
       );
     });
+
+    it("should throw error if referralValue not in range", async () => {
+      const contract = BaseRouterV2.create(ROUTER_ADDRESS);
+
+      await expect(() => {
+        return contract.createCrossSwapBody({
+          ...txArguments,
+          referralValue: 200,
+        });
+      }).rejects.toThrowError();
+
+      await expect(() => {
+        return contract.createCrossSwapBody({
+          ...txArguments,
+          referralValue: -1,
+        });
+      }).rejects.toThrowError();
+    });
   });
 
   describe("getSwapJettonToJettonTxParams", () => {

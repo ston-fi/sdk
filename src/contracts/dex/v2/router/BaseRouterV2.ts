@@ -88,7 +88,7 @@ export class BaseRouterV2 extends Contract {
       params.referralValue &&
       (BigInt(params.referralValue) < 0 || BigInt(params.referralValue) > 100)
     ) {
-      throw Error(`'referralValue' should be in range (0, 100)`);
+      throw Error(`'referralValue' should be in range [0, 100] BPS`);
     }
 
     return beginCell()
@@ -126,6 +126,13 @@ export class BaseRouterV2 extends Contract {
     referralAddress?: AddressType;
     referralValue?: AmountType;
   }): Promise<Cell> {
+    if (
+      params.referralValue &&
+      (BigInt(params.referralValue) < 0 || BigInt(params.referralValue) > 100)
+    ) {
+      throw Error(`'referralValue' should be in range [0, 100] BPS`);
+    }
+
     return beginCell()
       .storeUint(DEX_OP_CODES.CROSS_SWAP, 32)
       .storeAddress(toAddress(params.askJettonWalletAddress))
