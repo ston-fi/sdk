@@ -9,10 +9,14 @@ import {
 
 import { createMockObj } from "@/test-utils/createMockObj";
 
-type SnapshotItem = {
-  type: "cell" | "number";
-  data: string;
-};
+type SnapshotItem =
+  | {
+      type: "cell" | "number";
+      data: string;
+    }
+  | {
+      type: "null";
+    };
 
 class Snapshot {
   items: Array<SnapshotItem> = [];
@@ -27,14 +31,24 @@ class Snapshot {
     return this;
   }
 
+  null(): Snapshot {
+    this.items.push({ type: "null" });
+    return this;
+  }
+
   async toTupleReader() {
     return {
       gas_used: 0,
       stack: new TupleReader(
         this.items.map((item) => {
-          return item.type === "cell"
-            ? { type: "cell", cell: Cell.fromBase64(item.data) }
-            : { type: "int", value: BigInt(item.data) };
+          switch (item.type) {
+            case "cell":
+              return { type: "cell", cell: Cell.fromBase64(item.data) };
+            case "number":
+              return { type: "int", value: BigInt(item.data) };
+            case "null":
+              return { type: "null" };
+          }
         }),
       ),
     };

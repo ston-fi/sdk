@@ -236,31 +236,31 @@ describe("FarmNftMinterV3", () => {
   });
 
   describe("getFarmingMinterData", () => {
-    const snapshot = createProviderSnapshot()
-      .number("2259")
-      .number("1")
-      .number("3")
-      .number("248359521312")
-      .number("103037229")
-      .number("864000")
-      .cell(
-        "te6ccsEBAQEAJAAAAEOAB6QiQ0T/22/J+dCm9MMTbVU4qD4ojxQrph7+3gjW7q+QCf49AQ==",
-      )
-      .cell(
-        "te6ccsEBAQEAJAAAAEOAE1XEnRcjRVi9UD7WrYvKkVyYXqugt8gbjnnHwqvEhL6wioVD+g==",
-      )
-      .number("-1")
-      .number("-1")
-      .cell(
-        "te6ccsECCAEAAYcAAAAABQAKAA4AiQCNAQgBDAIBzQEGAgEgAgQBASADAPEAAAAAAAAAAAA23yPjcpaKGoAAAAAAAAAAAAAAAAAAAAPuFyutcAAAAAAAAAAAAqExE+k7MX4/iMAAAAAAAAAAAAe2FsLOQZKqRAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAZik3ToAQEgBQDxAAAAAAAAAAAAKloFj8KV7QAAAAAAAAAAAAAAAAAAAAADCIg3IIAAAAAAAAAAAAIHlyQrccQTlPJAAAAAAAAAAAAF86nbNP1sAeYAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAGYpN06AEBSAcA8QAAAAAAAAAAAAh4Z4NLTALKgAAAAAAAAAAAAAAAAAAAAHePkTPAAAAAAAAAAAAAV/Q9o73v1EmfwAAAAAAAAAAAAODc/cNWk3SaAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAABmKTdOh6Xm5I",
-      )
-      .cell(
-        "te6ccsEBCAEAxAAABQoOSEyGigIBzQEGAgEgAgQBASADAG8AAAAAAAAAAAAAAAHUPO36EjkQkAMAOevgarWLP/P2hL1ntIUBWX6WSBO92ecxt2sYIVc5dj5gIgEBIAUAbwAAAAAAAAAAAAAAAWlmldvRLTiQAwAcvewmHxjAY9t6LA5qs8aaoI2mVS+xBDKNyAvJWZOSGiAiAQFIBwBvAAAAAAAAAAAAAAAAbMlsqFVJlJADAAifWbxZ3ejqWZqGvBoCj7QafH5DzTJGXkbhA09Ad3ViICJCsQ3c",
-      );
-
-    const provider = createMockProviderFromSnapshot(snapshot);
-
     it("should return data about the farm NFT contract state", async () => {
+      const snapshot = createProviderSnapshot()
+        .number("2259")
+        .number("1")
+        .number("3")
+        .number("248359521312")
+        .number("103037229")
+        .number("864000")
+        .cell(
+          "te6ccsEBAQEAJAAAAEOAB6QiQ0T/22/J+dCm9MMTbVU4qD4ojxQrph7+3gjW7q+QCf49AQ==",
+        )
+        .cell(
+          "te6ccsEBAQEAJAAAAEOAE1XEnRcjRVi9UD7WrYvKkVyYXqugt8gbjnnHwqvEhL6wioVD+g==",
+        )
+        .number("-1")
+        .number("-1")
+        .cell(
+          "te6ccsECCAEAAYcAAAAABQAKAA4AiQCNAQgBDAIBzQEGAgEgAgQBASADAPEAAAAAAAAAAAA23yPjcpaKGoAAAAAAAAAAAAAAAAAAAAPuFyutcAAAAAAAAAAAAqExE+k7MX4/iMAAAAAAAAAAAAe2FsLOQZKqRAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAZik3ToAQEgBQDxAAAAAAAAAAAAKloFj8KV7QAAAAAAAAAAAAAAAAAAAAADCIg3IIAAAAAAAAAAAAIHlyQrccQTlPJAAAAAAAAAAAAF86nbNP1sAeYAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAGYpN06AEBSAcA8QAAAAAAAAAAAAh4Z4NLTALKgAAAAAAAAAAAAAAAAAAAAHePkTPAAAAAAAAAAAAAV/Q9o73v1EmfwAAAAAAAAAAAAODc/cNWk3SaAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAABmKTdOh6Xm5I",
+        )
+        .cell(
+          "te6ccsEBCAEAxAAABQoOSEyGigIBzQEGAgEgAgQBASADAG8AAAAAAAAAAAAAAAHUPO36EjkQkAMAOevgarWLP/P2hL1ntIUBWX6WSBO92ecxt2sYIVc5dj5gIgEBIAUAbwAAAAAAAAAAAAAAAWlmldvRLTiQAwAcvewmHxjAY9t6LA5qs8aaoI2mVS+xBDKNyAvJWZOSGiAiAQFIBwBvAAAAAAAAAAAAAAAAbMlsqFVJlJADAAifWbxZ3ejqWZqGvBoCj7QafH5DzTJGXkbhA09Ad3ViICJCsQ3c",
+        );
+
+      const provider = createMockProviderFromSnapshot(snapshot);
+
       const contract = provider.open(FarmNftMinterV3.create(ADDRESS));
 
       const farmingData = await contract.getFarmingMinterData();
@@ -343,6 +343,50 @@ describe("FarmNftMinterV3", () => {
         }
       `,
       );
+    });
+
+    it("should correctly return data about the farm NFT contract state with null dictionaries", async () => {
+      const snapshot = createProviderSnapshot()
+        .number("2259")
+        .number("1")
+        .number("3")
+        .number("248359521312")
+        .number("103037229")
+        .number("864000")
+        .cell(
+          "te6ccsEBAQEAJAAAAEOAB6QiQ0T/22/J+dCm9MMTbVU4qD4ojxQrph7+3gjW7q+QCf49AQ==",
+        )
+        .cell(
+          "te6ccsEBAQEAJAAAAEOAE1XEnRcjRVi9UD7WrYvKkVyYXqugt8gbjnnHwqvEhL6wioVD+g==",
+        )
+        .number("-1")
+        .number("-1")
+        .null()
+        .null();
+
+      const provider = createMockProviderFromSnapshot(snapshot);
+
+      const contract = provider.open(FarmNftMinterV3.create(ADDRESS));
+
+      const farmingData = await contract.getFarmingMinterData();
+
+      expect(farmingData.nextItemIndex).toMatchInlineSnapshot("2259n");
+      expect(farmingData.status).toMatchInlineSnapshot("1");
+      expect(farmingData.poolCount).toMatchInlineSnapshot("3");
+      expect(farmingData.currentStakedTokens).toMatchInlineSnapshot(
+        "248359521312n",
+      );
+      expect(farmingData.contractUniqueId).toMatchInlineSnapshot("103037229n");
+      expect(farmingData.stakingTokenWallet).toMatchInlineSnapshot(
+        '"EQA9IRIaJ_7bfk_OhTemGJtqqcVB8UR4oV0w9_bwRrd1fKMW"',
+      );
+      expect(farmingData.custodianAddress).toMatchInlineSnapshot(
+        '"EQCariTouRoqxeqB9rVsXlSK5ML1XQW-QNxzzj4VXiQl9Vix"',
+      );
+      expect(farmingData.canChangeCustodian).toBe(true);
+      expect(farmingData.canSendRawMsg).toBe(true);
+      expect(farmingData.farmDataParameters).toMatchInlineSnapshot("Map {}");
+      expect(farmingData.farmDataAccrued).toMatchInlineSnapshot("Map {}");
     });
   });
 });

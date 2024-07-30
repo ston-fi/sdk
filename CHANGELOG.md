@@ -22,6 +22,24 @@ You can find a full list of DEX  v2 features in our [DOCS](https://docs.ston.fi/
 
 - pTON v2 contract
 
+## [1.0.2]
+
+### Added
+
+- New major release version of the @ton/ton package was allowed as allowed dependency
+
+### Fixed
+
+- Correct parsing for a `null` dictionary value in the `FarmNftItemV3.getFarmingData.claimedPerUnit` filed
+- Correct parsing for a `null` dictionary value in the `FarmNftMinterV3.getFarmingMinterData.farmDataAccrued` filed
+- Correct parsing for a `null` dictionary value in the `FarmNftMinterV3.getFarmingMinterData.farmDataParameters` filed
+
+## [1.0.1]
+
+### Fixed
+
+- Correct parsing for a 0 `accruedPerUnitNanorewards` value in the `FarmNftItemV3.getFarmingData.claimedPerUnit` field.
+
 ## [1.0.0]
 
 > **Breaking changes**

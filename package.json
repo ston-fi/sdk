@@ -78,7 +78,7 @@
   },
   "peerDependencies": {
     "@ston-fi/api": "^0.7.0",
-    "@ton/ton": "^13.9.0"
+    "@ton/ton": "^13.9.0 || ^14.0.0"
   },
   "devDependencies": {
     "@biomejs/biome": "^1.7.3",
