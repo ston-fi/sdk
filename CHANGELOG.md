@@ -1,5 +1,11 @@
 # Changelog
 
+## [1.1.0]
+
+### Added
+
+- methods for deploy pTON wallet (`pTON.createDeployWalletBody`, `pTON.getDeployWalletTxParams`, `pTON.sendDeployWallet`)
+
 ## [1.0.2]
 
 ### Added
