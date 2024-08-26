@@ -22,6 +22,7 @@ export class PtonV2 extends PtonV1 {
 
   public static readonly gasConstants = {
     tonTransfer: toNano("0.01"),
+    deployWallet: toNano("0.1"),
   };
 
   public readonly gasConstants;
@@ -93,6 +94,51 @@ export class PtonV2 extends PtonV1 {
     params: Parameters<PtonV2["getTonTransferTxParams"]>[1],
   ) {
     const txParams = await this.getTonTransferTxParams(provider, params);
+
+    return via.send(txParams);
+  }
+
+  public override async createDeployWalletBody(params: {
+    ownerAddress: AddressType;
+    excessAddress: AddressType;
+    queryId?: QueryIdType;
+  }): Promise<Cell> {
+    return beginCell()
+      .storeUint(pTON_OP_CODES.DEPLOY_WALLET_V2, 32)
+      .storeUint(params.queryId ?? 0, 64)
+      .storeAddress(toAddress(params.ownerAddress))
+      .storeAddress(toAddress(params.excessAddress))
+      .endCell();
+  }
+
+  public override async getDeployWalletTxParams(
+    provider: ContractProvider,
+    params: {
+      ownerAddress: AddressType;
+      excessAddress?: AddressType;
+      gasAmount?: AmountType;
+      queryId?: QueryIdType;
+    },
+  ): Promise<SenderArguments> {
+    const to = this.address;
+
+    const body = await this.createDeployWalletBody({
+      ownerAddress: params.ownerAddress,
+      excessAddress: params.excessAddress ?? params.ownerAddress,
+      queryId: params?.queryId,
+    });
+
+    const value = BigInt(params?.gasAmount ?? this.gasConstants.deployWallet);
+
+    return { to, value, body };
+  }
+
+  public override async sendDeployWallet(
+    provider: ContractProvider,
+    via: Sender,
+    params: Parameters<PtonV2["getDeployWalletTxParams"]>[1],
+  ) {
+    const txParams = await this.getDeployWalletTxParams(provider, params);
 
     return via.send(txParams);
   }

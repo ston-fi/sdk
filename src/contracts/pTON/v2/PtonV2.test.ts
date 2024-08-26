@@ -30,6 +30,9 @@ describe("PtonV2", () => {
       expect(PtonV2.gasConstants.tonTransfer).toMatchInlineSnapshot(
         "10000000n",
       );
+      expect(PtonV2.gasConstants.deployWallet).toMatchInlineSnapshot(
+        "100000000n",
+      );
     });
   });
 
@@ -43,15 +46,35 @@ describe("PtonV2", () => {
 
   describe("constructor", () => {
     it("should create an instance of PtonV2", () => {
-      const contract = new PtonV2(PROXY_TON_ADDRESS);
+      const contract = PtonV2.create(PtonV2.address);
 
       expect(contract).toBeInstanceOf(PtonV2);
     });
 
-    it("should create an instance of RouterV1 with given address", () => {
+    it("should create an instance of PtonV2 with given address", () => {
       const contract = new PtonV2(USER_WALLET_ADDRESS); // just an address, not a real pTON v2 contract
 
       expect(contract.address.toString()).toEqual(USER_WALLET_ADDRESS);
+    });
+
+    it("should create an instance of PtonV2 with default gasConstants", () => {
+      const contract = PtonV2.create(PtonV2.address);
+
+      expect(contract.gasConstants).toEqual(PtonV2.gasConstants);
+    });
+
+    it("should create an instance of PtonV2 with given gasConstants", () => {
+      const gasConstants: Partial<PtonV2["gasConstants"]> = {
+        deployWallet: BigInt("1"),
+      };
+
+      const contract = new PtonV2(PtonV2.address, {
+        gasConstants,
+      });
+
+      expect(contract.gasConstants).toEqual(
+        expect.objectContaining(gasConstants),
+      );
     });
   });
 
@@ -149,6 +172,113 @@ describe("PtonV2", () => {
 
       expect(getTonTransferTxParams).toHaveBeenCalledWith(provider, txArgs);
       expect(sender.send).toHaveBeenCalledWith(txParams);
+    });
+  });
+
+  describe("createDeployWalletBody", () => {
+    const txArgs = {
+      ownerAddress: USER_WALLET_ADDRESS,
+      excessAddress: USER_WALLET_ADDRESS,
+    };
+
+    it("should build expected tx body", async () => {
+      const contract = PtonV2.create(PtonV2.address);
+
+      const body = await contract.createDeployWalletBody({
+        ...txArgs,
+      });
+
+      expect(body.toBoc().toString("base64")).toMatchInlineSnapshot(
+        '"te6cckEBAQEAUQAAnU9fQxMAAAAAAAAAAIACE+JdUq+wPWHEaGeeZ6wHj2SzKrIOfTGgf/k9ACJZzRAAQnxLqlX2B6w4jQzzzPWA8eyWZVZBz6Y0D/8noARLOaJL9mH4"',
+      );
+    });
+
+    it("should build expected tx body when queryId is defined", async () => {
+      const contract = PtonV2.create(PtonV2.address);
+
+      const body = await contract.createDeployWalletBody({
+        ...txArgs,
+        queryId: 12345,
+      });
+
+      expect(body.toBoc().toString("base64")).toMatchInlineSnapshot(
+        '"te6cckEBAQEAUQAAnU9fQxMAAAAAAAAwOYACE+JdUq+wPWHEaGeeZ6wHj2SzKrIOfTGgf/k9ACJZzRAAQnxLqlX2B6w4jQzzzPWA8eyWZVZBz6Y0D/8noARLOaL1jU6c"',
+      );
+    });
+  });
+
+  describe("getDeployWalletTxParams", () => {
+    const txArgs = {
+      ownerAddress: USER_WALLET_ADDRESS,
+    };
+
+    const proivder = createMockProvider();
+
+    it("should build expected tx params", async () => {
+      const contract = proivder.open(PtonV2.create(PtonV2.address));
+
+      const txParams = await contract.getDeployWalletTxParams({
+        ...txArgs,
+      });
+
+      expect(txParams.to).toMatchInlineSnapshot(
+        '"EQCM3B12QK1e4yZSf8GtBRT0aLMNyEsBc_DhVfRRtOEffLez"',
+      );
+      expect(txParams.body?.toBoc().toString("base64")).toMatchInlineSnapshot(
+        '"te6cckEBAQEAUQAAnU9fQxMAAAAAAAAAAIACE+JdUq+wPWHEaGeeZ6wHj2SzKrIOfTGgf/k9ACJZzRAAQnxLqlX2B6w4jQzzzPWA8eyWZVZBz6Y0D/8noARLOaJL9mH4"',
+      );
+      expect(txParams.value).toMatchInlineSnapshot("100000000n");
+    });
+
+    it("should build expected tx params when queryId is defined", async () => {
+      const contract = proivder.open(PtonV2.create(PtonV2.address));
+
+      const txParams = await contract.getDeployWalletTxParams({
+        ...txArgs,
+        queryId: 12345,
+      });
+
+      expect(txParams.to).toMatchInlineSnapshot(
+        '"EQCM3B12QK1e4yZSf8GtBRT0aLMNyEsBc_DhVfRRtOEffLez"',
+      );
+      expect(txParams.body?.toBoc().toString("base64")).toMatchInlineSnapshot(
+        '"te6cckEBAQEAUQAAnU9fQxMAAAAAAAAwOYACE+JdUq+wPWHEaGeeZ6wHj2SzKrIOfTGgf/k9ACJZzRAAQnxLqlX2B6w4jQzzzPWA8eyWZVZBz6Y0D/8noARLOaL1jU6c"',
+      );
+      expect(txParams.value).toMatchInlineSnapshot("100000000n");
+    });
+
+    it("should build expected tx params when custom gasAmount is defined", async () => {
+      const contract = proivder.open(PtonV2.create(PtonV2.address));
+
+      const txParams = await contract.getDeployWalletTxParams({
+        ...txArgs,
+        gasAmount: "1",
+      });
+
+      expect(txParams.to).toMatchInlineSnapshot(
+        '"EQCM3B12QK1e4yZSf8GtBRT0aLMNyEsBc_DhVfRRtOEffLez"',
+      );
+      expect(txParams.body?.toBoc().toString("base64")).toMatchInlineSnapshot(
+        '"te6cckEBAQEAUQAAnU9fQxMAAAAAAAAAAIACE+JdUq+wPWHEaGeeZ6wHj2SzKrIOfTGgf/k9ACJZzRAAQnxLqlX2B6w4jQzzzPWA8eyWZVZBz6Y0D/8noARLOaJL9mH4"',
+      );
+      expect(txParams.value).toMatchInlineSnapshot("1n");
+    });
+
+    it("should build expected tx params when excessAddress is defined", async () => {
+      const contract = proivder.open(PtonV2.create(PtonV2.address));
+
+      const txParams = await contract.getDeployWalletTxParams({
+        ...txArgs,
+        excessAddress: PtonV2.address,
+      });
+
+      expect(txParams.to).toMatchInlineSnapshot(
+        '"EQCM3B12QK1e4yZSf8GtBRT0aLMNyEsBc_DhVfRRtOEffLez"',
+      );
+      expect(txParams.body?.toBoc().toString("base64")).toMatchInlineSnapshot(
+        '"te6cckEBAQEAUQAAnU9fQxMAAAAAAAAAAIACE+JdUq+wPWHEaGeeZ6wHj2SzKrIOfTGgf/k9ACJZzRACM3B12QK1e4yZSf8GtBRT0aLMNyEsBc/DhVfRRtOEffJbNd9u"',
+      );
+      expect(txParams.value).toMatchInlineSnapshot("100000000n");
     });
   });
 });
