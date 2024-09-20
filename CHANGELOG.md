@@ -1,5 +1,85 @@
 # Changelog
 
+## [1.2.0]
+
+### Added
+
+- Because of the recent appearance of the [Mintless Jettons](https://gist.github.com/EmelyanenkoK/bfe633bdf8e22ca92a5138e59134988f) ability to pass `custom_payload` to [jetton transfer message](https://github.com/ton-blockchain/TEPs/blob/master/text/0074-jettons-standard.md#1-transfer) became a necessity, optional `jettonCustomPayload` parameter was added to all dex operations that are jettonTransfer's
+  - swap
+    - `RouterV1.getSwapJettonToJettonTxParams`
+    - `RouterV1.getSwapJettonToTonTxParams`
+  - liquidity provision
+    - `RouterV1.getProvideLiquidityJettonTxParams`
+
+Here is an example of how swap with non yet minted [Points](https://tonviewer.com/EQD6Z9DHc5Mx-8PI8I4BjGX0d2NhapaRAK12CgstweNoMint) jetton could be achieved
+
+```ts
+  import { WalletContractV4, TonClient, Cell, internal, toNano } from "@ton/ton";
+  import { mnemonicToPrivateKey } from "@ton/crypto";
+  import { DEX } from "@ston-fi/sdk";
+
+  const client = new TonClient({
+    endpoint: 'https://toncenter.com/api/v2/jsonRPC',
+    apiKey: '', // specify API key to avoid rate limits
+  });
+
+  const keyPair = await mnemonicToPrivateKey([]);
+
+  const offerJettonAddress = 'EQD6Z9DHc5Mx-8PI8I4BjGX0d2NhapaRAK12CgstweNoMint'; // Mintless Points
+  const askJettonAddress = 'EQCM3B12QK1e4yZSf8GtBRT0aLMNyEsBc_DhVfRRtOEffLez'; // pTON v1
+
+  const wallet = client.open(WalletContractV4.create({ workchain: 0, publicKey: keyPair.publicKey }));
+
+  // 1. request jetton data, to verify should claim be preformed or not
+
+  const offerJettonData = await (fetch(`https://tonapi.io/v2/accounts/${wallet.address.toString()}/jettons/${offerJettonAddress}?supported_extensions=custom_payload`).then((res) => res.json()));
+
+  console.log('offerJettonData', offerJettonData);
+
+  let customPayload: Cell | undefined;
+  let stateInit: { code: Cell, data: Cell } | undefined;
+
+  // 2. if jetton is not minted, request the `custom_payload` and `state_init` for it
+
+  if (offerJettonData.extensions?.includes('custom_payload')) {
+    const offerJettonCustomPayload = await (fetch(`${offerJettonData.jetton.custom_payload_api_uri}/wallet/${wallet.address.toString()}`).then((res) => res.json()));
+
+    const customPayload = Cell.fromBoc(Buffer.from(offerJettonCustomPayload.custom_payload, 'base64'))[0];
+    const stateInitCell = Cell.fromBoc(Buffer.from(offerJettonCustomPayload.state_init, 'base64'))[0].beginParse();
+
+    stateInit = {
+      code: stateInitCell.loadRef(),
+      data: stateInitCell.loadRef(),
+    };
+  }
+
+  // 3. build swap tx params with custom payload if needed
+
+  const router = client.open(DEX.v1.Router.create(DEX.v1.Router.address));
+  const txParams = await router.getSwapJettonToJettonTxParams({
+    userWalletAddress: wallet.address,
+    askJettonAddress,
+    offerJettonAddress,
+    offerAmount: toNano(0.1),
+    minAskAmount: 1,
+    jettonCustomPayload: customPayload,
+    // slightly increase gas amount to avoid out of gas error in case if init is required
+    gasAmount: stateInit ? DEX.v1.Router.gasConstants.swapJettonToJetton.gasAmount + toNano(0.1) : undefined,
+  });
+
+  // 4. send swap tx to the network with state init if needed
+
+  await wallet.sendTransfer({
+    seqno: await wallet.getSeqno(),
+    secretKey: keyPair.secretKey,
+    messages: [internal({
+      ...txParams,
+      init: stateInit,
+    })],
+  })
+}
+```
+
 ## [1.1.0]
 
 ### Added

@@ -10,7 +10,9 @@ import {
 import { Contract, type ContractOptions } from "@/contracts/core/Contract";
 import type { AddressType, AmountType, QueryIdType } from "@/types";
 
-import { DEX_OP_CODES, DEX_VERSION } from "../constants";
+import { DEX_VERSION } from "../constants";
+
+import { DEX_OP_CODES } from "./constants";
 
 export interface LpAccountV1Options extends ContractOptions {
   gasConstants?: Partial<typeof LpAccountV1.gasConstants>;
@@ -49,7 +51,7 @@ export class LpAccountV1 extends Contract {
     queryId?: QueryIdType;
   }): Promise<Cell> {
     return beginCell()
-      .storeUint(DEX_OP_CODES.REFUND, 32)
+      .storeUint(DEX_OP_CODES.REFUND_ME, 32)
       .storeUint(params?.queryId ?? 0, 64)
       .endCell();
   }
