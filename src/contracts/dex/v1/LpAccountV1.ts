@@ -10,7 +10,9 @@ import {
 import { Contract, type ContractOptions } from "@/contracts/core/Contract";
 import type { AddressType, AmountType, QueryIdType } from "@/types";
 
-import { DEX_OP_CODES, DEX_VERSION } from "../constants";
+import { DEX_VERSION } from "../constants";
+
+import { DEX_OP_CODES } from "./constants";
 
 export interface LpAccountV1Options extends ContractOptions {
   gasConstants?: Partial<typeof LpAccountV1.gasConstants>;

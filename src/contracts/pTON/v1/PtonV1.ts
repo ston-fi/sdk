@@ -14,7 +14,9 @@ import type { AddressType, AmountType, QueryIdType } from "@/types";
 import { createJettonTransferMessage } from "@/utils/createJettonTransferMessage";
 import { toAddress } from "@/utils/toAddress";
 
-import { pTON_OP_CODES, pTON_VERSION } from "../constants";
+import { pTON_VERSION } from "../constants";
+
+import { pTON_OP_CODES } from "./constants";
 
 export interface PtonV1Options extends ContractOptions {
   gasConstants?: Partial<typeof PtonV1.gasConstants>;
@@ -87,7 +89,7 @@ export class PtonV1 extends JettonMinter {
     queryId?: QueryIdType;
   }): Promise<Cell> {
     return beginCell()
-      .storeUint(pTON_OP_CODES.DEPLOY_WALLET_V1, 32)
+      .storeUint(pTON_OP_CODES.DEPLOY_WALLET, 32)
       .storeUint(params.queryId ?? 0, 64)
       .storeAddress(toAddress(params.ownerAddress))
       .endCell();

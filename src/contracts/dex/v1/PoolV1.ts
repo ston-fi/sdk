@@ -13,7 +13,9 @@ import { JettonWallet } from "@/contracts/core/JettonWallet";
 import type { AddressType, AmountType, QueryIdType } from "@/types";
 import { toAddress } from "@/utils/toAddress";
 
-import { DEX_OP_CODES, DEX_VERSION } from "../constants";
+import { DEX_VERSION } from "../constants";
+
+import { DEX_OP_CODES } from "./constants";
 import { LpAccountV1 } from "./LpAccountV1";
 
 export interface PoolV1Options extends ContractOptions {

@@ -15,8 +15,9 @@ import type { AddressType, AmountType, QueryIdType } from "@/types";
 import { createJettonTransferMessage } from "@/utils/createJettonTransferMessage";
 import { toAddress } from "@/utils/toAddress";
 
-import { DEX_OP_CODES, DEX_VERSION } from "../constants";
+import { DEX_VERSION } from "../constants";
 
+import { DEX_OP_CODES } from "./constants";
 import { PoolV1 } from "./PoolV1";
 
 export interface RouterV1Options extends ContractOptions {
@@ -105,6 +106,7 @@ export class RouterV1 extends Contract {
    * @param {bigint | number | string | undefined} params.gasAmount - Optional; Custom transaction gas amount (in nanoTons)
    * @param {bigint | number | string | undefined} params.forwardGasAmount - Optional; Custom transaction forward gas amount (in nanoTons)
    * @param {bigint | number | undefined} params.queryId - Optional; query id
+   * @param {Cell | undefined} params.jettonCustomPayload - Optional; custom payload for the jetton transfer message
    *
    * @returns {SenderArguments} data required to execute a jetton `swap` transaction
    */
@@ -120,6 +122,7 @@ export class RouterV1 extends Contract {
       gasAmount?: AmountType;
       forwardGasAmount?: AmountType;
       queryId?: QueryIdType;
+      jettonCustomPayload?: Cell;
     },
   ): Promise<SenderArguments> {
     const [offerJettonWalletAddress, askJettonWalletAddress] =
@@ -149,6 +152,7 @@ export class RouterV1 extends Contract {
       amount: params.offerAmount,
       destination: this.address,
       responseDestination: params.userWalletAddress,
+      customPayload: params.jettonCustomPayload,
       forwardTonAmount,
       forwardPayload,
     });
@@ -186,6 +190,7 @@ export class RouterV1 extends Contract {
    * @param {bigint | number | string | undefined} params.gasAmount - Optional; Custom transaction gas amount (in nanoTons)
    * @param {bigint | number | string | undefined} params.forwardGasAmount - Optional; Custom transaction forward gas amount (in nanoTons)
    * @param {bigint | number | undefined} params.queryId - Optional; query id
+   * @param {Cell | undefined} params.jettonCustomPayload - Optional; custom payload for the jetton transfer message
    *
    * @returns {SenderArguments} data required to execute a jetton `swap` transaction
    */
@@ -201,6 +206,7 @@ export class RouterV1 extends Contract {
       gasAmount?: AmountType;
       forwardGasAmount?: AmountType;
       queryId?: QueryIdType;
+      jettonCustomPayload?: Cell;
     },
   ): Promise<SenderArguments> {
     return await this.getSwapJettonToJettonTxParams(provider, {
@@ -309,6 +315,7 @@ export class RouterV1 extends Contract {
    * @param {bigint | number | string | undefined} params.gasAmount - Optional; Custom transaction gas amount (in nanoTons)
    * @param {bigint | number | string | undefined} params.forwardGasAmount - Optional; Custom transaction forward gas amount (in nanoTons)
    * @param {bigint | number | undefined} params.queryId - Optional; query id
+   * @param {Cell | undefined} params.jettonCustomPayload - Optional; custom payload for the jetton transfer message
    *
    * @returns {SenderArguments} data required to execute a jetton `provide_lp` transaction
    */
@@ -323,6 +330,7 @@ export class RouterV1 extends Contract {
       gasAmount?: AmountType;
       forwardGasAmount?: AmountType;
       queryId?: QueryIdType;
+      jettonCustomPayload?: Cell;
     },
   ): Promise<SenderArguments> {
     const [jettonWalletAddress, routerWalletAddress] = await Promise.all([
@@ -349,6 +357,7 @@ export class RouterV1 extends Contract {
       amount: params.sendAmount,
       destination: this.address,
       responseDestination: params.userWalletAddress,
+      customPayload: params.jettonCustomPayload,
       forwardTonAmount,
       forwardPayload,
     });

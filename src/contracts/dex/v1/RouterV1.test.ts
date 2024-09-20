@@ -1,5 +1,5 @@
 import { beforeAll, describe, expect, it, vi } from "vitest";
-import type { Sender } from "@ton/ton";
+import { beginCell, type Sender } from "@ton/ton";
 
 import { pTON } from "@/contracts/pTON";
 import {
@@ -269,6 +269,23 @@ describe("RouterV1", () => {
       );
       expect(txParams.value).toMatchInlineSnapshot("220000000n");
     });
+
+    it("should build expected tx params when custom jettonCustomPayload is defined", async () => {
+      const contract = provider.open(new RouterV1());
+
+      const txParams = await contract.getSwapJettonToJettonTxParams({
+        ...txArgs,
+        jettonCustomPayload: beginCell().storeBit(1).endCell(),
+      });
+
+      expect(txParams.to).toMatchInlineSnapshot(
+        '"EQBB_eiDQ9YJ_7UiNsrVvhTKt2O0oKjKe76eVQ7QPS-oYPsi"',
+      );
+      expect(txParams.body?.toBoc().toString("base64")).toMatchInlineSnapshot(
+        '"te6cckEBAwEArQACsA+KfqUAAAAAAAAAAEHc1lAIAO87mQKicbKgHIk4pSPP4k5xhHqutqYgAB7USnesDnCdAAQnxLqlX2B6w4jQzzzPWA8eyWZVZBz6Y0D/8noARLOaKBTck4EBAgABwACXJZOFYYABAM5g2SPF69zQu52aPmhZDOzP9L2+f39v9XQMt2w5RagX14QBAAQnxLqlX2B6w4jQzzzPWA8eyWZVZBz6Y0D/8noARLOaEO0cgYo="',
+      );
+      expect(txParams.value).toMatchInlineSnapshot("220000000n");
+    });
   });
 
   describe("sendSwapJettonToJetton", () => {
@@ -414,6 +431,23 @@ describe("RouterV1", () => {
       );
       expect(txParams.body?.toBoc().toString("base64")).toMatchInlineSnapshot(
         '"te6cckEBAgEApgABqg+KfqUAAAAAAAAAAEHc1lAIAO87mQKicbKgHIk4pSPP4k5xhHqutqYgAB7USnesDnCdAAQnxLqlX2B6w4jQzzzPWA8eyWZVZBz6Y0D/8noARLOaAgMBAJclk4VhgAIqFqMWTE1aoxM/MRD/EEluAMqKyKvv/FAn4CTTNIDD6BfXhAEABCfEuqVfYHrDiNDPPM9YDx7JZlVkHPpjQP/yegBEs5oQyZHaEA=="',
+      );
+      expect(txParams.value).toMatchInlineSnapshot("170000000n");
+    });
+
+    it("should build expected tx params when custom jettonCustomPayload is defined", async () => {
+      const contract = provider.open(new RouterV1());
+
+      const txParams = await contract.getSwapJettonToTonTxParams({
+        ...txArgs,
+        jettonCustomPayload: beginCell().storeBit(1).endCell(),
+      });
+
+      expect(txParams.to).toMatchInlineSnapshot(
+        '"EQBB_eiDQ9YJ_7UiNsrVvhTKt2O0oKjKe76eVQ7QPS-oYPsi"',
+      );
+      expect(txParams.body?.toBoc().toString("base64")).toMatchInlineSnapshot(
+        '"te6cckEBAwEArQACsA+KfqUAAAAAAAAAAEHc1lAIAO87mQKicbKgHIk4pSPP4k5xhHqutqYgAB7USnesDnCdAAQnxLqlX2B6w4jQzzzPWA8eyWZVZBz6Y0D/8noARLOaKA7msoEBAgABwACXJZOFYYACKhajFkxNWqMTPzEQ/xBJbgDKisir7/xQJ+Ak0zSAw+gX14QBAAQnxLqlX2B6w4jQzzzPWA8eyWZVZBz6Y0D/8noARLOaEDVpBRw="',
       );
       expect(txParams.value).toMatchInlineSnapshot("170000000n");
     });
@@ -680,16 +714,49 @@ describe("RouterV1", () => {
       const txParams = await contract.getProvideLiquidityJettonTxParams({
         ...txArgs,
         gasAmount: "1",
-        forwardGasAmount: "2",
       });
 
       expect(txParams.to).toMatchInlineSnapshot(
         '"EQBB_eiDQ9YJ_7UiNsrVvhTKt2O0oKjKe76eVQ7QPS-oYPsi"',
       );
       expect(txParams.body?.toBoc().toString("base64")).toMatchInlineSnapshot(
-        '"te6cckEBAgEAgQABqg+KfqUAAAAAAAAAAEHc1lAIAO87mQKicbKgHIk4pSPP4k5xhHqutqYgAB7USnesDnCdAAQnxLqlX2B6w4jQzzzPWA8eyWZVZBz6Y0D/8noARLOaAgUBAE38+eWPgAEAzmDZI8Xr3NC7nZo+aFkM7M/0vb5/f2/1dAy3bDlFogPlXGF2"',
+        '"te6cckEBAgEAhAABsA+KfqUAAAAAAAAAAEHc1lAIAO87mQKicbKgHIk4pSPP4k5xhHqutqYgAB7USnesDnCdAAQnxLqlX2B6w4jQzzzPWA8eyWZVZBz6Y0D/8noARLOaCBycOAEBAE38+eWPgAEAzmDZI8Xr3NC7nZo+aFkM7M/0vb5/f2/1dAy3bDlFogMsmgJ2"',
       );
       expect(txParams.value).toMatchInlineSnapshot("1n");
+    });
+
+    it("should build expected tx params when custom forwardGasAmount is defined", async () => {
+      const contract = provider.open(new RouterV1());
+
+      const txParams = await contract.getProvideLiquidityJettonTxParams({
+        ...txArgs,
+        forwardGasAmount: "1",
+      });
+
+      expect(txParams.to).toMatchInlineSnapshot(
+        '"EQBB_eiDQ9YJ_7UiNsrVvhTKt2O0oKjKe76eVQ7QPS-oYPsi"',
+      );
+      expect(txParams.body?.toBoc().toString("base64")).toMatchInlineSnapshot(
+        '"te6cckEBAgEAgQABqg+KfqUAAAAAAAAAAEHc1lAIAO87mQKicbKgHIk4pSPP4k5xhHqutqYgAB7USnesDnCdAAQnxLqlX2B6w4jQzzzPWA8eyWZVZBz6Y0D/8noARLOaAgMBAE38+eWPgAEAzmDZI8Xr3NC7nZo+aFkM7M/0vb5/f2/1dAy3bDlFogOQPo8V"',
+      );
+      expect(txParams.value).toMatchInlineSnapshot("300000000n");
+    });
+
+    it("should build expected tx params when custom jettonCustomPayload is defined", async () => {
+      const contract = provider.open(new RouterV1());
+
+      const txParams = await contract.getProvideLiquidityJettonTxParams({
+        ...txArgs,
+        jettonCustomPayload: beginCell().storeBit(1).endCell(),
+      });
+
+      expect(txParams.to).toMatchInlineSnapshot(
+        '"EQBB_eiDQ9YJ_7UiNsrVvhTKt2O0oKjKe76eVQ7QPS-oYPsi"',
+      );
+      expect(txParams.body?.toBoc().toString("base64")).toMatchInlineSnapshot(
+        '"te6cckEBAwEAiAACsA+KfqUAAAAAAAAAAEHc1lAIAO87mQKicbKgHIk4pSPP4k5xhHqutqYgAB7USnesDnCdAAQnxLqlX2B6w4jQzzzPWA8eyWZVZBz6Y0D/8noARLOaKBycOAEBAgABwABN/Pnlj4ABAM5g2SPF69zQu52aPmhZDOzP9L2+f39v9XQMt2w5RaIDh3HFeg=="',
+      );
+      expect(txParams.value).toMatchInlineSnapshot("300000000n");
     });
   });
 
@@ -791,21 +858,21 @@ describe("RouterV1", () => {
       expect(txParams.value).toMatchInlineSnapshot("760000000n");
     });
 
-    it("should build expected tx params when custom gasAmount is defined", async () => {
+    it("should build expected tx params when custom forwardGasAmount is defined", async () => {
       const contract = provider.open(new RouterV1());
 
       const txParams = await contract.getProvideLiquidityTonTxParams({
         ...txArgs,
-        forwardGasAmount: "2",
+        forwardGasAmount: "1",
       });
 
       expect(txParams.to).toMatchInlineSnapshot(
         '"EQARULUYsmJq1RiZ-YiH-IJLcAZUVkVff-KBPwEmmaQGH6aC"',
       );
       expect(txParams.body?.toBoc().toString("base64")).toMatchInlineSnapshot(
-        '"te6cckEBAgEAYAABZw+KfqUAAAAAAAAAAEHc1lAIAO87mQKicbKgHIk4pSPP4k5xhHqutqYgAB7USnesDnCcBAsBAE38+eWPgAEAzmDZI8Xr3NC7nZo+aFkM7M/0vb5/f2/1dAy3bDlFogMUO5pP"',
+        '"te6cckEBAgEAYAABZw+KfqUAAAAAAAAAAEHc1lAIAO87mQKicbKgHIk4pSPP4k5xhHqutqYgAB7USnesDnCcBAcBAE38+eWPgAEAzmDZI8Xr3NC7nZo+aFkM7M/0vb5/f2/1dAy3bDlFogP+/0aI"',
       );
-      expect(txParams.value).toMatchInlineSnapshot("500000002n");
+      expect(txParams.value).toMatchInlineSnapshot("500000001n");
     });
   });
 
