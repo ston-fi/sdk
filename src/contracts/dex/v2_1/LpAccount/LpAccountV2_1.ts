@@ -9,15 +9,17 @@ import {
 
 import type { AddressType, AmountType, QueryIdType } from "@/types";
 import { Contract, type ContractOptions } from "@/contracts/core/Contract";
-import { DEX_VERSION, DEX_OP_CODES } from "@/contracts/dex/constants";
+import { DEX_VERSION } from "@/contracts/dex/constants";
 import { toAddress } from "@/utils/toAddress";
 
-export interface LpAccountV2Options extends ContractOptions {
-  gasConstants?: Partial<typeof LpAccountV2.gasConstants>;
+import { DEX_OP_CODES } from "../constants";
+
+export interface LpAccountV2_1Options extends ContractOptions {
+  gasConstants?: Partial<typeof LpAccountV2_1.gasConstants>;
 }
 
-export class LpAccountV2 extends Contract {
-  public static readonly version = DEX_VERSION.v2;
+export class LpAccountV2_1 extends Contract {
+  public static readonly version = DEX_VERSION.v2_1;
 
   public static readonly gasConstants = {
     refund: toNano("0.8"),
@@ -29,12 +31,12 @@ export class LpAccountV2 extends Contract {
 
   constructor(
     address: AddressType,
-    { gasConstants, ...options }: LpAccountV2Options = {},
+    { gasConstants, ...options }: LpAccountV2_1Options = {},
   ) {
     super(address, options);
 
     this.gasConstants = {
-      ...LpAccountV2.gasConstants,
+      ...LpAccountV2_1.gasConstants,
       ...gasConstants,
     };
   }
@@ -77,7 +79,7 @@ export class LpAccountV2 extends Contract {
   public async sendRefund(
     provider: ContractProvider,
     via: Sender,
-    params: Parameters<LpAccountV2["getRefundTxParams"]>[1],
+    params: Parameters<LpAccountV2_1["getRefundTxParams"]>[1],
   ) {
     const txParams = await this.getRefundTxParams(provider, params);
 
@@ -91,8 +93,8 @@ export class LpAccountV2 extends Contract {
     userWalletAddress: AddressType;
     refundAddress?: AddressType;
     excessesAddress?: AddressType;
-    customPayload?: Cell;
-    customPayloadForwardGasAmount?: AmountType;
+    dexCustomPayload?: Cell;
+    dexCustomPayloadForwardGasAmount?: AmountType;
     queryId?: QueryIdType;
   }): Promise<Cell> {
     return beginCell()
@@ -101,9 +103,9 @@ export class LpAccountV2 extends Contract {
       .storeCoins(BigInt(params.amount0))
       .storeCoins(BigInt(params.amount1))
       .storeCoins(BigInt(params.minimumLpToMint ?? 1))
-      .storeCoins(BigInt(params.customPayloadForwardGasAmount ?? 0))
+      .storeCoins(BigInt(params.dexCustomPayloadForwardGasAmount ?? 0))
       .storeAddress(toAddress(params.userWalletAddress))
-      .storeMaybeRef(params.customPayload)
+      .storeMaybeRef(params.dexCustomPayload)
       .storeRef(
         beginCell()
           .storeAddress(
@@ -130,8 +132,8 @@ export class LpAccountV2 extends Contract {
       minimumLpToMint?: AmountType;
       refundAddress?: AddressType;
       excessesAddress?: AddressType;
-      customPayload?: Cell;
-      customPayloadForwardGasAmount?: AmountType;
+      dexCustomPayload?: Cell;
+      dexCustomPayloadForwardGasAmount?: AmountType;
       gasAmount?: AmountType;
       queryId?: QueryIdType;
     },
@@ -145,8 +147,8 @@ export class LpAccountV2 extends Contract {
       userWalletAddress: params.userWalletAddress,
       refundAddress: params.refundAddress,
       excessesAddress: params.excessesAddress,
-      customPayload: params.customPayload,
-      customPayloadForwardGasAmount: params.customPayloadForwardGasAmount,
+      dexCustomPayload: params.dexCustomPayload,
+      dexCustomPayloadForwardGasAmount: params.dexCustomPayloadForwardGasAmount,
       queryId: params.queryId,
     });
 
@@ -158,7 +160,7 @@ export class LpAccountV2 extends Contract {
   public async sendDirectAddLiquidity(
     provider: ContractProvider,
     via: Sender,
-    params: Parameters<LpAccountV2["getDirectAddLiquidityTxParams"]>[1],
+    params: Parameters<LpAccountV2_1["getDirectAddLiquidityTxParams"]>[1],
   ) {
     const txParams = await this.getDirectAddLiquidityTxParams(provider, params);
 
@@ -195,7 +197,7 @@ export class LpAccountV2 extends Contract {
   public async sendResetGas(
     provider: ContractProvider,
     via: Sender,
-    params: Parameters<LpAccountV2["getResetGasTxParams"]>[1],
+    params: Parameters<LpAccountV2_1["getResetGasTxParams"]>[1],
   ) {
     const txParams = await this.getResetGasTxParams(provider, params);
 

@@ -10,15 +10,17 @@ import {
 import type { AddressType, AmountType, QueryIdType } from "@/types";
 import { toAddress } from "@/utils/toAddress";
 
-import { pTON_VERSION, pTON_OP_CODES } from "../constants";
+import { pTON_VERSION } from "../constants";
 import { PtonV1, type PtonV1Options } from "../v1/PtonV1";
 
-export interface PtonV2Options extends PtonV1Options {
-  gasConstants?: Partial<typeof PtonV2.gasConstants>;
+import { pTON_OP_CODES } from "./constants";
+
+export interface PtonV2_1Options extends PtonV1Options {
+  gasConstants?: Partial<typeof PtonV2_1.gasConstants>;
 }
 
-export class PtonV2 extends PtonV1 {
-  public static readonly version = pTON_VERSION.v2;
+export class PtonV2_1 extends PtonV1 {
+  public static readonly version = pTON_VERSION.v2_1;
 
   public static readonly gasConstants = {
     tonTransfer: toNano("0.01"),
@@ -29,12 +31,12 @@ export class PtonV2 extends PtonV1 {
 
   constructor(
     address: AddressType,
-    { gasConstants, ...options }: PtonV2Options = {},
+    { gasConstants, ...options }: PtonV2_1Options = {},
   ) {
     super(address, options);
 
     this.gasConstants = {
-      ...PtonV2.gasConstants,
+      ...PtonV2_1.gasConstants,
       ...gasConstants,
     };
   }
@@ -91,7 +93,7 @@ export class PtonV2 extends PtonV1 {
   public async sendTonTransfer(
     provider: ContractProvider,
     via: Sender,
-    params: Parameters<PtonV2["getTonTransferTxParams"]>[1],
+    params: Parameters<PtonV2_1["getTonTransferTxParams"]>[1],
   ) {
     const txParams = await this.getTonTransferTxParams(provider, params);
 
@@ -104,7 +106,7 @@ export class PtonV2 extends PtonV1 {
     queryId?: QueryIdType;
   }): Promise<Cell> {
     return beginCell()
-      .storeUint(pTON_OP_CODES.DEPLOY_WALLET_V2, 32)
+      .storeUint(pTON_OP_CODES.DEPLOY_WALLET, 32)
       .storeUint(params.queryId ?? 0, 64)
       .storeAddress(toAddress(params.ownerAddress))
       .storeAddress(toAddress(params.excessAddress))
@@ -115,7 +117,7 @@ export class PtonV2 extends PtonV1 {
     provider: ContractProvider,
     params: {
       ownerAddress: AddressType;
-      excessAddress?: AddressType;
+      excessAddress: AddressType;
       gasAmount?: AmountType;
       queryId?: QueryIdType;
     },
@@ -124,7 +126,7 @@ export class PtonV2 extends PtonV1 {
 
     const body = await this.createDeployWalletBody({
       ownerAddress: params.ownerAddress,
-      excessAddress: params.excessAddress ?? params.ownerAddress,
+      excessAddress: params.excessAddress,
       queryId: params?.queryId,
     });
 
@@ -136,7 +138,7 @@ export class PtonV2 extends PtonV1 {
   public override async sendDeployWallet(
     provider: ContractProvider,
     via: Sender,
-    params: Parameters<PtonV2["getDeployWalletTxParams"]>[1],
+    params: Parameters<PtonV2_1["getDeployWalletTxParams"]>[1],
   ) {
     const txParams = await this.getDeployWalletTxParams(provider, params);
 

@@ -1,5 +1,126 @@
 # Changelog
 
+## [2.0.0-rc.5]
+
+### Changed
+
+- dex `v2` was deprecated and removed from the SDK. A new version, `v2_1,` was introduced instead.
+  `v2` contracts were only deployed in the testnet and will never be deployed in the main net.
+  `v2_1` has a few changes in comparison to the previous version:
+  - some operation codes were changed
+  - The optional parameter `deadline` was added to the swap & liquidity provide operations. This parameter is motivated by blockchain issues with TX processing that happen occasionally at a high load. If the transaction execution takes more time than defined by the `deadline` (15 min by default), the transaction will bounce.
+
+The migration from `v2` to `v2_1` is pretty simple:
+
+```diff
+const router = client.open(
+--  DEX.v2.Router.create(
+++  DEX.v2_1.Router.create(
+--    "kQCas2p939ESyXM_BzFJzcIe3GD5S0tbjJDj6EBVn-SPsEkN" // CPI Router v2.0.0
+++    "kQALh-JBBIKK7gr0o4AVf9JZnEsFndqO0qTCyT-D-yBsWk0v" // CPI Router v2.1.0
+  )
+);
+```
+
+- pTON `v2` was deprecated and removed from the SDK. A new version, `v2_1,` was introduced instead.
+  `v2` contracts were only deployed in the testnet and will never be deployed in the main net.
+
+The migration from `v2` to `v2_1` is pretty simple:
+
+```diff
+-- const proxyTon = pTON.v2.create(
+++ const proxyTon = pTON.v2_1.create(
+--  "kQDwpyxrmYQlGDViPk-oqP4XK6J11I-bx7fJAlQCWmJB4m74" // pTON v2.0.0
+++  "kQACS30DNoUQ7NfApPvzh7eBmSZ9L4ygJ-lkNWtba8TQT-Px" // pTON v2.1.0
+);
+```
+
+### Added
+
+- Because of the recent appearance of the [Mintless Jettons](https://gist.github.com/EmelyanenkoK/bfe633bdf8e22ca92a5138e59134988f) ability to pass `custom_payload` to [jetton transfer message](https://github.com/ton-blockchain/TEPs/blob/master/text/0074-jettons-standard.md#1-transfer) became a necessity, optional `jettonCustomPayload` parameter was added to all dex operations that are jettonTransfer's
+  - swap
+    - `RouterV1.getSwapJettonToJettonTxParams`
+    - `RouterV1.getSwapJettonToTonTxParams`
+    - `RouterV2_1.getSwapJettonToJettonTxParams`
+    - `RouterV2_1.getSwapJettonToTonTxParams`
+  - liquidity provision
+    - `RouterV1.getProvideLiquidityJettonTxParams`
+    - `RouterV2_1.getProvideLiquidityJettonTxParams`
+    - `RouterV2_1.getSingleSideProvideLiquidityJettonTxParams`
+
+Here is an example of how swap with non yet minted [Points](https://tonviewer.com/EQD6Z9DHc5Mx-8PI8I4BjGX0d2NhapaRAK12CgstweNoMint) jetton could be achieved
+
+```ts
+  import { WalletContractV4, TonClient, Cell, internal, toNano } from "@ton/ton";
+  import { mnemonicToPrivateKey } from "@ton/crypto";
+  import { DEX } from "@ston-fi/sdk";
+
+  const client = new TonClient({
+    endpoint: 'https://toncenter.com/api/v2/jsonRPC',
+    apiKey: '', // specify API key to avoid rate limits
+  });
+
+  const keyPair = await mnemonicToPrivateKey([]);
+
+  const offerJettonAddress = 'EQD6Z9DHc5Mx-8PI8I4BjGX0d2NhapaRAK12CgstweNoMint'; // Mintless Points
+  const askJettonAddress = 'EQCM3B12QK1e4yZSf8GtBRT0aLMNyEsBc_DhVfRRtOEffLez'; // pTON v1
+
+  const wallet = client.open(WalletContractV4.create({ workchain: 0, publicKey: keyPair.publicKey }));
+
+  // 1. request jetton data, to verify should claim be preformed or not
+
+  const offerJettonData = await (fetch(`https://tonapi.io/v2/accounts/${wallet.address.toString()}/jettons/${offerJettonAddress}?supported_extensions=custom_payload`).then((res) => res.json()));
+
+  console.log('offerJettonData', offerJettonData);
+
+  let customPayload: Cell | undefined;
+  let stateInit: { code: Cell, data: Cell } | undefined;
+
+  // 2. if jetton is not minted, request the `custom_payload` and `state_init` for it
+
+  if (offerJettonData.extensions?.includes('custom_payload')) {
+    const offerJettonCustomPayload = await (fetch(`${offerJettonData.jetton.custom_payload_api_uri}/wallet/${wallet.address.toString()}`).then((res) => res.json()));
+
+    const customPayload = Cell.fromBoc(Buffer.from(offerJettonCustomPayload.custom_payload, 'base64'))[0];
+    const stateInitCell = Cell.fromBoc(Buffer.from(offerJettonCustomPayload.state_init, 'base64'))[0].beginParse();
+
+    stateInit = {
+      code: stateInitCell.loadRef(),
+      data: stateInitCell.loadRef(),
+    };
+  }
+
+  // 3. build swap tx params with custom payload if needed
+
+  const router = client.open(DEX.v1.Router.create(DEX.v1.Router.address));
+  const txParams = await router.getSwapJettonToJettonTxParams({
+    userWalletAddress: wallet.address,
+    askJettonAddress,
+    offerJettonAddress,
+    offerAmount: toNano(0.1),
+    minAskAmount: 1,
+    jettonCustomPayload: customPayload,
+    // slightly increase gas amount to avoid out of gas error in case if init is required
+    gasAmount: stateInit ? DEX.v1.Router.gasConstants.swapJettonToJetton.gasAmount + toNano(0.1) : undefined,
+  });
+
+  // 4. send swap tx to the network with state init if needed
+
+  await wallet.sendTransfer({
+    seqno: await wallet.getSeqno(),
+    secretKey: keyPair.secretKey,
+    messages: [internal({
+      ...txParams,
+      init: stateInit,
+    })],
+  })
+}
+```
+
+### Removed
+
+- `RouterV2_1.createCrossProvideLiquidityBody` removed. Cross provide liquidity will not be implemented in this contract version
+
 ## [2.0.0-rc.3]
 
 ### Added

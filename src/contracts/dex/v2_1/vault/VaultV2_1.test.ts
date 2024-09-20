@@ -11,47 +11,47 @@ import {
 
 import { DEX_VERSION } from "../../constants";
 
-import { VaultV2 } from "./VaultV2";
+import { VaultV2_1 } from "./VaultV2_1";
 
 const USER_WALLET_ADDRESS = "UQAQnxLqlX2B6w4jQzzzPWA8eyWZVZBz6Y0D_8noARLOaEAn";
 const VAULT_ADDRESS = "EQDIAOYrxwbAI1m3wUJlvJVRoZuxO_TZmavNVj-TBDe0LiLR"; // Vault for `USER_WALLET_ADDRESS` wallet and TestRED token
 
-describe("VaultV2", () => {
+describe("VaultV2_1", () => {
   beforeAll(setup);
 
   describe("version", () => {
     it("should have expected static value", () => {
-      expect(VaultV2.version).toBe(DEX_VERSION.v2);
+      expect(VaultV2_1.version).toBe(DEX_VERSION.v2_1);
     });
   });
 
   describe("gasConstants", () => {
     it("should have expected static value", () => {
-      expect(VaultV2.gasConstants.withdrawFee).toMatchInlineSnapshot(
+      expect(VaultV2_1.gasConstants.withdrawFee).toMatchInlineSnapshot(
         "300000000n",
       );
     });
   });
 
   describe("constructor", () => {
-    it("should create an instance of VaultV2", () => {
-      const contract = VaultV2.create(VAULT_ADDRESS);
+    it("should create an instance of VaultV2_1", () => {
+      const contract = VaultV2_1.create(VAULT_ADDRESS);
 
-      expect(contract).toBeInstanceOf(VaultV2);
+      expect(contract).toBeInstanceOf(VaultV2_1);
     });
 
-    it("should create an instance of VaultV2 with default gasConstants", () => {
-      const contract = VaultV2.create(VAULT_ADDRESS);
+    it("should create an instance of VaultV2_1 with default gasConstants", () => {
+      const contract = VaultV2_1.create(VAULT_ADDRESS);
 
-      expect(contract.gasConstants).toEqual(VaultV2.gasConstants);
+      expect(contract.gasConstants).toEqual(VaultV2_1.gasConstants);
     });
 
-    it("should create an instance of VaultV2 with given gasConstants", () => {
-      const gasConstants: Partial<VaultV2["gasConstants"]> = {
+    it("should create an instance of VaultV2_1 with given gasConstants", () => {
+      const gasConstants: Partial<VaultV2_1["gasConstants"]> = {
         withdrawFee: BigInt("1"),
       };
 
-      const contract = new VaultV2(VAULT_ADDRESS, {
+      const contract = new VaultV2_1(VAULT_ADDRESS, {
         gasConstants,
       });
 
@@ -63,24 +63,24 @@ describe("VaultV2", () => {
 
   describe("createWithdrawFeeBody", () => {
     it("should build expected tx body", async () => {
-      const contract = VaultV2.create(VAULT_ADDRESS);
+      const contract = VaultV2_1.create(VAULT_ADDRESS);
 
       const body = await contract.createWithdrawFeeBody();
 
       expect(body.toBoc().toString("base64")).toMatchInlineSnapshot(
-        '"te6cckEBAQEADgAAGEXtLccAAAAAAAAAAJcJAj4="',
+        '"te6cckEBAQEADgAAGDVLzfQAAAAAAAAAADRql48="',
       );
     });
 
     it("should build expected tx body when queryId is defined", async () => {
-      const contract = VaultV2.create(VAULT_ADDRESS);
+      const contract = VaultV2_1.create(VAULT_ADDRESS);
 
       const body = await contract.createWithdrawFeeBody({
         queryId: 12345,
       });
 
       expect(body.toBoc().toString("base64")).toMatchInlineSnapshot(
-        '"te6cckEBAQEADgAAGEXtLccAAAAAAAAwOWmJHTY="',
+        '"te6cckEBAQEADgAAGDVLzfQAAAAAAAAwOcrqiIc="',
       );
     });
   });
@@ -89,19 +89,19 @@ describe("VaultV2", () => {
     const provider = createMockProvider();
 
     it("should build expected tx params", async () => {
-      const contract = provider.open(VaultV2.create(VAULT_ADDRESS));
+      const contract = provider.open(VaultV2_1.create(VAULT_ADDRESS));
 
       const params = await contract.getWithdrawFeeTxParams();
 
       expect(params.to.toString()).toBe(VAULT_ADDRESS);
       expect(params.body?.toBoc().toString("base64")).toMatchInlineSnapshot(
-        '"te6cckEBAQEADgAAGEXtLccAAAAAAAAAAJcJAj4="',
+        '"te6cckEBAQEADgAAGDVLzfQAAAAAAAAAADRql48="',
       );
       expect(params.value).toBe(contract.gasConstants.withdrawFee);
     });
 
     it("should build expected tx params when queryId is defined", async () => {
-      const contract = provider.open(VaultV2.create(VAULT_ADDRESS));
+      const contract = provider.open(VaultV2_1.create(VAULT_ADDRESS));
 
       const params = await contract.getWithdrawFeeTxParams({
         queryId: 12345,
@@ -109,13 +109,13 @@ describe("VaultV2", () => {
 
       expect(params.to.toString()).toBe(VAULT_ADDRESS);
       expect(params.body?.toBoc().toString("base64")).toMatchInlineSnapshot(
-        '"te6cckEBAQEADgAAGEXtLccAAAAAAAAwOWmJHTY="',
+        '"te6cckEBAQEADgAAGDVLzfQAAAAAAAAwOcrqiIc="',
       );
       expect(params.value).toBe(contract.gasConstants.withdrawFee);
     });
 
     it("should build expected tx params when custom gasAmount is defined", async () => {
-      const contract = provider.open(VaultV2.create(VAULT_ADDRESS));
+      const contract = provider.open(VaultV2_1.create(VAULT_ADDRESS));
 
       const params = await contract.getWithdrawFeeTxParams({
         gasAmount: "1",
@@ -123,7 +123,7 @@ describe("VaultV2", () => {
 
       expect(params.to.toString()).toBe(VAULT_ADDRESS);
       expect(params.body?.toBoc().toString("base64")).toMatchInlineSnapshot(
-        '"te6cckEBAQEADgAAGEXtLccAAAAAAAAAAJcJAj4="',
+        '"te6cckEBAQEADgAAGDVLzfQAAAAAAAAAADRql48="',
       );
       expect(params.value).toMatchInlineSnapshot("1n");
     });
@@ -131,9 +131,9 @@ describe("VaultV2", () => {
 
   describe("sendWithdrawFee", () => {
     it("should call getWithdrawFeeTxParams and pass the result to the sender", async () => {
-      const txArgs = {} as Parameters<VaultV2["sendWithdrawFee"]>[2];
+      const txArgs = {} as Parameters<VaultV2_1["sendWithdrawFee"]>[2];
 
-      const contract = VaultV2.create(VAULT_ADDRESS);
+      const contract = VaultV2_1.create(VAULT_ADDRESS);
 
       const getWithdrawFeeTxParams = vi.spyOn(
         contract,
@@ -177,7 +177,7 @@ describe("VaultV2", () => {
 
       const provider = createMockProviderFromSnapshot(snapshot);
 
-      const contract = provider.open(VaultV2.create(VAULT_ADDRESS));
+      const contract = provider.open(VaultV2_1.create(VAULT_ADDRESS));
 
       const data = await contract.getVaultData();
 

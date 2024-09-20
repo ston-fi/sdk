@@ -10,55 +10,55 @@ import {
 } from "@/test-utils";
 import { DEX_VERSION } from "../../constants";
 
-import { LpAccountV2 } from "./LpAccountV2";
+import { LpAccountV2_1 } from "./LpAccountV2_1";
 
 const USER_WALLET_ADDRESS = "UQAQnxLqlX2B6w4jQzzzPWA8eyWZVZBz6Y0D_8noARLOaEAn";
 const LP_ACCOUNT_ADDRESS = "EQAAPP517U137Zx7xkNgzm662hGlxuL20iiQDRtwemhWTPLx"; // LP account of `USER_WALLET_ADDRESS` wallet for TestRED/TestBLUE pool
 
-describe("LpAccountV2", () => {
+describe("LpAccountV2_1", () => {
   beforeAll(setup);
 
   describe("version", () => {
     it("should have expected static value", () => {
-      expect(LpAccountV2.version).toBe(DEX_VERSION.v2);
+      expect(LpAccountV2_1.version).toBe(DEX_VERSION.v2_1);
     });
   });
 
   describe("gasConstants", () => {
     it("should have expected static value", () => {
-      expect(LpAccountV2.gasConstants.directAddLp).toMatchInlineSnapshot(
+      expect(LpAccountV2_1.gasConstants.directAddLp).toMatchInlineSnapshot(
         "300000000n",
       );
-      expect(LpAccountV2.gasConstants.refund).toMatchInlineSnapshot(
+      expect(LpAccountV2_1.gasConstants.refund).toMatchInlineSnapshot(
         "800000000n",
       );
-      expect(LpAccountV2.gasConstants.resetGas).toMatchInlineSnapshot(
+      expect(LpAccountV2_1.gasConstants.resetGas).toMatchInlineSnapshot(
         "20000000n",
       );
     });
   });
 
   describe("constructor", () => {
-    it("should create an instance of LpAccountV2", () => {
-      const contract = LpAccountV2.create(LP_ACCOUNT_ADDRESS);
+    it("should create an instance of LpAccountV2_1", () => {
+      const contract = LpAccountV2_1.create(LP_ACCOUNT_ADDRESS);
 
-      expect(contract).toBeInstanceOf(LpAccountV2);
+      expect(contract).toBeInstanceOf(LpAccountV2_1);
     });
 
-    it("should create an instance of LpAccountV2 with default gasConstants", () => {
-      const contract = LpAccountV2.create(LP_ACCOUNT_ADDRESS);
+    it("should create an instance of LpAccountV2_1 with default gasConstants", () => {
+      const contract = LpAccountV2_1.create(LP_ACCOUNT_ADDRESS);
 
-      expect(contract.gasConstants).toEqual(LpAccountV2.gasConstants);
+      expect(contract.gasConstants).toEqual(LpAccountV2_1.gasConstants);
     });
 
-    it("should create an instance of LpAccountV2 with given gasConstants", () => {
-      const gasConstants: Partial<LpAccountV2["gasConstants"]> = {
+    it("should create an instance of LpAccountV2_1 with given gasConstants", () => {
+      const gasConstants: Partial<LpAccountV2_1["gasConstants"]> = {
         refund: BigInt("1"),
         directAddLp: BigInt("2"),
         resetGas: BigInt("3"),
       };
 
-      const contract = new LpAccountV2(LP_ACCOUNT_ADDRESS, {
+      const contract = new LpAccountV2_1(LP_ACCOUNT_ADDRESS, {
         gasConstants,
       });
 
@@ -70,24 +70,24 @@ describe("LpAccountV2", () => {
 
   describe("createRefundBody", () => {
     it("should build expected tx body", async () => {
-      const contract = LpAccountV2.create(LP_ACCOUNT_ADDRESS);
+      const contract = LpAccountV2_1.create(LP_ACCOUNT_ADDRESS);
 
       const body = await contract.createRefundBody();
 
       expect(body.toBoc().toString("base64")).toMatchInlineSnapshot(
-        '"te6cckEBAQEADwAAGQvz9EcAAAAAAAAAACCVqe6q"',
+        '"te6cckEBAQEADwAAGRMrmiwAAAAAAAAAACAs58M0"',
       );
     });
 
     it("should build expected tx body when queryId is defined", async () => {
-      const contract = LpAccountV2.create(LP_ACCOUNT_ADDRESS);
+      const contract = LpAccountV2_1.create(LP_ACCOUNT_ADDRESS);
 
       const body = await contract.createRefundBody({
         queryId: 12345,
       });
 
       expect(body.toBoc().toString("base64")).toMatchInlineSnapshot(
-        '"te6cckEBAQEADwAAGQvz9EcAAAAAAAAwOSBHZvD1"',
+        '"te6cckEBAQEADwAAGRMrmiwAAAAAAAAwOSD+KN1r"',
       );
     });
   });
@@ -96,19 +96,19 @@ describe("LpAccountV2", () => {
     const provider = createMockProvider();
 
     it("should build expected tx params", async () => {
-      const contract = provider.open(LpAccountV2.create(LP_ACCOUNT_ADDRESS));
+      const contract = provider.open(LpAccountV2_1.create(LP_ACCOUNT_ADDRESS));
 
       const params = await contract.getRefundTxParams();
 
       expect(params.to.toString()).toBe(LP_ACCOUNT_ADDRESS);
       expect(params.body?.toBoc().toString("base64")).toMatchInlineSnapshot(
-        '"te6cckEBAQEADwAAGQvz9EcAAAAAAAAAACCVqe6q"',
+        '"te6cckEBAQEADwAAGRMrmiwAAAAAAAAAACAs58M0"',
       );
       expect(params.value).toBe(contract.gasConstants.refund);
     });
 
     it("should build expected tx params when queryId is defined", async () => {
-      const contract = provider.open(LpAccountV2.create(LP_ACCOUNT_ADDRESS));
+      const contract = provider.open(LpAccountV2_1.create(LP_ACCOUNT_ADDRESS));
 
       const params = await contract.getRefundTxParams({
         queryId: 12345,
@@ -116,13 +116,13 @@ describe("LpAccountV2", () => {
 
       expect(params.to.toString()).toBe(LP_ACCOUNT_ADDRESS);
       expect(params.body?.toBoc().toString("base64")).toMatchInlineSnapshot(
-        '"te6cckEBAQEADwAAGQvz9EcAAAAAAAAwOSBHZvD1"',
+        '"te6cckEBAQEADwAAGRMrmiwAAAAAAAAwOSD+KN1r"',
       );
       expect(params.value).toBe(contract.gasConstants.refund);
     });
 
     it("should build expected tx params when custom gasAmount is defined", async () => {
-      const contract = provider.open(LpAccountV2.create(LP_ACCOUNT_ADDRESS));
+      const contract = provider.open(LpAccountV2_1.create(LP_ACCOUNT_ADDRESS));
 
       const params = await contract.getRefundTxParams({
         gasAmount: "1",
@@ -130,7 +130,7 @@ describe("LpAccountV2", () => {
 
       expect(params.to.toString()).toBe(LP_ACCOUNT_ADDRESS);
       expect(params.body?.toBoc().toString("base64")).toMatchInlineSnapshot(
-        '"te6cckEBAQEADwAAGQvz9EcAAAAAAAAAACCVqe6q"',
+        '"te6cckEBAQEADwAAGRMrmiwAAAAAAAAAACAs58M0"',
       );
       expect(params.value).toMatchInlineSnapshot("1n");
     });
@@ -138,9 +138,9 @@ describe("LpAccountV2", () => {
 
   describe("sendRefund", () => {
     it("should call getRefundTxParams and pass the result to the sender", async () => {
-      const txArgs = {} as Parameters<LpAccountV2["sendRefund"]>[2];
+      const txArgs = {} as Parameters<LpAccountV2_1["sendRefund"]>[2];
 
-      const contract = LpAccountV2.create(LP_ACCOUNT_ADDRESS);
+      const contract = LpAccountV2_1.create(LP_ACCOUNT_ADDRESS);
 
       const getRefundTxParams = vi.spyOn(contract, "getRefundTxParams");
 
@@ -170,19 +170,19 @@ describe("LpAccountV2", () => {
     };
 
     it("should build expected tx body", async () => {
-      const contract = LpAccountV2.create(LP_ACCOUNT_ADDRESS);
+      const contract = LpAccountV2_1.create(LP_ACCOUNT_ADDRESS);
 
       const body = await contract.createDirectAddLiquidityBody({
         ...txParams,
       });
 
       expect(body.toBoc().toString("base64")).toMatchInlineSnapshot(
-        '"te6cckEBAgEAgQABcUz4KAMAAAAAAAAAAEO5rKAEdzWUABAQgAIT4l1Sr7A9YcRoZ55nrAePZLMqsg59MaB/+T0AIlnNCAEAhYACE+JdUq+wPWHEaGeeZ6wHj2SzKrIOfTGgf/k9ACJZzRAAQnxLqlX2B6w4jQzzzPWA8eyWZVZBz6Y0D/8noARLOaJUKwEU"',
+        '"te6cckEBAgEAgQABcQ/4v8YAAAAAAAAAAEO5rKAEdzWUABAQgAIT4l1Sr7A9YcRoZ55nrAePZLMqsg59MaB/+T0AIlnNCAEAhYACE+JdUq+wPWHEaGeeZ6wHj2SzKrIOfTGgf/k9ACJZzRAAQnxLqlX2B6w4jQzzzPWA8eyWZVZBz6Y0D/8noARLOaLnKlNw"',
       );
     });
 
     it("should build expected tx body when queryId is defined", async () => {
-      const contract = LpAccountV2.create(LP_ACCOUNT_ADDRESS);
+      const contract = LpAccountV2_1.create(LP_ACCOUNT_ADDRESS);
 
       const body = await contract.createDirectAddLiquidityBody({
         ...txParams,
@@ -190,12 +190,12 @@ describe("LpAccountV2", () => {
       });
 
       expect(body.toBoc().toString("base64")).toMatchInlineSnapshot(
-        '"te6cckEBAgEAgQABcUz4KAMAAAAAAAAwOUO5rKAEdzWUABAQgAIT4l1Sr7A9YcRoZ55nrAePZLMqsg59MaB/+T0AIlnNCAEAhYACE+JdUq+wPWHEaGeeZ6wHj2SzKrIOfTGgf/k9ACJZzRAAQnxLqlX2B6w4jQzzzPWA8eyWZVZBz6Y0D/8noARLOaI6Vjui"',
+        '"te6cckEBAgEAgQABcQ/4v8YAAAAAAAAwOUO5rKAEdzWUABAQgAIT4l1Sr7A9YcRoZ55nrAePZLMqsg59MaB/+T0AIlnNCAEAhYACE+JdUq+wPWHEaGeeZ6wHj2SzKrIOfTGgf/k9ACJZzRAAQnxLqlX2B6w4jQzzzPWA8eyWZVZBz6Y0D/8noARLOaKJV2nG"',
       );
     });
 
     it("should build expected tx body when minimumLpToMint is defined", async () => {
-      const contract = LpAccountV2.create(LP_ACCOUNT_ADDRESS);
+      const contract = LpAccountV2_1.create(LP_ACCOUNT_ADDRESS);
 
       const body = await contract.createDirectAddLiquidityBody({
         ...txParams,
@@ -203,7 +203,7 @@ describe("LpAccountV2", () => {
       });
 
       expect(body.toBoc().toString("base64")).toMatchInlineSnapshot(
-        '"te6cckEBAgEAggABc0z4KAMAAAAAAAAAAEO5rKAEdzWUACASwIACE+JdUq+wPWHEaGeeZ6wHj2SzKrIOfTGgf/k9ACJZzQgBAIWAAhPiXVKvsD1hxGhnnmesB49ksyqyDn0xoH/5PQAiWc0QAEJ8S6pV9gesOI0M88z1gPHslmVWQc+mNA//J6AESzmiXyA3Mw=="',
+        '"te6cckEBAgEAggABcw/4v8YAAAAAAAAAAEO5rKAEdzWUACASwIACE+JdUq+wPWHEaGeeZ6wHj2SzKrIOfTGgf/k9ACJZzQgBAIWAAhPiXVKvsD1hxGhnnmesB49ksyqyDn0xoH/5PQAiWc0QAEJ8S6pV9gesOI0M88z1gPHslmVWQc+mNA//J6AESzmiY/MWkg=="',
       );
     });
   });
@@ -218,7 +218,7 @@ describe("LpAccountV2", () => {
     };
 
     it("should build expected tx params", async () => {
-      const contract = provider.open(LpAccountV2.create(LP_ACCOUNT_ADDRESS));
+      const contract = provider.open(LpAccountV2_1.create(LP_ACCOUNT_ADDRESS));
 
       const params = await contract.getDirectAddLiquidityTxParams({
         ...txParams,
@@ -226,13 +226,13 @@ describe("LpAccountV2", () => {
 
       expect(params.to.toString()).toBe(LP_ACCOUNT_ADDRESS);
       expect(params.body?.toBoc().toString("base64")).toMatchInlineSnapshot(
-        '"te6cckEBAgEAewABZUz4KAMAAAAAAAAAABARAhAQgAIT4l1Sr7A9YcRoZ55nrAePZLMqsg59MaB/+T0AIlnNCAEAhYACE+JdUq+wPWHEaGeeZ6wHj2SzKrIOfTGgf/k9ACJZzRAAQnxLqlX2B6w4jQzzzPWA8eyWZVZBz6Y0D/8noARLOaIG6kbG"',
+        '"te6cckEBAgEAewABZQ/4v8YAAAAAAAAAABARAhAQgAIT4l1Sr7A9YcRoZ55nrAePZLMqsg59MaB/+T0AIlnNCAEAhYACE+JdUq+wPWHEaGeeZ6wHj2SzKrIOfTGgf/k9ACJZzRAAQnxLqlX2B6w4jQzzzPWA8eyWZVZBz6Y0D/8noARLOaKkaNXm"',
       );
       expect(params.value).toBe(contract.gasConstants.directAddLp);
     });
 
     it("should build expected tx params when queryId is defined", async () => {
-      const contract = provider.open(LpAccountV2.create(LP_ACCOUNT_ADDRESS));
+      const contract = provider.open(LpAccountV2_1.create(LP_ACCOUNT_ADDRESS));
 
       const params = await contract.getDirectAddLiquidityTxParams({
         ...txParams,
@@ -241,13 +241,13 @@ describe("LpAccountV2", () => {
 
       expect(params.to.toString()).toBe(LP_ACCOUNT_ADDRESS);
       expect(params.body?.toBoc().toString("base64")).toMatchInlineSnapshot(
-        '"te6cckEBAgEAewABZUz4KAMAAAAAAAAwORARAhAQgAIT4l1Sr7A9YcRoZ55nrAePZLMqsg59MaB/+T0AIlnNCAEAhYACE+JdUq+wPWHEaGeeZ6wHj2SzKrIOfTGgf/k9ACJZzRAAQnxLqlX2B6w4jQzzzPWA8eyWZVZBz6Y0D/8noARLOaIeyYa1"',
+        '"te6cckEBAgEAewABZQ/4v8YAAAAAAAAwORARAhAQgAIT4l1Sr7A9YcRoZ55nrAePZLMqsg59MaB/+T0AIlnNCAEAhYACE+JdUq+wPWHEaGeeZ6wHj2SzKrIOfTGgf/k9ACJZzRAAQnxLqlX2B6w4jQzzzPWA8eyWZVZBz6Y0D/8noARLOaK8SxWV"',
       );
       expect(params.value).toBe(contract.gasConstants.directAddLp);
     });
 
     it("should build expected tx params when minimumLpToMint is defined", async () => {
-      const contract = provider.open(LpAccountV2.create(LP_ACCOUNT_ADDRESS));
+      const contract = provider.open(LpAccountV2_1.create(LP_ACCOUNT_ADDRESS));
 
       const params = await contract.getDirectAddLiquidityTxParams({
         ...txParams,
@@ -256,13 +256,13 @@ describe("LpAccountV2", () => {
 
       expect(params.to.toString()).toBe(LP_ACCOUNT_ADDRESS);
       expect(params.body?.toBoc().toString("base64")).toMatchInlineSnapshot(
-        '"te6cckEBAgEAewABZUz4KAMAAAAAAAAAABARAhAwgAIT4l1Sr7A9YcRoZ55nrAePZLMqsg59MaB/+T0AIlnNCAEAhYACE+JdUq+wPWHEaGeeZ6wHj2SzKrIOfTGgf/k9ACJZzRAAQnxLqlX2B6w4jQzzzPWA8eyWZVZBz6Y0D/8noARLOaJ+Mo0t"',
+        '"te6cckEBAgEAewABZQ/4v8YAAAAAAAAAABARAhAwgAIT4l1Sr7A9YcRoZ55nrAePZLMqsg59MaB/+T0AIlnNCAEAhYACE+JdUq+wPWHEaGeeZ6wHj2SzKrIOfTGgf/k9ACJZzRAAQnxLqlX2B6w4jQzzzPWA8eyWZVZBz6Y0D/8noARLOaLcsB4N"',
       );
       expect(params.value).toBe(contract.gasConstants.directAddLp);
     });
 
     it("should build expected tx params when custom gasAmount is defined", async () => {
-      const contract = provider.open(LpAccountV2.create(LP_ACCOUNT_ADDRESS));
+      const contract = provider.open(LpAccountV2_1.create(LP_ACCOUNT_ADDRESS));
 
       const params = await contract.getDirectAddLiquidityTxParams({
         ...txParams,
@@ -273,7 +273,7 @@ describe("LpAccountV2", () => {
         '"EQAAPP517U137Zx7xkNgzm662hGlxuL20iiQDRtwemhWTPLx"',
       );
       expect(params.body?.toBoc().toString("base64")).toMatchInlineSnapshot(
-        '"te6cckEBAgEAewABZUz4KAMAAAAAAAAAABARAhAQgAIT4l1Sr7A9YcRoZ55nrAePZLMqsg59MaB/+T0AIlnNCAEAhYACE+JdUq+wPWHEaGeeZ6wHj2SzKrIOfTGgf/k9ACJZzRAAQnxLqlX2B6w4jQzzzPWA8eyWZVZBz6Y0D/8noARLOaIG6kbG"',
+        '"te6cckEBAgEAewABZQ/4v8YAAAAAAAAAABARAhAQgAIT4l1Sr7A9YcRoZ55nrAePZLMqsg59MaB/+T0AIlnNCAEAhYACE+JdUq+wPWHEaGeeZ6wHj2SzKrIOfTGgf/k9ACJZzRAAQnxLqlX2B6w4jQzzzPWA8eyWZVZBz6Y0D/8noARLOaKkaNXm"',
       );
       expect(params.value).toMatchInlineSnapshot("1n");
     });
@@ -281,9 +281,11 @@ describe("LpAccountV2", () => {
 
   describe("sendDirectAddLiquidity", () => {
     it("should call getDirectAddLiquidityTxParams and pass the result to the sender", async () => {
-      const txArgs = {} as Parameters<LpAccountV2["sendDirectAddLiquidity"]>[2];
+      const txArgs = {} as Parameters<
+        LpAccountV2_1["sendDirectAddLiquidity"]
+      >[2];
 
-      const contract = LpAccountV2.create(LP_ACCOUNT_ADDRESS);
+      const contract = LpAccountV2_1.create(LP_ACCOUNT_ADDRESS);
 
       const getDirectAddLiquidityTxParams = vi.spyOn(
         contract,
@@ -313,24 +315,24 @@ describe("LpAccountV2", () => {
 
   describe("createResetGasBody", () => {
     it("should build expected tx body", async () => {
-      const contract = LpAccountV2.create(LP_ACCOUNT_ADDRESS);
+      const contract = LpAccountV2_1.create(LP_ACCOUNT_ADDRESS);
 
       const body = await contract.createResetGasBody();
 
       expect(body.toBoc().toString("base64")).toMatchInlineSnapshot(
-        '"te6cckEBAQEADgAAGEKg+0MAAAAAAAAAAPc9hrQ="',
+        '"te6cckEBAQEADgAAGCnSKTUAAAAAAAAAAI6H96U="',
       );
     });
 
     it("should build expected tx body when queryId is defined", async () => {
-      const contract = LpAccountV2.create(LP_ACCOUNT_ADDRESS);
+      const contract = LpAccountV2_1.create(LP_ACCOUNT_ADDRESS);
 
       const body = await contract.createResetGasBody({
         queryId: 12345,
       });
 
       expect(body.toBoc().toString("base64")).toMatchInlineSnapshot(
-        '"te6cckEBAQEADgAAGEKg+0MAAAAAAAAwOQm9mbw="',
+        '"te6cckEBAQEADgAAGCnSKTUAAAAAAAAwOXAH6K0="',
       );
     });
   });
@@ -339,19 +341,19 @@ describe("LpAccountV2", () => {
     const provider = createMockProvider();
 
     it("should build expected tx params", async () => {
-      const contract = provider.open(LpAccountV2.create(LP_ACCOUNT_ADDRESS));
+      const contract = provider.open(LpAccountV2_1.create(LP_ACCOUNT_ADDRESS));
 
       const params = await contract.getResetGasTxParams();
 
       expect(params.to.toString()).toBe(LP_ACCOUNT_ADDRESS);
       expect(params.body?.toBoc().toString("base64")).toMatchInlineSnapshot(
-        '"te6cckEBAQEADgAAGEKg+0MAAAAAAAAAAPc9hrQ="',
+        '"te6cckEBAQEADgAAGCnSKTUAAAAAAAAAAI6H96U="',
       );
       expect(params.value).toBe(contract.gasConstants.resetGas);
     });
 
     it("should build expected tx params when queryId is defined", async () => {
-      const contract = provider.open(LpAccountV2.create(LP_ACCOUNT_ADDRESS));
+      const contract = provider.open(LpAccountV2_1.create(LP_ACCOUNT_ADDRESS));
 
       const params = await contract.getResetGasTxParams({
         queryId: 12345,
@@ -359,7 +361,7 @@ describe("LpAccountV2", () => {
 
       expect(params.to.toString()).toBe(LP_ACCOUNT_ADDRESS);
       expect(params.body?.toBoc().toString("base64")).toMatchInlineSnapshot(
-        '"te6cckEBAQEADgAAGEKg+0MAAAAAAAAwOQm9mbw="',
+        '"te6cckEBAQEADgAAGCnSKTUAAAAAAAAwOXAH6K0="',
       );
       expect(params.value).toBe(contract.gasConstants.resetGas);
     });
@@ -367,9 +369,9 @@ describe("LpAccountV2", () => {
 
   describe("sendResetGas", () => {
     it("should call getResetGasTxParams and pass the result to the sender", async () => {
-      const txArgs = {} as Parameters<LpAccountV2["sendResetGas"]>[2];
+      const txArgs = {} as Parameters<LpAccountV2_1["sendResetGas"]>[2];
 
-      const contract = LpAccountV2.create(LP_ACCOUNT_ADDRESS);
+      const contract = LpAccountV2_1.create(LP_ACCOUNT_ADDRESS);
 
       const getResetGasTxParams = vi.spyOn(contract, "getResetGasTxParams");
 
@@ -408,7 +410,7 @@ describe("LpAccountV2", () => {
 
       const provider = createMockProviderFromSnapshot(snapshot);
 
-      const contract = provider.open(LpAccountV2.create(LP_ACCOUNT_ADDRESS));
+      const contract = provider.open(LpAccountV2_1.create(LP_ACCOUNT_ADDRESS));
 
       const data = await contract.getLpAccountData();
 

@@ -11,21 +11,18 @@ import type { AddressType, AmountType, QueryIdType } from "@/types";
 import type { ContractOptions } from "@/contracts/core/Contract";
 import { JettonMinter } from "@/contracts/core/JettonMinter";
 import { JettonWallet } from "@/contracts/core/JettonWallet";
-import {
-  DEX_VERSION,
-  DEX_OP_CODES,
-  type DEX_TYPE,
-} from "@/contracts/dex/constants";
+import { type DEX_TYPE, DEX_VERSION } from "@/contracts/dex/constants";
 import { toAddress } from "@/utils/toAddress";
 
-import { LpAccountV2 } from "../LpAccount/LpAccountV2";
+import { DEX_OP_CODES } from "../constants";
+import { LpAccountV2_1 } from "../LpAccount/LpAccountV2_1";
 
-export interface BasePoolV2Options extends ContractOptions {
-  gasConstants?: Partial<typeof BasePoolV2.gasConstants>;
+export interface BasePoolV2_1Options extends ContractOptions {
+  gasConstants?: Partial<typeof BasePoolV2_1.gasConstants>;
 }
 
-export class BasePoolV2 extends JettonMinter {
-  public static readonly version = DEX_VERSION.v2;
+export class BasePoolV2_1 extends JettonMinter {
+  public static readonly version = DEX_VERSION.v2_1;
 
   public static readonly gasConstants = {
     collectFees: toNano("0.4"),
@@ -36,12 +33,12 @@ export class BasePoolV2 extends JettonMinter {
 
   constructor(
     address: AddressType,
-    { gasConstants, ...options }: BasePoolV2Options = {},
+    { gasConstants, ...options }: BasePoolV2_1Options = {},
   ) {
     super(address, options);
 
     this.gasConstants = {
-      ...BasePoolV2.gasConstants,
+      ...BasePoolV2_1.gasConstants,
       ...gasConstants,
     };
   }
@@ -76,7 +73,7 @@ export class BasePoolV2 extends JettonMinter {
   public async sendCollectFees(
     provider: ContractProvider,
     via: Sender,
-    params: Parameters<BasePoolV2["getCollectFeeTxParams"]>[1],
+    params: Parameters<BasePoolV2_1["getCollectFeeTxParams"]>[1],
   ) {
     const txParams = await this.getCollectFeeTxParams(provider, params);
 
@@ -85,7 +82,7 @@ export class BasePoolV2 extends JettonMinter {
 
   public async createBurnBody(params: {
     amount: AmountType;
-    customPayload?: Cell;
+    dexCustomPayload?: Cell;
     queryId?: QueryIdType;
   }): Promise<Cell> {
     return beginCell()
@@ -93,7 +90,7 @@ export class BasePoolV2 extends JettonMinter {
       .storeUint(params?.queryId ?? 0, 64)
       .storeCoins(BigInt(params.amount))
       .storeAddress(null)
-      .storeMaybeRef(params.customPayload)
+      .storeMaybeRef(params.dexCustomPayload)
       .endCell();
   }
 
@@ -102,7 +99,7 @@ export class BasePoolV2 extends JettonMinter {
     params: {
       amount: AmountType;
       userWalletAddress: AddressType;
-      customPayload?: Cell;
+      dexCustomPayload?: Cell;
       gasAmount?: AmountType;
       queryId?: QueryIdType;
     },
@@ -111,7 +108,7 @@ export class BasePoolV2 extends JettonMinter {
       this.getWalletAddress(provider, params.userWalletAddress),
       this.createBurnBody({
         amount: params.amount,
-        customPayload: params.customPayload,
+        dexCustomPayload: params.dexCustomPayload,
         queryId: params.queryId,
       }),
     ]);
@@ -124,7 +121,7 @@ export class BasePoolV2 extends JettonMinter {
   public async sendBurn(
     provider: ContractProvider,
     via: Sender,
-    params: Parameters<BasePoolV2["getBurnTxParams"]>[1],
+    params: Parameters<BasePoolV2_1["getBurnTxParams"]>[1],
   ) {
     const txParams = await this.getBurnTxParams(provider, params);
 
@@ -163,7 +160,7 @@ export class BasePoolV2 extends JettonMinter {
   ) {
     const lpAccountAddress = await this.getLpAccountAddress(provider, params);
 
-    return LpAccountV2.create(lpAccountAddress);
+    return LpAccountV2_1.create(lpAccountAddress);
   }
 
   public async getJettonWallet(

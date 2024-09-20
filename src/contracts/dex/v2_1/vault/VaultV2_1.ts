@@ -9,10 +9,12 @@ import {
 
 import type { QueryIdType, AmountType, AddressType } from "@/types";
 import { Contract, type ContractOptions } from "@/contracts/core/Contract";
-import { DEX_VERSION, DEX_OP_CODES } from "@/contracts/dex/constants";
+import { DEX_VERSION } from "@/contracts/dex/constants";
 
-export interface VaultV2Options extends ContractOptions {
-  gasConstants?: Partial<typeof VaultV2.gasConstants>;
+import { DEX_OP_CODES } from "../constants";
+
+export interface VaultV2_1Options extends ContractOptions {
+  gasConstants?: Partial<typeof VaultV2_1.gasConstants>;
 }
 
 /**
@@ -22,8 +24,8 @@ export interface VaultV2Options extends ContractOptions {
  * Vault address is defined by router_address, owner_address and router_token_Wallet_address,
  * so, for each token, each user can have a dedicated vault contract.
  */
-export class VaultV2 extends Contract {
-  public static readonly version = DEX_VERSION.v2;
+export class VaultV2_1 extends Contract {
+  public static readonly version = DEX_VERSION.v2_1;
 
   public static readonly gasConstants = {
     withdrawFee: toNano("0.3"),
@@ -33,12 +35,12 @@ export class VaultV2 extends Contract {
 
   constructor(
     address: AddressType,
-    { gasConstants, ...options }: VaultV2Options = {},
+    { gasConstants, ...options }: VaultV2_1Options = {},
   ) {
     super(address, options);
 
     this.gasConstants = {
-      ...VaultV2.gasConstants,
+      ...VaultV2_1.gasConstants,
       ...gasConstants,
     };
   }
@@ -85,7 +87,7 @@ export class VaultV2 extends Contract {
   public async sendWithdrawFee(
     provider: ContractProvider,
     via: Sender,
-    params: Parameters<VaultV2["getWithdrawFeeTxParams"]>[1],
+    params: Parameters<VaultV2_1["getWithdrawFeeTxParams"]>[1],
   ) {
     const txParams = await this.getWithdrawFeeTxParams(provider, params);
 

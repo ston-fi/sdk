@@ -9,25 +9,23 @@ import {
 
 import type { AddressType, AmountType, QueryIdType } from "@/types";
 import { Contract, type ContractOptions } from "@/contracts/core/Contract";
-import {
-  DEX_VERSION,
-  DEX_OP_CODES,
-  type DEX_TYPE,
-} from "@/contracts/dex/constants";
+import { type DEX_TYPE, DEX_VERSION } from "@/contracts/dex/constants";
 import { JettonMinter } from "@/contracts/core/JettonMinter";
 import type { Pton } from "@/contracts/pTON/types";
 import { createJettonTransferMessage } from "@/utils/createJettonTransferMessage";
 import { toAddress } from "@/utils/toAddress";
 
-import { BasePoolV2 } from "../pool/BasePoolV2";
-import { VaultV2 } from "../vault/VaultV2";
+import { DEX_OP_CODES, TX_DEADLINE } from "../constants";
+import { BasePoolV2_1 } from "../pool/BasePoolV2_1";
+import { VaultV2_1 } from "../vault/VaultV2_1";
 
-export interface BaseRouterV2Options extends ContractOptions {
-  gasConstants?: Partial<typeof BaseRouterV2.gasConstants>;
+export interface BaseRouterV2_1Options extends ContractOptions {
+  gasConstants?: Partial<typeof BaseRouterV2_1.gasConstants>;
+  txDeadline?: number;
 }
 
-export class BaseRouterV2 extends Contract {
-  public static readonly version = DEX_VERSION.v2;
+export class BaseRouterV2_1 extends Contract {
+  public static readonly version = DEX_VERSION.v2_1;
 
   public static readonly gasConstants = {
     swapJettonToJetton: {
@@ -58,17 +56,19 @@ export class BaseRouterV2 extends Contract {
   };
 
   public readonly gasConstants;
+  private readonly txDeadline;
 
   constructor(
     address: AddressType,
-    { gasConstants, ...options }: BaseRouterV2Options = {},
+    { gasConstants, txDeadline, ...options }: BaseRouterV2_1Options = {},
   ) {
     super(address, options);
 
     this.gasConstants = {
-      ...BaseRouterV2.gasConstants,
+      ...BaseRouterV2_1.gasConstants,
       ...gasConstants,
     };
+    this.txDeadline = txDeadline ?? TX_DEADLINE;
   }
 
   public async createSwapBody(params: {
@@ -77,12 +77,13 @@ export class BaseRouterV2 extends Contract {
     minAskAmount: AmountType;
     refundAddress: AddressType;
     excessesAddress?: AddressType;
-    customPayload?: Cell;
-    customPayloadForwardGasAmount?: AmountType;
+    dexCustomPayload?: Cell;
+    dexCustomPayloadForwardGasAmount?: AmountType;
     refundPayload?: Cell;
     refundForwardGasAmount?: AmountType;
     referralAddress?: AddressType;
     referralValue?: AmountType;
+    deadline?: number;
   }): Promise<Cell> {
     if (
       params.referralValue &&
@@ -96,12 +97,13 @@ export class BaseRouterV2 extends Contract {
       .storeAddress(toAddress(params.askJettonWalletAddress))
       .storeAddress(toAddress(params.refundAddress))
       .storeAddress(toAddress(params.excessesAddress ?? params.refundAddress))
+      .storeUint(params.deadline ?? this.defaultDeadline, 64)
       .storeRef(
         beginCell()
           .storeCoins(BigInt(params.minAskAmount))
           .storeAddress(toAddress(params.receiverAddress))
-          .storeCoins(BigInt(params.customPayloadForwardGasAmount ?? 0))
-          .storeMaybeRef(params.customPayload)
+          .storeCoins(BigInt(params.dexCustomPayloadForwardGasAmount ?? 0))
+          .storeMaybeRef(params.dexCustomPayload)
           .storeCoins(BigInt(params.refundForwardGasAmount ?? 0))
           .storeMaybeRef(params.refundPayload)
           .storeUint(BigInt(params.referralValue ?? 10), 16)
@@ -119,12 +121,13 @@ export class BaseRouterV2 extends Contract {
     minAskAmount: AmountType;
     refundAddress: AddressType;
     excessesAddress?: AddressType;
-    customPayload?: Cell;
-    customPayloadForwardGasAmount?: AmountType;
+    dexCustomPayload?: Cell;
+    dexCustomPayloadForwardGasAmount?: AmountType;
     refundPayload?: Cell;
     refundForwardGasAmount?: AmountType;
     referralAddress?: AddressType;
     referralValue?: AmountType;
+    deadline?: number;
   }): Promise<Cell> {
     if (
       params.referralValue &&
@@ -138,12 +141,13 @@ export class BaseRouterV2 extends Contract {
       .storeAddress(toAddress(params.askJettonWalletAddress))
       .storeAddress(toAddress(params.refundAddress))
       .storeAddress(toAddress(params.excessesAddress ?? params.refundAddress))
+      .storeUint(params.deadline ?? this.defaultDeadline, 64)
       .storeRef(
         beginCell()
           .storeCoins(BigInt(params.minAskAmount))
           .storeAddress(toAddress(params.receiverAddress))
-          .storeCoins(BigInt(params.customPayloadForwardGasAmount ?? 0))
-          .storeMaybeRef(params.customPayload)
+          .storeCoins(BigInt(params.dexCustomPayloadForwardGasAmount ?? 0))
+          .storeMaybeRef(params.dexCustomPayload)
           .storeCoins(BigInt(params.refundForwardGasAmount ?? 0))
           .storeMaybeRef(params.refundPayload)
           .storeUint(BigInt(params.referralValue ?? 10), 16)
@@ -167,13 +171,15 @@ export class BaseRouterV2 extends Contract {
       excessesAddress?: AddressType;
       referralAddress?: AddressType;
       referralValue?: AmountType;
-      customPayload?: Cell;
-      customPayloadForwardGasAmount?: AmountType;
+      dexCustomPayload?: Cell;
+      dexCustomPayloadForwardGasAmount?: AmountType;
       refundPayload?: Cell;
       refundForwardGasAmount?: AmountType;
+      deadline?: number;
       gasAmount?: AmountType;
       forwardGasAmount?: AmountType;
       queryId?: QueryIdType;
+      jettonCustomPayload?: Cell;
     },
   ): Promise<SenderArguments> {
     const contractAddress = this.address;
@@ -201,10 +207,11 @@ export class BaseRouterV2 extends Contract {
       excessesAddress: params.excessesAddress,
       referralAddress: params.referralAddress,
       referralValue: params.referralValue,
-      customPayload: params.customPayload,
-      customPayloadForwardGasAmount: params.customPayloadForwardGasAmount,
+      dexCustomPayload: params.dexCustomPayload,
+      dexCustomPayloadForwardGasAmount: params.dexCustomPayloadForwardGasAmount,
       refundPayload: params.refundPayload,
       refundForwardGasAmount: params.refundForwardGasAmount,
+      deadline: params.deadline,
     });
 
     const body = createJettonTransferMessage({
@@ -212,8 +219,9 @@ export class BaseRouterV2 extends Contract {
       amount: params.offerAmount,
       destination: contractAddress,
       responseDestination: params.userWalletAddress,
-      forwardPayload,
+      customPayload: params.jettonCustomPayload,
       forwardTonAmount,
+      forwardPayload,
     });
 
     const value = BigInt(
@@ -230,7 +238,7 @@ export class BaseRouterV2 extends Contract {
   public async sendSwapJettonToJetton(
     provider: ContractProvider,
     via: Sender,
-    params: Parameters<BaseRouterV2["getSwapJettonToJettonTxParams"]>[1],
+    params: Parameters<BaseRouterV2_1["getSwapJettonToJettonTxParams"]>[1],
   ) {
     const txParams = await this.getSwapJettonToJettonTxParams(provider, params);
 
@@ -249,13 +257,15 @@ export class BaseRouterV2 extends Contract {
       excessesAddress?: AddressType;
       referralAddress?: AddressType;
       referralValue?: AmountType;
-      customPayload?: Cell;
-      customPayloadForwardGasAmount?: AmountType;
+      dexCustomPayload?: Cell;
+      dexCustomPayloadForwardGasAmount?: AmountType;
       refundPayload?: Cell;
       refundForwardGasAmount?: AmountType;
+      deadline?: number;
       gasAmount?: AmountType;
       forwardGasAmount?: AmountType;
       queryId?: QueryIdType;
+      jettonCustomPayload?: Cell;
     },
   ): Promise<SenderArguments> {
     return await this.getSwapJettonToJettonTxParams(provider, {
@@ -272,7 +282,7 @@ export class BaseRouterV2 extends Contract {
   public async sendSwapJettonToTon(
     provider: ContractProvider,
     via: Sender,
-    params: Parameters<BaseRouterV2["getSwapJettonToTonTxParams"]>[1],
+    params: Parameters<BaseRouterV2_1["getSwapJettonToTonTxParams"]>[1],
   ) {
     const txParams = await this.getSwapJettonToTonTxParams(provider, params);
 
@@ -291,10 +301,11 @@ export class BaseRouterV2 extends Contract {
       excessesAddress?: AddressType;
       referralAddress?: AddressType;
       referralValue?: AmountType;
-      customPayload?: Cell;
-      customPayloadForwardGasAmount?: AmountType;
+      dexCustomPayload?: Cell;
+      dexCustomPayloadForwardGasAmount?: AmountType;
       refundPayload?: Cell;
       refundForwardGasAmount?: AmountType;
+      deadline?: number;
       forwardGasAmount?: AmountType;
       queryId?: QueryIdType;
     },
@@ -313,10 +324,11 @@ export class BaseRouterV2 extends Contract {
       excessesAddress: params.excessesAddress,
       referralAddress: params.referralAddress,
       referralValue: params.referralValue,
-      customPayload: params.customPayload,
-      customPayloadForwardGasAmount: params.customPayloadForwardGasAmount,
+      dexCustomPayload: params.dexCustomPayload,
+      dexCustomPayloadForwardGasAmount: params.dexCustomPayloadForwardGasAmount,
       refundPayload: params.refundPayload,
       refundForwardGasAmount: params.refundForwardGasAmount,
+      deadline: params.deadline,
     });
 
     const forwardTonAmount = BigInt(
@@ -337,7 +349,7 @@ export class BaseRouterV2 extends Contract {
   public async sendSwapTonToJetton(
     provider: ContractProvider,
     via: Sender,
-    params: Parameters<BaseRouterV2["getSwapTonToJettonTxParams"]>[1],
+    params: Parameters<BaseRouterV2_1["getSwapTonToJettonTxParams"]>[1],
   ) {
     const txParams = await this.getSwapTonToJettonTxParams(provider, params);
 
@@ -351,48 +363,23 @@ export class BaseRouterV2 extends Contract {
     refundAddress: AddressType;
     excessesAddress?: AddressType;
     bothPositive: boolean;
-    customPayload?: Cell;
-    customPayloadForwardGasAmount?: AmountType;
+    dexCustomPayload?: Cell;
+    dexCustomPayloadForwardGasAmount?: AmountType;
+    deadline?: number;
   }): Promise<Cell> {
     return beginCell()
       .storeUint(DEX_OP_CODES.PROVIDE_LP, 32)
       .storeAddress(toAddress(params.routerWalletAddress))
       .storeAddress(toAddress(params.refundAddress))
       .storeAddress(toAddress(params.excessesAddress ?? params.refundAddress))
+      .storeUint(params.deadline ?? this.defaultDeadline, 64)
       .storeRef(
         beginCell()
           .storeCoins(BigInt(params.minLpOut))
           .storeAddress(toAddress(params.receiverAddress))
           .storeUint(params.bothPositive ? 1 : 0, 1)
-          .storeCoins(BigInt(params.customPayloadForwardGasAmount ?? 0))
-          .storeMaybeRef(params.customPayload)
-          .endCell(),
-      )
-      .endCell();
-  }
-
-  public async createCrossProvideLiquidityBody(params: {
-    routerWalletAddress: AddressType;
-    minLpOut: AmountType;
-    receiverAddress: AddressType;
-    refundAddress: AddressType;
-    excessesAddress?: AddressType;
-    bothPositive: boolean;
-    customPayload?: Cell;
-    customPayloadForwardGasAmount?: AmountType;
-  }): Promise<Cell> {
-    return beginCell()
-      .storeUint(DEX_OP_CODES.CROSS_PROVIDE_LP, 32)
-      .storeAddress(toAddress(params.routerWalletAddress))
-      .storeAddress(toAddress(params.refundAddress))
-      .storeAddress(toAddress(params.excessesAddress ?? params.refundAddress))
-      .storeRef(
-        beginCell()
-          .storeCoins(BigInt(params.minLpOut))
-          .storeAddress(toAddress(params.receiverAddress))
-          .storeUint(params.bothPositive ? 1 : 0, 1)
-          .storeCoins(BigInt(params.customPayloadForwardGasAmount ?? 0))
-          .storeMaybeRef(params.customPayload)
+          .storeCoins(BigInt(params.dexCustomPayloadForwardGasAmount ?? 0))
+          .storeMaybeRef(params.dexCustomPayload)
           .endCell(),
       )
       .endCell();
@@ -408,11 +395,13 @@ export class BaseRouterV2 extends Contract {
       minLpOut: AmountType;
       refundAddress?: AddressType;
       excessesAddress?: AddressType;
-      customPayload?: Cell;
-      customPayloadForwardGasAmount?: AmountType;
+      dexCustomPayload?: Cell;
+      dexCustomPayloadForwardGasAmount?: AmountType;
+      deadline?: number;
       gasAmount?: AmountType;
       forwardGasAmount?: AmountType;
       queryId?: QueryIdType;
+      jettonCustomPayload?: Cell;
     },
   ): Promise<SenderArguments> {
     return this.implGetProvideLiquidityJettonTxParams(provider, {
@@ -429,7 +418,7 @@ export class BaseRouterV2 extends Contract {
   public async sendProvideLiquidityJetton(
     provider: ContractProvider,
     via: Sender,
-    params: Parameters<BaseRouterV2["getProvideLiquidityJettonTxParams"]>[1],
+    params: Parameters<BaseRouterV2_1["getProvideLiquidityJettonTxParams"]>[1],
   ) {
     const txParams = await this.getProvideLiquidityJettonTxParams(
       provider,
@@ -449,11 +438,13 @@ export class BaseRouterV2 extends Contract {
       minLpOut: AmountType;
       refundAddress?: AddressType;
       excessesAddress?: AddressType;
-      customPayload?: Cell;
-      customPayloadForwardGasAmount?: AmountType;
+      dexCustomPayload?: Cell;
+      dexCustomPayloadForwardGasAmount?: AmountType;
+      deadline?: number;
       gasAmount?: AmountType;
       forwardGasAmount?: AmountType;
       queryId?: QueryIdType;
+      jettonCustomPayload?: Cell;
     },
   ): Promise<SenderArguments> {
     return this.implGetProvideLiquidityJettonTxParams(provider, {
@@ -472,7 +463,7 @@ export class BaseRouterV2 extends Contract {
     provider: ContractProvider,
     via: Sender,
     params: Parameters<
-      BaseRouterV2["getSingleSideProvideLiquidityJettonTxParams"]
+      BaseRouterV2_1["getSingleSideProvideLiquidityJettonTxParams"]
     >[1],
   ) {
     const txParams = await this.getSingleSideProvideLiquidityJettonTxParams(
@@ -485,7 +476,9 @@ export class BaseRouterV2 extends Contract {
 
   protected async implGetProvideLiquidityJettonTxParams(
     provider: ContractProvider,
-    params: Parameters<BaseRouterV2["getProvideLiquidityJettonTxParams"]>[1] & {
+    params: Parameters<
+      BaseRouterV2_1["getProvideLiquidityJettonTxParams"]
+    >[1] & {
       gasAmount: AmountType;
       forwardGasAmount: AmountType;
       bothPositive: boolean;
@@ -508,9 +501,10 @@ export class BaseRouterV2 extends Contract {
       minLpOut: params.minLpOut,
       refundAddress: params.refundAddress ?? params.userWalletAddress,
       excessesAddress: params.excessesAddress,
-      customPayload: params.customPayload,
-      customPayloadForwardGasAmount: params.customPayloadForwardGasAmount,
+      dexCustomPayload: params.dexCustomPayload,
+      dexCustomPayloadForwardGasAmount: params.dexCustomPayloadForwardGasAmount,
       bothPositive: params.bothPositive,
+      deadline: params.deadline,
     });
 
     const forwardTonAmount = BigInt(params.forwardGasAmount);
@@ -520,6 +514,7 @@ export class BaseRouterV2 extends Contract {
       amount: params.sendAmount,
       destination: contractAddress,
       responseDestination: params.userWalletAddress,
+      customPayload: params.jettonCustomPayload,
       forwardTonAmount,
       forwardPayload,
     });
@@ -544,8 +539,9 @@ export class BaseRouterV2 extends Contract {
       refundAddress?: AddressType;
       excessesAddress?: AddressType;
       bothPositive?: boolean;
-      customPayload?: Cell;
-      customPayloadForwardGasAmount?: AmountType;
+      dexCustomPayload?: Cell;
+      dexCustomPayloadForwardGasAmount?: AmountType;
+      deadline?: number;
       forwardGasAmount?: AmountType;
       queryId?: QueryIdType;
     },
@@ -562,7 +558,7 @@ export class BaseRouterV2 extends Contract {
   public async sendProvideLiquidityTon(
     provider: ContractProvider,
     via: Sender,
-    params: Parameters<BaseRouterV2["getProvideLiquidityTonTxParams"]>[1],
+    params: Parameters<BaseRouterV2_1["getProvideLiquidityTonTxParams"]>[1],
   ) {
     const txParams = await this.getProvideLiquidityTonTxParams(
       provider,
@@ -583,8 +579,9 @@ export class BaseRouterV2 extends Contract {
       refundAddress?: AddressType;
       excessesAddress?: AddressType;
       bothPositive?: boolean;
-      customPayload?: Cell;
-      customPayloadForwardGasAmount?: AmountType;
+      dexCustomPayload?: Cell;
+      dexCustomPayloadForwardGasAmount?: AmountType;
+      deadline?: number;
       forwardGasAmount?: AmountType;
       queryId?: QueryIdType;
     },
@@ -602,7 +599,7 @@ export class BaseRouterV2 extends Contract {
     provider: ContractProvider,
     via: Sender,
     params: Parameters<
-      BaseRouterV2["getSingleSideProvideLiquidityTonTxParams"]
+      BaseRouterV2_1["getSingleSideProvideLiquidityTonTxParams"]
     >[1],
   ) {
     const txParams = await this.getSingleSideProvideLiquidityTonTxParams(
@@ -615,7 +612,7 @@ export class BaseRouterV2 extends Contract {
 
   protected async implGetProvideLiquidityTonTxParams(
     provider: ContractProvider,
-    params: Parameters<BaseRouterV2["getProvideLiquidityTonTxParams"]>[1] & {
+    params: Parameters<BaseRouterV2_1["getProvideLiquidityTonTxParams"]>[1] & {
       forwardGasAmount: AmountType;
       bothPositive: boolean;
     },
@@ -632,9 +629,10 @@ export class BaseRouterV2 extends Contract {
       minLpOut: params.minLpOut,
       refundAddress: params.refundAddress ?? params.userWalletAddress,
       excessesAddress: params.excessesAddress,
-      customPayload: params.customPayload,
-      customPayloadForwardGasAmount: params.customPayloadForwardGasAmount,
+      dexCustomPayload: params.dexCustomPayload,
+      dexCustomPayloadForwardGasAmount: params.dexCustomPayloadForwardGasAmount,
       bothPositive: params.bothPositive,
+      deadline: params.deadline,
     });
 
     const forwardTonAmount = BigInt(params.forwardGasAmount);
@@ -647,6 +645,10 @@ export class BaseRouterV2 extends Contract {
       forwardPayload,
       forwardTonAmount,
     });
+  }
+
+  private get defaultDeadline() {
+    return Math.floor(Date.now() / 1000) + this.txDeadline;
   }
 
   public async getPoolAddress(
@@ -706,7 +708,7 @@ export class BaseRouterV2 extends Contract {
       params,
     );
 
-    return BasePoolV2.create(poolAddress);
+    return BasePoolV2_1.create(poolAddress);
   }
 
   public async getVaultAddress(
@@ -744,7 +746,7 @@ export class BaseRouterV2 extends Contract {
       tokenWallet: await tokenMinter.getWalletAddress(this.address),
     });
 
-    return VaultV2.create(vaultAddress);
+    return VaultV2_1.create(vaultAddress);
   }
 
   public async getRouterVersion(provider: ContractProvider) {

@@ -1,6 +1,6 @@
 {
   "name": "@ston-fi/sdk",
-  "version": "2.0.0-rc.3",
+  "version": "2.0.0-rc.5",
   "description": "Typescript SDK to interact with the Ston.fi DEX",
   "license": "MIT",
   "type": "module",
@@ -43,10 +43,10 @@
       "import": "./dist/contracts/dex/v1/index.js",
       "default": "./dist/contracts/dex/v1/index.cjs"
     },
-    "./dex/v2": {
-      "types": "./dist/contracts/dex/v2/index.d.ts",
-      "import": "./dist/contracts/dex/v2/index.js",
-      "default": "./dist/contracts/dex/v2/index.cjs"
+    "./dex/v2_1": {
+      "types": "./dist/contracts/dex/v2_1/index.d.ts",
+      "import": "./dist/contracts/dex/v2_1/index.js",
+      "default": "./dist/contracts/dex/v2_1/index.cjs"
     },
     "./farm/v1": {
       "types": "./dist/contracts/farm/v1/index.d.ts",
