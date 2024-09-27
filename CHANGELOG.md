@@ -1,5 +1,12 @@
 # Changelog
 
+## [2.0.0-rc.6]
+
+### Added
+
+- Router v2_1 address validation has been added. It will throw an error if Router v2_1 is initialized with the v1 address. This is needed to prevent users from fund loss caused by the operation execution on an invalid router version
+- All test snapshots were updated with values from actual v2_1 contracts
+
 ## [2.0.0-rc.5]
 
 ### Changed

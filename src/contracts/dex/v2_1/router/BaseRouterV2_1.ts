@@ -1,4 +1,5 @@
 import {
+  Address,
   type Cell,
   type ContractProvider,
   type Sender,
@@ -10,6 +11,7 @@ import {
 import type { AddressType, AmountType, QueryIdType } from "@/types";
 import { Contract, type ContractOptions } from "@/contracts/core/Contract";
 import { type DEX_TYPE, DEX_VERSION } from "@/contracts/dex/constants";
+import { ROUTER_ADDRESS as ROUTER_v1_ADDRESS } from "@/contracts/dex/v1/constants";
 import { JettonMinter } from "@/contracts/core/JettonMinter";
 import type { Pton } from "@/contracts/pTON/types";
 import { createJettonTransferMessage } from "@/utils/createJettonTransferMessage";
@@ -63,6 +65,15 @@ export class BaseRouterV2_1 extends Contract {
     { gasConstants, txDeadline, ...options }: BaseRouterV2_1Options = {},
   ) {
     super(address, options);
+
+    if (this.address.equals(Address.parse(ROUTER_v1_ADDRESS))) {
+      throw Error(
+        [
+          "You are trying to create an instance v2.1 Router with a v1 address",
+          "Please use the appropriate class for the v1 Router. Otherwise, all the funds will be permanently lost.",
+        ].join("\n"),
+      );
+    }
 
     this.gasConstants = {
       ...BaseRouterV2_1.gasConstants,

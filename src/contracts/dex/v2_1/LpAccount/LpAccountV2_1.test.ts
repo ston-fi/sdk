@@ -13,7 +13,7 @@ import { DEX_VERSION } from "../../constants";
 import { LpAccountV2_1 } from "./LpAccountV2_1";
 
 const USER_WALLET_ADDRESS = "UQAQnxLqlX2B6w4jQzzzPWA8eyWZVZBz6Y0D_8noARLOaEAn";
-const LP_ACCOUNT_ADDRESS = "EQAAPP517U137Zx7xkNgzm662hGlxuL20iiQDRtwemhWTPLx"; // LP account of `USER_WALLET_ADDRESS` wallet for TestRED/TestBLUE pool
+const LP_ACCOUNT_ADDRESS = "EQCoVWuDgFWUQTrIQel2W2cpSRRKiJ_O5_gIyC7sOJzWcfJk"; // LP account of `USER_WALLET_ADDRESS` wallet for TestRED/TestBLUE pool
 
 describe("LpAccountV2_1", () => {
   beforeAll(setup);
@@ -270,7 +270,7 @@ describe("LpAccountV2_1", () => {
       });
 
       expect(params.to.toString()).toMatchInlineSnapshot(
-        '"EQAAPP517U137Zx7xkNgzm662hGlxuL20iiQDRtwemhWTPLx"',
+        '"EQCoVWuDgFWUQTrIQel2W2cpSRRKiJ_O5_gIyC7sOJzWcfJk"',
       );
       expect(params.body?.toBoc().toString("base64")).toMatchInlineSnapshot(
         '"te6cckEBAgEAewABZQ/4v8YAAAAAAAAAABARAhAQgAIT4l1Sr7A9YcRoZ55nrAePZLMqsg59MaB/+T0AIlnNCAEAhYACE+JdUq+wPWHEaGeeZ6wHj2SzKrIOfTGgf/k9ACJZzRAAQnxLqlX2B6w4jQzzzPWA8eyWZVZBz6Y0D/8noARLOaKkaNXm"',
@@ -403,7 +403,7 @@ describe("LpAccountV2_1", () => {
           "te6ccsEBAQEAJAAAAEOAAhPiXVKvsD1hxGhnnmesB49ksyqyDn0xoH/5PQAiWc0QY+4g6g==",
         )
         .cell(
-          "te6cckEBAQEAJAAAQ4AcWjZMMl4PnV4hXc0bTXOnmOCQPE08nma5bszegFth3FBjJd6+",
+          "te6cckEBAQEAJAAAQ4AbKt2Bb3pHS8bNc829uKGQg9yvKLmEqSKo9NUV1pdmHRDqCLOi",
         )
         .number("0")
         .number("0");
@@ -418,7 +418,7 @@ describe("LpAccountV2_1", () => {
         '"EQAQnxLqlX2B6w4jQzzzPWA8eyWZVZBz6Y0D_8noARLOaB3i"',
       );
       expect(data.poolAddress).toMatchInlineSnapshot(
-        '"EQDi0bJhkvB86vEK7mjaa508xwSB4mnk8zXLdmb0AtsO4iG7"',
+        '"EQDZVuwLe9I6XjZrnm3txQyEHuV5RcwlSRVHpqiutLsw6M_x"',
       );
       expect(data.amount0).toMatchInlineSnapshot("0n");
       expect(data.amount1).toMatchInlineSnapshot("0n");

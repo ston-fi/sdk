@@ -17,7 +17,7 @@ import { toAddress } from "@/utils/toAddress";
 
 import { DEX_VERSION } from "../constants";
 
-import { DEX_OP_CODES } from "./constants";
+import { DEX_OP_CODES, ROUTER_ADDRESS } from "./constants";
 import { PoolV1 } from "./PoolV1";
 
 export interface RouterV1Options extends ContractOptions {
@@ -33,9 +33,7 @@ export interface RouterV1Options extends ContractOptions {
  */
 export class RouterV1 extends Contract {
   public static readonly version = DEX_VERSION.v1;
-  public static readonly address = address(
-    "EQB3ncyBUTjZUA5EnFKR5_EnOMI9V1tTEAAPaiU71gc4TiUt",
-  );
+  public static readonly address = address(ROUTER_ADDRESS);
   public static readonly gasConstants = {
     swapJettonToJetton: {
       gasAmount: toNano("0.22"),

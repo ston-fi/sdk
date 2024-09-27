@@ -14,7 +14,7 @@ import { DEX_VERSION } from "../../constants";
 import { VaultV2_1 } from "./VaultV2_1";
 
 const USER_WALLET_ADDRESS = "UQAQnxLqlX2B6w4jQzzzPWA8eyWZVZBz6Y0D_8noARLOaEAn";
-const VAULT_ADDRESS = "EQDIAOYrxwbAI1m3wUJlvJVRoZuxO_TZmavNVj-TBDe0LiLR"; // Vault for `USER_WALLET_ADDRESS` wallet and TestRED token
+const VAULT_ADDRESS = "EQB1HMY-_uCVDH4MkShZrf4tathj8_RNvdF6ChuFl7Vbt1tu"; // Vault for `USER_WALLET_ADDRESS` wallet and TestRED token
 
 describe("VaultV2_1", () => {
   beforeAll(setup);
@@ -171,7 +171,7 @@ describe("VaultV2_1", () => {
           "te6cckEBAQEAJAAAQ4AZd9jNEu8dzORwCo3lq1hM9p2LwjKwjSwTbaUbDUiFNzBy9LMe",
         )
         .cell(
-          "te6cckEBAQEAJAAAQ4ATVm1Pu/oiWS5n4OYpObhD24wfKWlrcZIcfQgKs/yR9hAq9P4f",
+          "te6cckEBAQEAJAAAQ4ABcPxIIJBRXcFelHACr/pLM4lgs7tR2lSYWSfwf2QNi1DQHKwZ",
         )
         .number("1");
 
@@ -188,7 +188,7 @@ describe("VaultV2_1", () => {
         '"EQDLvsZol3juZyOAVG8tWsJntOxeEZWEaWCbbSjYakQpuTjz"',
       );
       expect(data.routerAddress).toMatchInlineSnapshot(
-        '"EQCas2p939ESyXM_BzFJzcIe3GD5S0tbjJDj6EBVn-SPsPKH"',
+        '"EQALh-JBBIKK7gr0o4AVf9JZnEsFndqO0qTCyT-D-yBsWval"',
       );
       expect(data.depositedAmount).toMatchInlineSnapshot("1n");
     });

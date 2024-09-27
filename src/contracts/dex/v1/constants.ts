@@ -7,3 +7,6 @@ export const DEX_OP_CODES = {
   COLLECT_FEES: 0x1fcb7d3d,
   BURN: 0x595f07bc,
 } as const;
+
+export const ROUTER_ADDRESS =
+  "EQB3ncyBUTjZUA5EnFKR5_EnOMI9V1tTEAAPaiU71gc4TiUt";

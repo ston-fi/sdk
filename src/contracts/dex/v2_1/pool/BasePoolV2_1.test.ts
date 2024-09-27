@@ -1,5 +1,5 @@
 import { beforeAll, describe, expect, it, vi } from "vitest";
-import type { Sender } from "@ton/ton";
+import { Address, type Sender } from "@ton/ton";
 
 import {
   createMockObj,
@@ -17,7 +17,7 @@ import { DEX_TYPE, DEX_VERSION } from "../../constants";
 import { BasePoolV2_1 } from "./BasePoolV2_1";
 
 const USER_WALLET_ADDRESS = "UQAQnxLqlX2B6w4jQzzzPWA8eyWZVZBz6Y0D_8noARLOaEAn";
-const POOL_ADDRESS = "EQDi0bJhkvB86vEK7mjaa508xwSB4mnk8zXLdmb0AtsO4iG7"; // TestRED/TestBLUE pool
+const POOL_ADDRESS = "kQDZVuwLe9I6XjZrnm3txQyEHuV5RcwlSRVHpqiutLsw6HR7"; // TestRED/TestBLUE pool
 
 describe("BasePoolV2_1", () => {
   beforeAll(setup);
@@ -101,7 +101,7 @@ describe("BasePoolV2_1", () => {
       const params = await contract.getCollectFeeTxParams();
 
       expect(params.to.toString()).toMatchInlineSnapshot(
-        '"EQDi0bJhkvB86vEK7mjaa508xwSB4mnk8zXLdmb0AtsO4iG7"',
+        '"EQDZVuwLe9I6XjZrnm3txQyEHuV5RcwlSRVHpqiutLsw6M_x"',
       );
       expect(params.body?.toBoc().toString("base64")).toMatchInlineSnapshot(
         '"te6cckEBAQEADgAAGB7kkR4AAAAAAAAAAPr6RWc="',
@@ -117,7 +117,7 @@ describe("BasePoolV2_1", () => {
       });
 
       expect(params.to.toString()).toMatchInlineSnapshot(
-        '"EQDi0bJhkvB86vEK7mjaa508xwSB4mnk8zXLdmb0AtsO4iG7"',
+        '"EQDZVuwLe9I6XjZrnm3txQyEHuV5RcwlSRVHpqiutLsw6M_x"',
       );
       expect(params.body?.toBoc().toString("base64")).toMatchInlineSnapshot(
         '"te6cckEBAQEADgAAGB7kkR4AAAAAAAAwOQR6Wm8="',
@@ -133,7 +133,7 @@ describe("BasePoolV2_1", () => {
       });
 
       expect(params.to.toString()).toMatchInlineSnapshot(
-        '"EQDi0bJhkvB86vEK7mjaa508xwSB4mnk8zXLdmb0AtsO4iG7"',
+        '"EQDZVuwLe9I6XjZrnm3txQyEHuV5RcwlSRVHpqiutLsw6M_x"',
       );
       expect(params.body?.toBoc().toString("base64")).toMatchInlineSnapshot(
         '"te6cckEBAQEADgAAGB7kkR4AAAAAAAAAAPr6RWc="',
@@ -209,9 +209,12 @@ describe("BasePoolV2_1", () => {
     };
 
     const provider = createMockProviderFromSnapshot((address, method) => {
-      if (address === POOL_ADDRESS && method === "get_wallet_address")
+      if (
+        address === Address.normalize(POOL_ADDRESS) &&
+        method === "get_wallet_address"
+      )
         return createProviderSnapshot().cell(
-          "te6ccsEBAQEAJAAAAEOACstDZ3ATHWF//MUN1iK/rfVwlHFuhUxxdp3sB2jMtipQs2Cj5Q==",
+          "te6cckEBAQEAJAAAQ4ATs+bqKCw4DAFCBzMdP48shi7M2sbD6VRgGksjnmLsO1CK5a4W",
         );
 
       throw new Error(`Unexpected call: ${address} ${method}`);
@@ -225,7 +228,7 @@ describe("BasePoolV2_1", () => {
       });
 
       expect(params.to.toString()).toMatchInlineSnapshot(
-        '"EQBWWhs7gJjrC__mKG6xFf1vq4Sji3QqY4u072A7RmWxUoT1"',
+        '"EQCdnzdRQWHAYAoQOZjp_HlkMXZm1jYfSqMA0lkc8xdh2lF-"',
       );
       expect(params.body?.toBoc().toString("base64")).toMatchInlineSnapshot(
         '"te6cckEBAQEAEwAAIVlfB7wAAAAAAAAAAEO5rKABu8koZQ=="',
@@ -242,7 +245,7 @@ describe("BasePoolV2_1", () => {
       });
 
       expect(params.to.toString()).toMatchInlineSnapshot(
-        '"EQBWWhs7gJjrC__mKG6xFf1vq4Sji3QqY4u072A7RmWxUoT1"',
+        '"EQCdnzdRQWHAYAoQOZjp_HlkMXZm1jYfSqMA0lkc8xdh2lF-"',
       );
       expect(params.body?.toBoc().toString("base64")).toMatchInlineSnapshot(
         '"te6cckEBAQEAEwAAIVlfB7wAAAAAAAAwOUO5rKABFeXmDg=="',
@@ -259,7 +262,7 @@ describe("BasePoolV2_1", () => {
       });
 
       expect(params.to.toString()).toMatchInlineSnapshot(
-        '"EQBWWhs7gJjrC__mKG6xFf1vq4Sji3QqY4u072A7RmWxUoT1"',
+        '"EQCdnzdRQWHAYAoQOZjp_HlkMXZm1jYfSqMA0lkc8xdh2lF-"',
       );
       expect(params.body?.toBoc().toString("base64")).toMatchInlineSnapshot(
         '"te6cckEBAQEAEwAAIVlfB7wAAAAAAAAAAEO5rKABu8koZQ=="',
@@ -298,7 +301,7 @@ describe("BasePoolV2_1", () => {
     const ownerAddress = USER_WALLET_ADDRESS;
 
     const snapshot = createProviderSnapshot().cell(
-      "te6cckEBAQEAJAAAQ4AAB5/Ovamu/bOPeMhsGc3XW0I0uNxe2kUSAaNuD00KyZBJLKC6",
+      "te6cckEBAQEAJAAAQ4AVCq1wcAqyiCdZCD0uy2zlKSKJURP53P8BGQXdhxOazjC3iKkE",
     );
     const provider = createMockProviderFromSnapshot(snapshot);
 
@@ -310,14 +313,14 @@ describe("BasePoolV2_1", () => {
       });
 
       expect(data).toMatchInlineSnapshot(
-        '"EQAAPP517U137Zx7xkNgzm662hGlxuL20iiQDRtwemhWTPLx"',
+        '"EQCoVWuDgFWUQTrIQel2W2cpSRRKiJ_O5_gIyC7sOJzWcfJk"',
       );
     });
   });
 
   describe("getJettonWallet", () => {
     const userJettonWalletAddress =
-      "EQD5SDeFVvz8HjVZiwgxLR6UugyJxrSzAGztgGokzVyOD5pV";
+      "EQCdnzdRQWHAYAoQOZjp_HlkMXZm1jYfSqMA0lkc8xdh2lF-";
 
     it("should create JettonWallet contract instance for USER_WALLET_ADDRESS", async () => {
       const contract = BasePoolV2_1.create(POOL_ADDRESS);
@@ -342,7 +345,7 @@ describe("BasePoolV2_1", () => {
 
   describe("getLpAccount", () => {
     const userLpAccountAddress =
-      "EQAAPP517U137Zx7xkNgzm662hGlxuL20iiQDRtwemhWTPLx";
+      "EQCoVWuDgFWUQTrIQel2W2cpSRRKiJ_O5_gIyC7sOJzWcfJk";
 
     it("should create LpAccount contract instance with defined address", async () => {
       const contract = BasePoolV2_1.create(POOL_ADDRESS);
@@ -383,22 +386,22 @@ describe("BasePoolV2_1", () => {
     const snapshot = createProviderSnapshot()
       .number("0")
       .cell(
-        "te6cckEBAQEAJAAAQ4ATVm1Pu/oiWS5n4OYpObhD24wfKWlrcZIcfQgKs/yR9hAq9P4f",
+        "te6cckEBAQEAJAAAQ4ABcPxIIJBRXcFelHACr/pLM4lgs7tR2lSYWSfwf2QNi1DQHKwZ",
       )
-      .number("4986244178")
-      .number("4408450497")
-      .number("5646981229")
+      .number("1283510854219")
+      .number("912514867886")
+      .number("1814983635223")
       .cell(
-        "te6cckEBAQEAJAAAQ4AFImSaUo+dFf1OYl8dtYp9Zj6M0s4JKV4Dgg9WfZm54vCRWjIN",
+        "te6cckEBAQEAJAAAQ4AbODBzUaSK5j0GzCBQi97jKeks860gYcTemIQLL7ZKxZD8mj8B",
       )
       .cell(
-        "te6cckEBAQEAJAAAQ4ATmaZ7TLWAsPlzzyZBHUychwiCFGUXrTsOROB1sQcwtxDOko/O",
+        "te6cckEBAQEAJAAAQ4AOHVtw9k5i6efu1Ofm2mbqbMyLChv0FZFYxaypjToz1nAgGr6p",
       )
       .number("20")
       .number("10")
       .cell("te6cckEBAQEAAwAAASCUQYZV")
-      .number("2519317")
-      .number("514527");
+      .number("2423145")
+      .number("9827851");
     const provider = createMockProviderFromSnapshot(snapshot);
 
     it("should make on-chain request and return parsed response", async () => {
@@ -408,22 +411,22 @@ describe("BasePoolV2_1", () => {
 
       expect(data.isLocked).toBe(false);
       expect(data.routerAddress).toMatchInlineSnapshot(
-        '"EQCas2p939ESyXM_BzFJzcIe3GD5S0tbjJDj6EBVn-SPsPKH"',
+        '"EQALh-JBBIKK7gr0o4AVf9JZnEsFndqO0qTCyT-D-yBsWval"',
       );
-      expect(data.totalSupplyLP).toMatchInlineSnapshot("4986244178n");
-      expect(data.reserve0).toMatchInlineSnapshot("4408450497n");
-      expect(data.reserve1).toMatchInlineSnapshot("5646981229n");
+      expect(data.totalSupplyLP).toMatchInlineSnapshot("1283510854219n");
+      expect(data.reserve0).toMatchInlineSnapshot("912514867886n");
+      expect(data.reserve1).toMatchInlineSnapshot("1814983635223n");
       expect(data.token0WalletAddress).toMatchInlineSnapshot(
-        '"EQApEyTSlHzor-pzEvjtrFPrMfRmlnBJSvAcEHqz7M3PF3Tb"',
+        '"EQDZwYOajSRXMeg2YQKEXvcZT0lnnWkDDib0xCBZfbJWLBpD"',
       );
       expect(data.token1WalletAddress).toMatchInlineSnapshot(
-        '"EQCczTPaZawFh8ueeTII6mTkOEQQoyi9adhyJwOtiDmFuB9j"',
+        '"EQBw6tuHsnMXTz92pz820zdTZmRYUN-grIrGLWVMadGes4-9"',
       );
       expect(data.lpFee).toMatchInlineSnapshot("20n");
       expect(data.protocolFee).toMatchInlineSnapshot("10n");
       expect(data.protocolFeeAddress).toMatchInlineSnapshot("null");
-      expect(data.collectedToken0ProtocolFee).toMatchInlineSnapshot("2519317n");
-      expect(data.collectedToken1ProtocolFee).toMatchInlineSnapshot("514527n");
+      expect(data.collectedToken0ProtocolFee).toMatchInlineSnapshot("2423145n");
+      expect(data.collectedToken1ProtocolFee).toMatchInlineSnapshot("9827851n");
     });
   });
 });
