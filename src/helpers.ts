@@ -51,5 +51,5 @@ export function routerFactory({
 }) {
   const { Router } = dexFactory({ majorVersion, minorVersion });
 
-  return new Router(address);
+  return Router.create(address);
 }

@@ -78,6 +78,12 @@ describe("PtonV2_1", () => {
         expect.objectContaining(gasConstants),
       );
     });
+
+    it("should create an instance of PtonV1 with correct version", () => {
+      const contract = PtonV2_1.create(PtonV2_1.address);
+
+      expect(contract.version).toEqual(PtonV2_1.version);
+    });
   });
 
   describe("getTonTransferTxParams", () => {

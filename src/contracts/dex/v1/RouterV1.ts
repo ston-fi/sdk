@@ -10,12 +10,13 @@ import {
 
 import { Contract, type ContractOptions } from "@/contracts/core/Contract";
 import { JettonMinter } from "@/contracts/core/JettonMinter";
-import type { Pton } from "@/contracts/pTON/types";
+import type { PtonV1 } from "@/contracts/pTON/v1/PtonV1";
 import type { AddressType, AmountType, QueryIdType } from "@/types";
 import { createJettonTransferMessage } from "@/utils/createJettonTransferMessage";
 import { toAddress } from "@/utils/toAddress";
 
 import { DEX_VERSION } from "../constants";
+import * as Errors from "../errors";
 
 import { DEX_OP_CODES, ROUTER_ADDRESS } from "./constants";
 import { PoolV1 } from "./PoolV1";
@@ -181,7 +182,7 @@ export class RouterV1 extends Contract {
    *
    * @param {Address | string} params.userWalletAddress - User's address
    * @param {Address | string} params.offerJettonAddress - Jetton address of a token to be swapped
-   * @param {Address | string} params.proxyTon - Proxy ton contract
+   * @param {PtonV1} params.proxyTon - Proxy ton contract
    * @param {bigint | number} params.offerAmount - Amount of tokens to be swapped (in basic token units)
    * @param {bigint | number} params.minAskAmount - Minimum amount of tokens received (in basic token units)
    * @param {Address | string | undefined} params.referralAddress - Optional; referral address
@@ -197,7 +198,7 @@ export class RouterV1 extends Contract {
     params: {
       userWalletAddress: AddressType;
       offerJettonAddress: AddressType;
-      proxyTon: Pton;
+      proxyTon: PtonV1;
       offerAmount: AmountType;
       minAskAmount: AmountType;
       referralAddress?: AddressType;
@@ -207,6 +208,13 @@ export class RouterV1 extends Contract {
       jettonCustomPayload?: Cell;
     },
   ): Promise<SenderArguments> {
+    if (params.proxyTon.version !== RouterV1.version) {
+      throw new Errors.UnmatchedPtonVersion({
+        expected: RouterV1.version,
+        received: params.proxyTon.version,
+      });
+    }
+
     return await this.getSwapJettonToJettonTxParams(provider, {
       ...params,
       askJettonAddress: params.proxyTon.address,
@@ -232,7 +240,7 @@ export class RouterV1 extends Contract {
    * Build all data required to execute a ton to jetton `swap` transaction
    *
    * @param {Address | string} params.userWalletAddress - User's address
-   * @param {Address | string} params.proxyTon - Proxy ton contract
+   * @param {PtonV1} params.proxyTon - Proxy ton contract
    * @param {Address | string} params.askJettonAddress - Jetton address of a token to be received
    * @param {bigint | number} params.offerAmount - Amount of ton to be swapped (in nanoTons)
    * @param {bigint | number} params.minAskAmount - Minimum amount of tokens received (in basic token units)
@@ -246,7 +254,7 @@ export class RouterV1 extends Contract {
     provider: ContractProvider,
     params: {
       userWalletAddress: AddressType;
-      proxyTon: Pton;
+      proxyTon: PtonV1;
       askJettonAddress: AddressType;
       offerAmount: AmountType;
       minAskAmount: AmountType;
@@ -255,6 +263,13 @@ export class RouterV1 extends Contract {
       queryId?: QueryIdType;
     },
   ): Promise<SenderArguments> {
+    if (params.proxyTon.version !== RouterV1.version) {
+      throw new Errors.UnmatchedPtonVersion({
+        expected: RouterV1.version,
+        received: params.proxyTon.version,
+      });
+    }
+
     const askJettonWalletAddress = await provider
       .open(JettonMinter.create(params.askJettonAddress))
       .getWalletAddress(this.address);
@@ -388,7 +403,7 @@ export class RouterV1 extends Contract {
    * Collect all data required to execute a proxy ton `provide_lp` transaction
    *
    * @param {Address | string} params.userWalletAddress - User's address
-   * @param {Address | string} params.proxyTon - proxy ton contract
+   * @param {PtonV1} params.proxyTon - proxy ton contract
    * @param {Address | string} params.otherTokenAddress - Address of the other Jetton token in pair
    * @param {bigint | number} params.sendAmount - Amount of ton deposited as liquidity (in nanoTons)
    * @param {bigint | number} params.minLpOut - Minimum amount of created liquidity tokens (in basic token units)
@@ -401,7 +416,7 @@ export class RouterV1 extends Contract {
     provider: ContractProvider,
     params: {
       userWalletAddress: AddressType;
-      proxyTon: Pton;
+      proxyTon: PtonV1;
       otherTokenAddress: AddressType;
       sendAmount: AmountType;
       minLpOut: AmountType;
@@ -409,6 +424,13 @@ export class RouterV1 extends Contract {
       queryId?: QueryIdType;
     },
   ): Promise<SenderArguments> {
+    if (params.proxyTon.version !== RouterV1.version) {
+      throw new Errors.UnmatchedPtonVersion({
+        expected: RouterV1.version,
+        received: params.proxyTon.version,
+      });
+    }
+
     const routerWalletAddress = await provider
       .open(JettonMinter.create(params.otherTokenAddress))
       .getWalletAddress(this.address);

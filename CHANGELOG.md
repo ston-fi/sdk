@@ -1,5 +1,64 @@
 # Changelog
 
+## [2.0.0-rc.7]
+
+### Changed
+
+- Because of the frequent cases of pTON contracts being used with the uncopiable Router we changed the type declaration of the pTON in the Router contracts to allow only the pTON contract with the same version as the Router. Now Error will be thrown in case of mismatching versions
+
+```ts
+const router = client.open(DEX.v2_1.Router.create('EQ...'));
+
+const txParams = await router.getSwapTonToJettonTxParams({
+  // ...
+  proxyTon: pTON.v1.create('EQ...'),
+});
+
+// [Error]: The version of the provided pTON (v1) does not match the expected version (v2_1)
+```
+
+- `Contract.create` method generic type declaration were rewritten to solve an issue with inferring the contract type. Before, following code caused a ts error, and now it will work just fine
+
+```ts
+const router: RouterV1 | RouterV2_1;
+
+router.create('EQ...')
+// ^
+// The 'this' context of type 'typeof RouterV1 | typeof RouterV2_1'
+//   is not assignable to method's 'this' of type 'new (address: AddressType) => RouterV1'.
+// Types of construct signatures are incompatible.
+```
+
+### Added
+
+- pTON contract was added to the `DEX` object exported for each dex version to simplify it usage and illuminate additional import.
+
+```ts
+import { DEX } from '@ston-fi/sdk/dex/v2_1';
+
+const { Router, pTON } = DEX;
+```
+
+- `dexFactory` helper was added. This method will return the DEX object with all needed contracts of the correct version based on `majorVersion` & `minorVersion` fields from the RouterInfo from the API
+
+```ts
+import { StonApiClient } from "@ston-fi/api";
+import { dexFactory } from "@ston-fi/sdk";
+
+const apiClient = new StonApiClient();
+
+const routerInfo = await apiClient.getRouter('EQ...');
+
+const dex = dexFactory(routerInfo);
+
+const router = dex.Router.create(routerInfo.address);
+const pTON = dex.pTON.create(routerInfo.ptonMasterAddress);
+```
+
+- `routerFactory` helper was added. This method is similar to the `dexFactory` and also requires the RouterInfo from the API as an argument. As a result, it will return the Router contract instance of the correct version initialized with the `address` from the RouterInfo object
+
+- `@ton/ton@^15.0.0` was listed as a valid peer dependency
+
 ## [2.0.0-rc.6]
 
 ### Added

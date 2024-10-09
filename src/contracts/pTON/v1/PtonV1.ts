@@ -33,6 +33,8 @@ export class PtonV1 extends JettonMinter {
     deployWallet: toNano("1.05"),
   };
 
+  public readonly version = PtonV1.version;
+
   public readonly gasConstants;
 
   constructor(

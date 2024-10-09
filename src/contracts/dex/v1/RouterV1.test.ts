@@ -11,6 +11,7 @@ import {
 } from "@/test-utils";
 
 import { DEX_VERSION } from "../constants";
+import * as Errors from "../errors";
 
 import { PoolV1 } from "./PoolV1";
 import { RouterV1 } from "./RouterV1";
@@ -451,6 +452,24 @@ describe("RouterV1", () => {
       );
       expect(txParams.value).toMatchInlineSnapshot("170000000n");
     });
+
+    it("should throw UnmatchedPtonVersion error when pTON version does not match", async () => {
+      const contract = provider.open(new RouterV1());
+
+      await expect(
+        contract.getSwapJettonToTonTxParams({
+          ...txArgs,
+          proxyTon: pTON.v2_1.create(
+            PTON_CONTRACT.address,
+          ) as typeof PTON_CONTRACT,
+        }),
+      ).rejects.toThrowError(
+        new Errors.UnmatchedPtonVersion({
+          expected: RouterV1.version,
+          received: pTON.v2_1.version,
+        }),
+      );
+    });
   });
 
   describe("sendSwapJettonToTon", () => {
@@ -490,6 +509,7 @@ describe("RouterV1", () => {
       offerAmount: "500000000",
       minAskAmount: "200000000",
     };
+
     const provider = createMockProviderFromSnapshot((address, method) => {
       if (
         address === txArgs.askJettonAddress &&
@@ -593,6 +613,24 @@ describe("RouterV1", () => {
         '"te6cckEBAgEAhQABZw+KfqUAAAAAAAAAAEHc1lAIAO87mQKicbKgHIk4pSPP4k5xhHqutqYgAB7USnesDnCcBAcBAJclk4VhgAEAzmDZI8Xr3NC7nZo+aFkM7M/0vb5/f2/1dAy3bDlFqBfXhAEABCfEuqVfYHrDiNDPPM9YDx7JZlVkHPpjQP/yegBEs5oQoDsKGA=="',
       );
       expect(txParams.value).toMatchInlineSnapshot("500000001n");
+    });
+
+    it("should throw UnmatchedPtonVersion error when pTON version does not match", async () => {
+      const contract = provider.open(new RouterV1());
+
+      await expect(
+        contract.getSwapTonToJettonTxParams({
+          ...txArgs,
+          proxyTon: pTON.v2_1.create(
+            PTON_CONTRACT.address,
+          ) as typeof PTON_CONTRACT,
+        }),
+      ).rejects.toThrowError(
+        new Errors.UnmatchedPtonVersion({
+          expected: RouterV1.version,
+          received: pTON.v2_1.version,
+        }),
+      );
     });
   });
 
@@ -873,6 +911,24 @@ describe("RouterV1", () => {
         '"te6cckEBAgEAYAABZw+KfqUAAAAAAAAAAEHc1lAIAO87mQKicbKgHIk4pSPP4k5xhHqutqYgAB7USnesDnCcBAcBAE38+eWPgAEAzmDZI8Xr3NC7nZo+aFkM7M/0vb5/f2/1dAy3bDlFogP+/0aI"',
       );
       expect(txParams.value).toMatchInlineSnapshot("500000001n");
+    });
+
+    it("should throw UnmatchedPtonVersion error when pTON version does not match", async () => {
+      const contract = provider.open(new RouterV1());
+
+      await expect(
+        contract.getProvideLiquidityTonTxParams({
+          ...txArgs,
+          proxyTon: pTON.v2_1.create(
+            PTON_CONTRACT.address,
+          ) as typeof PTON_CONTRACT,
+        }),
+      ).rejects.toThrowError(
+        new Errors.UnmatchedPtonVersion({
+          expected: RouterV1.version,
+          received: pTON.v2_1.version,
+        }),
+      );
     });
   });
 

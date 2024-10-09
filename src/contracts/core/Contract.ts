@@ -13,13 +13,13 @@ export abstract class Contract implements ContractInterface {
     this.address = toAddress(address);
   }
 
-  public static create<T extends Contract>(
-    this: new (
+  public static create<
+    T extends Contract,
+    C extends new (
       address: AddressType,
     ) => T,
-    address: AddressType,
-  ): T {
+  >(this: C, address: AddressType) {
     // biome-ignore lint/complexity/noThisInStatic: this here is a derived class
-    return new this(address);
+    return new this(address) as InstanceType<C>;
   }
 }

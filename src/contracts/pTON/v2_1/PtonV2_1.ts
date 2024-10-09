@@ -27,6 +27,8 @@ export class PtonV2_1 extends PtonV1 {
     deployWallet: toNano("0.1"),
   };
 
+  public readonly version = PtonV2_1.version;
+
   public readonly gasConstants;
 
   constructor(

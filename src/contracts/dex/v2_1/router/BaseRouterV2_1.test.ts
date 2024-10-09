@@ -16,10 +16,10 @@ import {
   createProviderSnapshot,
   setup,
 } from "@/test-utils";
-
-import { PtonV2_1 } from "@/contracts/pTON/v2_1/PtonV2_1";
+import { pTON } from "@/contracts/pTON";
 
 import { DEX_VERSION } from "../../constants";
+import * as Errors from "../../errors";
 
 import { BaseRouterV2_1 } from "./BaseRouterV2_1";
 import { BasePoolV2_1 } from "../pool/BasePoolV2_1";
@@ -30,7 +30,7 @@ const ROUTER_ADDRESS = "kQALh-JBBIKK7gr0o4AVf9JZnEsFndqO0qTCyT-D-yBsWk0v";
 const OFFER_JETTON_ADDRESS = "kQDLvsZol3juZyOAVG8tWsJntOxeEZWEaWCbbSjYakQpuYN5"; // TestRED
 const ASK_JETTON_ADDRESS = "kQB_TOJSB7q3-Jm1O8s0jKFtqLElZDPjATs5uJGsujcjznq3"; // TestBLUE
 
-const PTON_CONTRACT = PtonV2_1.create(
+const PTON_CONTRACT = pTON.v2_1.create(
   "kQACS30DNoUQ7NfApPvzh7eBmSZ9L4ygJ-lkNWtba8TQT-Px",
 );
 
@@ -566,6 +566,24 @@ describe("BaseRouterV2_1", () => {
       );
       expect(params.value).toMatchInlineSnapshot("300000000n");
     });
+
+    it("should throw UnmatchedPtonVersion error when pTON version does not match", async () => {
+      const contract = provider.open(BaseRouterV2_1.create(ROUTER_ADDRESS));
+
+      await expect(
+        contract.getSwapJettonToTonTxParams({
+          ...txArguments,
+          proxyTon: pTON.v1.create(
+            PTON_CONTRACT.address,
+          ) as typeof PTON_CONTRACT,
+        }),
+      ).rejects.toThrowError(
+        new Errors.UnmatchedPtonVersion({
+          expected: BaseRouterV2_1.version,
+          received: pTON.v1.version,
+        }),
+      );
+    });
   });
 
   describe("sendSwapJettonToTon", () => {
@@ -710,6 +728,24 @@ describe("BaseRouterV2_1", () => {
         '"te6cckEBAwEA1QABZAHzg10AAAAAAAAAAEHc1lAIACE+JdUq+wPWHEaGeeZ6wHj2SzKrIOfTGgf/k9ACJZzRAQHhZmTeKoAOHVtw9k5i6efu1Ofm2mbqbMyLChv0FZFYxaypjToz1nAAQnxLqlX2B6w4jQzzzPWA8eyWZVZBz6Y0D/8noARLOaIACE+JdUq+wPWHEaGeeZ6wHj2SzKrIOfTGgf/k9ACJZzQAAAAAAAABwkACAFNAvrwgCAAhPiXVKvsD1hxGhnnmesB49ksyqyDn0xoH/5PQAiWc0AAABRAK+HJz"',
       );
       expect(params.value).toMatchInlineSnapshot("510000001n");
+    });
+
+    it("should throw UnmatchedPtonVersion error when pTON version does not match", async () => {
+      const contract = provider.open(BaseRouterV2_1.create(ROUTER_ADDRESS));
+
+      await expect(
+        contract.getSwapTonToJettonTxParams({
+          ...txArguments,
+          proxyTon: pTON.v1.create(
+            PTON_CONTRACT.address,
+          ) as typeof PTON_CONTRACT,
+        }),
+      ).rejects.toThrowError(
+        new Errors.UnmatchedPtonVersion({
+          expected: BaseRouterV2_1.version,
+          received: pTON.v1.version,
+        }),
+      );
     });
   });
 
@@ -995,6 +1031,24 @@ describe("BaseRouterV2_1", () => {
       );
       expect(params.value).toMatchInlineSnapshot("510000002n");
     });
+
+    it("should throw UnmatchedPtonVersion error when pTON version does not match", async () => {
+      const contract = provider.open(BaseRouterV2_1.create(ROUTER_ADDRESS));
+
+      await expect(
+        contract.getProvideLiquidityTonTxParams({
+          ...txArguments,
+          proxyTon: pTON.v1.create(
+            PTON_CONTRACT.address,
+          ) as typeof PTON_CONTRACT,
+        }),
+      ).rejects.toThrowError(
+        new Errors.UnmatchedPtonVersion({
+          expected: BaseRouterV2_1.version,
+          received: pTON.v1.version,
+        }),
+      );
+    });
   });
 
   describe("sendProvideLiquidityTon", () => {
@@ -1275,6 +1329,24 @@ describe("BaseRouterV2_1", () => {
         '"te6cckEBAwEAzwABZAHzg10AAAAAAAAAAEHc1lAIACE+JdUq+wPWHEaGeeZ6wHj2SzKrIOfTGgf/k9ACJZzRAQHhN8CW34AbODBzUaSK5j0GzCBQi97jKeks860gYcTemIQLL7ZKxZAAQnxLqlX2B6w4jQzzzPWA8eyWZVZBz6Y0D/8noARLOaIACE+JdUq+wPWHEaGeeZ6wHj2SzKrIOfTGgf/k9ACJZzQAAAAAAAABwkACAEcQGAAhPiXVKvsD1hxGhnnmesB49ksyqyDn0xoH/5PQAiWc0AQqqv66"',
       );
       expect(params.value).toMatchInlineSnapshot("510000002n");
+    });
+
+    it("should throw UnmatchedPtonVersion error when pTON version does not match", async () => {
+      const contract = provider.open(BaseRouterV2_1.create(ROUTER_ADDRESS));
+
+      await expect(
+        contract.getSingleSideProvideLiquidityTonTxParams({
+          ...txArguments,
+          proxyTon: pTON.v1.create(
+            PTON_CONTRACT.address,
+          ) as typeof PTON_CONTRACT,
+        }),
+      ).rejects.toThrowError(
+        new Errors.UnmatchedPtonVersion({
+          expected: BaseRouterV2_1.version,
+          received: pTON.v1.version,
+        }),
+      );
     });
   });
 

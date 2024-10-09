@@ -1,6 +1,6 @@
 {
   "name": "@ston-fi/sdk",
-  "version": "2.0.0-rc.6",
+  "version": "2.0.0-rc.7",
   "description": "Typescript SDK to interact with the Ston.fi DEX",
   "license": "MIT",
   "type": "module",
@@ -80,7 +80,7 @@
   },
   "peerDependencies": {
     "@ston-fi/api": "^0.7.0",
-    "@ton/ton": "^13.9.0 || ^14.0.0"
+    "@ton/ton": "^13.9.0 || ^14.0.0 || ^15.0.0"
   },
   "devDependencies": {
     "@biomejs/biome": "^1.7.3",

@@ -12,8 +12,8 @@ importers:
         specifier: ^0.7.0
         version: 0.7.4
       '@ton/ton':
-        specifier: ^13.9.0 || ^14.0.0
-        version: 14.0.0(@ton/core@0.56.3(@ton/crypto@3.2.0))(@ton/crypto@3.2.0)
+        specifier: ^13.9.0 || ^14.0.0 || ^15.0.0
+        version: 15.0.0(@ton/core@0.56.3(@ton/crypto@3.2.0))(@ton/crypto@3.2.0)
     devDependencies:
       '@biomejs/biome':
         specifier: ^1.7.3
@@ -334,8 +334,8 @@ packages:
   '@ton/crypto@3.2.0':
     resolution: {integrity: sha512-50RkwReEuV2FkxSZ8ht/x9+n0ZGtwRKGsJ0ay4I/HFhkYVG/awIIBQeH0W4j8d5lADdO5h01UtX8PJ8AjiejjA==}
 
-  '@ton/ton@14.0.0':
-    resolution: {integrity: sha512-xb2CY6U0AlHUKc7DV7xK/K4Gqn6YoR253yUrM2E7L5WegVFsDF0CQRUIfpYACCuj1oUywQc5J2oMolYNu/uGkA==}
+  '@ton/ton@15.0.0':
+    resolution: {integrity: sha512-0xBivkN0u0+vczt3mKJrx5yqkCxRR00wM8gXCmN/eOzzHKXRFWDEjJp8EEs5J/mq1Op/OhCOFExmOZkr58wgOA==}
     peerDependencies:
       '@ton/core': '>=0.56.0'
       '@ton/crypto': '>=3.2.0'
@@ -1565,7 +1565,7 @@ snapshots:
       jssha: 3.2.0
       tweetnacl: 1.0.3
 
-  '@ton/ton@14.0.0(@ton/core@0.56.3(@ton/crypto@3.2.0))(@ton/crypto@3.2.0)':
+  '@ton/ton@15.0.0(@ton/core@0.56.3(@ton/crypto@3.2.0))(@ton/crypto@3.2.0)':
     dependencies:
       '@ton/core': 0.56.3(@ton/crypto@3.2.0)
       '@ton/crypto': 3.2.0
