@@ -29,7 +29,7 @@ export interface PoolV1Options extends ContractOptions {
  * All the swap/lp calculations are done in the pool contract.
  */
 export class PoolV1 extends JettonMinter {
-  public static readonly version = DEX_VERSION.v1;
+  public static readonly version: DEX_VERSION = DEX_VERSION.v1;
   public static readonly gasConstants = {
     collectFees: toNano("1.1"),
     burn: toNano("0.5"),

@@ -25,7 +25,7 @@ export interface VaultV2_1Options extends ContractOptions {
  * so, for each token, each user can have a dedicated vault contract.
  */
 export class VaultV2_1 extends Contract {
-  public static readonly version = DEX_VERSION.v2_1;
+  public static readonly version: DEX_VERSION = DEX_VERSION.v2_1;
 
   public static readonly gasConstants = {
     withdrawFee: toNano("0.3"),

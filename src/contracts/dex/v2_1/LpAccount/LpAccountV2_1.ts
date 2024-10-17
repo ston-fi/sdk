@@ -19,7 +19,7 @@ export interface LpAccountV2_1Options extends ContractOptions {
 }
 
 export class LpAccountV2_1 extends Contract {
-  public static readonly version = DEX_VERSION.v2_1;
+  public static readonly version: DEX_VERSION = DEX_VERSION.v2_1;
 
   public static readonly gasConstants = {
     refund: toNano("0.8"),

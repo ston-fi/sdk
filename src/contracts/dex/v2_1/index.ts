@@ -1,9 +1,9 @@
+import { PtonV2_1 } from "@/contracts/pTON/v2_1/PtonV2_1";
+
 import { RouterV2_1 } from "./router/RouterV2_1";
 import { PoolV2_1 } from "./pool/PoolV2_1";
 import { LpAccountV2_1 } from "./LpAccount/LpAccountV2_1";
 import { VaultV2_1 } from "./vault/VaultV2_1";
-
-import { PtonV2_1 } from "../../pTON/v2_1/PtonV2_1";
 
 export const DEX = {
   Router: RouterV2_1,

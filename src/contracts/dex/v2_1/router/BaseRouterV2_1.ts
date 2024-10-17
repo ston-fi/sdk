@@ -29,7 +29,7 @@ export interface BaseRouterV2_1Options extends ContractOptions {
 }
 
 export class BaseRouterV2_1 extends Contract {
-  public static readonly version = DEX_VERSION.v2_1;
+  public static readonly version: DEX_VERSION = DEX_VERSION.v2_1;
 
   public static readonly gasConstants = {
     swapJettonToJetton: {

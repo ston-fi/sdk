@@ -1,6 +1,7 @@
 export const DEX_VERSION = {
   v1: "v1",
   v2_1: "v2_1",
+  v2_2: "v2_2",
 } as const;
 
 export type DEX_VERSION = (typeof DEX_VERSION)[keyof typeof DEX_VERSION];

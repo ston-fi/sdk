@@ -33,7 +33,7 @@ export interface RouterV1Options extends ContractOptions {
  * Each Jetton that goes through the DEX is owned by the router. The router does not store anything about pairs.
  */
 export class RouterV1 extends Contract {
-  public static readonly version = DEX_VERSION.v1;
+  public static readonly version: DEX_VERSION = DEX_VERSION.v1;
   public static readonly address = address(ROUTER_ADDRESS);
   public static readonly gasConstants = {
     swapJettonToJetton: {

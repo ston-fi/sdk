@@ -26,6 +26,10 @@ export function dexFactory({
     return DEX.v2_1;
   }
 
+  if (majorVersion === 2 && minorVersion === 2) {
+    return DEX.v2_2;
+  }
+
   throw new Error(`Unsupported dex version: ${majorVersion}.${minorVersion}`);
 }
 

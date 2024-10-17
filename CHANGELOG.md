@@ -1,5 +1,11 @@
 # Changelog
 
+## [2.0.0-rc.8]
+
+### Added
+
+- DEX v2.2 contracts (`Router`, `Pool`, `LpAccount`, `Vault`);
+
 ## [2.0.0-rc.7]
 
 ### Changed

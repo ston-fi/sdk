@@ -25,7 +25,7 @@ export interface LpAccountV1Options extends ContractOptions {
  * Then the account contract calls the pool contract again to mint new liquidity (once it satisfies some requirements).
  */
 export class LpAccountV1 extends Contract {
-  public static readonly version = DEX_VERSION.v1;
+  public static readonly version: DEX_VERSION = DEX_VERSION.v1;
 
   public static readonly gasConstants = {
     refund: toNano("0.3"),
