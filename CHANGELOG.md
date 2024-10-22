@@ -1,5 +1,12 @@
 # Changelog
 
+## [2.0.0-rc.9]
+
+### Fixed
+
+- `DEX.v2_2.Router.CPI.version` now will return correct `v2_2` value instead of `v2_1`
+- `DEX.v2_2.Pool.CPI` was mistakenly nested from the `CPIRouterV2_1` class instead of `CPIPoolV2_1`
+
 ## [2.0.0-rc.8]
 
 ### Added

@@ -6,7 +6,6 @@ import {
 
 export interface BaseRouterV2_2Options extends BaseRouterV2_1Options {}
 
-// biome-ignore lint/complexity/noStaticOnlyClass: <explanation>
 export class BaseRouterV2_2 extends BaseRouterV2_1 {
   public static readonly version: DEX_VERSION = DEX_VERSION.v2_2;
 }

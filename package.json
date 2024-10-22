@@ -1,6 +1,6 @@
 {
   "name": "@ston-fi/sdk",
-  "version": "2.0.0-rc.8",
+  "version": "2.0.0-rc.9",
   "description": "Typescript SDK to interact with the Ston.fi DEX",
   "license": "MIT",
   "type": "module",
@@ -83,10 +83,10 @@
     "@ton/ton": "^13.9.0 || ^14.0.0 || ^15.0.0"
   },
   "devDependencies": {
-    "@biomejs/biome": "^1.7.3",
+    "@biomejs/biome": "^1.9.4",
     "@vitest/coverage-c8": "^0.25.8",
     "lefthook": "^1.6.10",
-    "rollup-plugin-visualizer": "^5.11.0",
+    "rollup-plugin-visualizer": "^5.12.0",
     "typescript": "^5.4.2",
     "vite": "^4.5.5",
     "vite-plugin-dts": "1.7.1",

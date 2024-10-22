@@ -13,7 +13,7 @@ export interface VaultV2_2Options extends VaultV2_1Options {}
  * Vault address is defined by router_address, owner_address and router_token_Wallet_address,
  * so, for each token, each user can have a dedicated vault contract.
  */
-// biome-ignore lint/complexity/noStaticOnlyClass: <explanation>
+
 export class VaultV2_2 extends VaultV2_1 {
   public static readonly version = DEX_VERSION.v2_2;
 }
