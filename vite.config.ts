@@ -1,6 +1,6 @@
 import { defineConfig } from "vite";
 import { resolve } from "node:path";
-import dts from "vite-plugin-dts";
+// import dts from "vite-plugin-dts";
 import { visualizer } from "rollup-plugin-visualizer";
 
 import { peerDependencies } from "./package.json";
@@ -12,7 +12,7 @@ export default defineConfig({
     },
   },
   plugins: [
-    dts(),
+    // dts(),
   ],
   build: {
     rollupOptions: {
