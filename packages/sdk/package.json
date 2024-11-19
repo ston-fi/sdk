@@ -1,0 +1,61 @@
+{
+  "name": "@ston-fi/sdk",
+  "version": "2.0.0-rc.10",
+  "description": "Typescript SDK to interact with the Ston.fi DEX",
+  "license": "MIT",
+  "type": "module",
+  "packageManager": "pnpm@9.0.0",
+  "files": [
+    "dist",
+    "package.json"
+  ],
+  "main": "./dist/index.cjs",
+  "module": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "sideEffects": false,
+  "exports": {
+    "./package.json": "./package.json",
+    ".": {
+      "import": "./dist/index.js",
+      "default": "./dist/index.cjs"
+    },
+    "./dex/v1": {
+      "import": "./dist/contracts/dex/v1/index.js",
+      "default": "./dist/contracts/dex/v1/index.cjs"
+    },
+    "./dex/v2_1": {
+      "import": "./dist/contracts/dex/v2_1/index.js",
+      "default": "./dist/contracts/dex/v2_1/index.cjs"
+    },
+    "./farm/v1": {
+      "import": "./dist/contracts/farm/v1/index.js",
+      "default": "./dist/contracts/farm/v1/index.cjs"
+    },
+    "./farm/v2": {
+      "import": "./dist/contracts/farm/v2/index.js",
+      "default": "./dist/contracts/farm/v2/index.cjs"
+    },
+    "./farm/v3": {
+      "import": "./dist/contracts/farm/v3/index.js",
+      "default": "./dist/contracts/farm/v3/index.cjs"
+    }
+  },
+  "scripts": {
+    "test": "vitest",
+    "build": "tsup",
+    "inspect:unused-code": "pnpm dlx knip",
+    "inspect:circular-dependencies": "npx --yes madge --circular --extensions js,ts .",
+    "prepublishOnly": "pnpm i && biome check . && tsc --noEmit --pretty && pnpm run test --run && pnpm run build && npx --yes publint"
+  },
+  "peerDependencies": {
+    "@ston-fi/api": ">=0.7.0 <1.0.0",
+    "@ton/ton": "^13.9.0 || ^14.0.0 || ^15.0.0"
+  },
+  "devDependencies": {
+    "@ston-fi/typescript-config": "workspace:*",
+    "esbuild-analyzer": "^0.2.0",
+    "tsup": "8.3.5",
+    "typescript": "^5.4.2",
+    "vitest": "2.1.5"
+  }
+}

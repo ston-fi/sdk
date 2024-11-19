@@ -1,0 +1,5 @@
+{
+  "$schema": "https://json.schemastore.org/tsconfig",
+  "display": "Default",
+  "extends": "@total-typescript/tsconfig/bundler/no-dom/library-monorepo"
+}

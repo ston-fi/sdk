@@ -11,6 +11,7 @@ node_modules
 dist
 coverage
 *.local
+packages/*/build-report.html
 
 # Editor directories and files
 .vscode
@@ -23,3 +24,5 @@ coverage
 *.sw?
 
 .husky
+.turbo
+.vercel

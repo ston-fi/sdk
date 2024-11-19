@@ -1,6 +1,0 @@
-export * from "@/client";
-export * from "@/contracts/dex";
-export * from "@/contracts/farm";
-export * from "@/contracts/pTON";
-export * from "@/types";
-export * from "@/helpers";

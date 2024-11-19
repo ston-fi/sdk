@@ -1,5 +1,20 @@
 # Changelog
 
+## [2.0.0-rc.10]
+
+### Changed
+
+- the project structure was changed to monorepo
+- as an result of the research on [@Siykt](https://github.com/Siykt) [issue](https://github.com/ston-fi/sdk/issues/41) package build tool was changed from vite to tsup
+
+### Fixed
+
+- correct description for the `PoolV1.getExpectedOutputs` method `jettonWallet` parameter. Thanks to [@Ludwintor](https://github.com/Ludwintor) for finding [this issue](https://github.com/ston-fi/sdk/issues/43).
+- correct declaration of the `@ston-fi/api` package version to prevent npm warnings
+- `DEX.v2_2.Pool.getLpAccount` method now will return correct `LpAccountV2_2` instance instead of `LpAccountV2_1`
+- `DEX.v2_2.Router.getPool` method now will return correct `BasePoolV2_2` instance instead of `BasePoolV2_1`
+- `DEX.v2_2.Router.getVault` method now will return correct `VaultV2_2` instance instead of `VaultV2_1`
+
 ## [2.0.0-rc.9]
 
 ### Fixed
