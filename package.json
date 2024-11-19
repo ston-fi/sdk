@@ -1,6 +1,6 @@
 {
   "name": "@ston-fi/sdk",
-  "version": "1.2.0",
+  "version": "1.2.1",
   "description": "Typescript SDK to interact with the Ston.fi DEX",
   "license": "MIT",
   "type": "module",

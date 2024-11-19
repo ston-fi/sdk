@@ -1,5 +1,11 @@
 # Changelog
 
+## [1.2.1]
+
+### Fixed
+
+- correct description for the `PoolV1.getExpectedOutputs` method `jettonWallet` parameter. Thanks to [@Ludwintor](https://github.com/Ludwintor) for finding [this issue](https://github.com/ston-fi/sdk/issues/43)
+
 ## [1.2.0]
 
 ### Added

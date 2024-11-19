@@ -151,12 +151,12 @@ export class PoolV1 extends JettonMinter {
   }
 
   /**
-   * Estimate expected result of the amount of jettonWallet tokens swapped to the other type of tokens of the pool
+   * Estimate the expected result of the amount of jettonWallet tokens swapped to the other token of the pool
    *
    * @param {bigint | number} params.amount - Amount of tokens to swap (in basic token units)
-   * @param {Address | string} params.jettonWallet - Token Jetton address (must be equal to one of the Jetton addresses of the pool)
+   * @param {Address | string} params.jettonWallet - jetton wallet address (owned by the router)
    *
-   * @returns structure with expected result of a token swap
+   * @returns structure with the expected result of a token swap
    */
   public async getExpectedOutputs(
     provider: ContractProvider,
