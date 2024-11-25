@@ -1,5 +1,11 @@
 # Changelog
 
+## [2.0.0-rc.11]
+
+### Added
+
+- optional `receiverAddress` parameter was added to the `BaseRouterV2_1` contract methods. By default, it will be equal to `userWalletAddress`
+
 ## [2.0.0-rc.10]
 
 ### Changed

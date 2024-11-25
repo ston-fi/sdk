@@ -2,7 +2,8 @@
   "$schema": "https://biomejs.dev/schemas/1.9.4/schema.json",
   "files": {
     "ignoreUnknown": true,
-    "include": ["./src/*"]
+    "include": ["./examples/**", "./packages/**"],
+    "ignore": ["node_modules", ".turbo", "dist", "coverage"]
   },
   "organizeImports": {
     "enabled": true

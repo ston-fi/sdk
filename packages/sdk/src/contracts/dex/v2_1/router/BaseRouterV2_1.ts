@@ -174,6 +174,7 @@ export class BaseRouterV2_1 extends Contract {
     provider: ContractProvider,
     params: {
       userWalletAddress: AddressType;
+      receiverAddress?: AddressType;
       offerJettonAddress: AddressType;
       askJettonAddress: AddressType;
       offerAmount: AmountType;
@@ -212,7 +213,7 @@ export class BaseRouterV2_1 extends Contract {
 
     const forwardPayload = await this.createSwapBody({
       askJettonWalletAddress: askJettonWalletAddress,
-      receiverAddress: params.userWalletAddress,
+      receiverAddress: params.receiverAddress ?? params.userWalletAddress,
       minAskAmount: params.minAskAmount,
       refundAddress: params.refundAddress ?? params.userWalletAddress,
       excessesAddress: params.excessesAddress,
@@ -260,6 +261,7 @@ export class BaseRouterV2_1 extends Contract {
     provider: ContractProvider,
     params: {
       userWalletAddress: AddressType;
+      receiverAddress?: AddressType;
       offerJettonAddress: AddressType;
       proxyTon: PtonV2_1;
       offerAmount: AmountType;
@@ -311,6 +313,7 @@ export class BaseRouterV2_1 extends Contract {
     provider: ContractProvider,
     params: {
       userWalletAddress: AddressType;
+      receiverAddress?: AddressType;
       proxyTon: PtonV2_1;
       askJettonAddress: AddressType;
       offerAmount: AmountType;
@@ -343,7 +346,7 @@ export class BaseRouterV2_1 extends Contract {
 
     const forwardPayload = await this.createSwapBody({
       askJettonWalletAddress: askJettonWalletAddress,
-      receiverAddress: params.userWalletAddress,
+      receiverAddress: params.receiverAddress ?? params.userWalletAddress,
       minAskAmount: params.minAskAmount,
       refundAddress: params.refundAddress ?? params.userWalletAddress,
       excessesAddress: params.excessesAddress,
@@ -414,6 +417,7 @@ export class BaseRouterV2_1 extends Contract {
     provider: ContractProvider,
     params: {
       userWalletAddress: AddressType;
+      receiverAddress?: AddressType;
       sendTokenAddress: AddressType;
       otherTokenAddress: AddressType;
       sendAmount: AmountType;
@@ -457,6 +461,7 @@ export class BaseRouterV2_1 extends Contract {
     provider: ContractProvider,
     params: {
       userWalletAddress: AddressType;
+      receiverAddress?: AddressType;
       sendTokenAddress: AddressType;
       otherTokenAddress: AddressType;
       sendAmount: AmountType;
@@ -522,7 +527,7 @@ export class BaseRouterV2_1 extends Contract {
 
     const forwardPayload = await this.createProvideLiquidityBody({
       routerWalletAddress: routerWalletAddress,
-      receiverAddress: params.userWalletAddress,
+      receiverAddress: params.receiverAddress ?? params.userWalletAddress,
       minLpOut: params.minLpOut,
       refundAddress: params.refundAddress ?? params.userWalletAddress,
       excessesAddress: params.excessesAddress,
@@ -557,6 +562,7 @@ export class BaseRouterV2_1 extends Contract {
     provider: ContractProvider,
     params: {
       userWalletAddress: AddressType;
+      receiverAddress?: AddressType;
       proxyTon: PtonV2_1;
       otherTokenAddress: AddressType;
       sendAmount: AmountType;
@@ -597,6 +603,7 @@ export class BaseRouterV2_1 extends Contract {
     provider: ContractProvider,
     params: {
       userWalletAddress: AddressType;
+      receiverAddress?: AddressType;
       proxyTon: PtonV2_1;
       otherTokenAddress: AddressType;
       sendAmount: AmountType;
@@ -657,7 +664,7 @@ export class BaseRouterV2_1 extends Contract {
 
     const forwardPayload = await this.createProvideLiquidityBody({
       routerWalletAddress: routerWalletAddress,
-      receiverAddress: params.userWalletAddress,
+      receiverAddress: params.receiverAddress ?? params.userWalletAddress,
       minLpOut: params.minLpOut,
       refundAddress: params.refundAddress ?? params.userWalletAddress,
       excessesAddress: params.excessesAddress,

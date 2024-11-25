@@ -1,14 +1,11 @@
 {
   "name": "@ston-fi/sdk",
-  "version": "2.0.0-rc.10",
+  "version": "2.0.0-rc.11",
   "description": "Typescript SDK to interact with the Ston.fi DEX",
   "license": "MIT",
   "type": "module",
   "packageManager": "pnpm@9.0.0",
-  "files": [
-    "dist",
-    "package.json"
-  ],
+  "files": ["dist", "package.json"],
   "main": "./dist/index.cjs",
   "module": "./dist/index.js",
   "types": "./dist/index.d.ts",
@@ -45,7 +42,7 @@
     "build": "tsup",
     "inspect:unused-code": "pnpm dlx knip",
     "inspect:circular-dependencies": "npx --yes madge --circular --extensions js,ts .",
-    "prepublishOnly": "pnpm i && biome check . && tsc --noEmit --pretty && pnpm run test --run && pnpm run build && npx --yes publint"
+    "prepublishOnly": "pnpm i && npx --yes biome check && tsc --noEmit --pretty && pnpm run test --run && pnpm run build && npx --yes publint"
   },
   "peerDependencies": {
     "@ston-fi/api": ">=0.7.0 <1.0.0",
