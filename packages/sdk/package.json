@@ -1,11 +1,11 @@
 {
   "name": "@ston-fi/sdk",
-  "version": "2.0.0",
+  "version": "2.0.1",
   "description": "Typescript SDK to interact with the Ston.fi DEX",
   "license": "MIT",
   "type": "module",
   "packageManager": "pnpm@9.0.0",
-  "files": ["dist", "package.json"],
+  "files": ["dist", "package.json", "README.md"],
   "main": "./dist/index.cjs",
   "module": "./dist/index.js",
   "types": "./dist/index.d.ts",

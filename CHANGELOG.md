@@ -1,5 +1,11 @@
 # Changelog
 
+## [2.0.1]
+
+### Fixed
+
+- fix missed README.md file for the SDK package in NPM registry
+
 ## [2.0.0]
 
 - `2.0.0-rc.11` was tagged as stable release `2.0.0`
