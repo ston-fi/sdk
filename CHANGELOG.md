@@ -1,5 +1,9 @@
 # Changelog
 
+## [2.0.0]
+
+- `2.0.0-rc.11` was tagged as stable release `2.0.0`
+
 ## [2.0.0-rc.11]
 
 ### Added
