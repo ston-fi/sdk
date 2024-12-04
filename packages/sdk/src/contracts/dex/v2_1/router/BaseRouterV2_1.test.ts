@@ -390,6 +390,23 @@ describe("BaseRouterV2_1", () => {
       );
       expect(params.value).toMatchInlineSnapshot("300000000n");
     });
+
+    it("should build expected tx params when custom receiverAddress is defined", async () => {
+      const contract = provider.open(BaseRouterV2_1.create(ROUTER_ADDRESS));
+
+      const params = await contract.getSwapJettonToJettonTxParams({
+        ...txArguments,
+        receiverAddress: "EQAjYQUL8px7oz4nf2i7lgWT70wZ236EKbiOOpbfj8zusDvH",
+      });
+
+      expect(params.to.toString()).toMatchInlineSnapshot(
+        '"EQBB_eiDQ9YJ_7UiNsrVvhTKt2O0oKjKe76eVQ7QPS-oYPsi"',
+      );
+      expect(params.body?.toBoc().toString("base64")).toMatchInlineSnapshot(
+        `"te6cckEBAwEA+wABsA+KfqUAAAAAAAAAAEHc1lAIABcPxIIJBRXcFelHACr/pLM4lgs7tR2lSYWSfwf2QNi1AAQnxLqlX2B6w4jQzzzPWA8eyWZVZBz6Y0D/8noARLOaCBycOAEBAeFmZN4qgAEAzmDZI8Xr3NC7nZo+aFkM7M/0vb5/f2/1dAy3bDlFsABCfEuqVfYHrDiNDPPM9YDx7JZlVkHPpjQP/yegBEs5ogAIT4l1Sr7A9YcRoZ55nrAePZLMqsg59MaB/+T0AIlnNAAAAAAAAAHCQAIAU0C+vCAIAEbCChflOPdGfE7+0XcsCyfemDO2/QhTcRx1Lb8fmd1gAAAFEAreNSo="`,
+      );
+      expect(params.value).toMatchInlineSnapshot("300000000n");
+    });
   });
 
   describe("sendSwapJettonToJetton", () => {
@@ -565,6 +582,23 @@ describe("BaseRouterV2_1", () => {
       expect(params.value).toMatchInlineSnapshot("300000000n");
     });
 
+    it("should build expected tx params when custom receiverAddress is defined", async () => {
+      const contract = provider.open(BaseRouterV2_1.create(ROUTER_ADDRESS));
+
+      const params = await contract.getSwapJettonToTonTxParams({
+        ...txArguments,
+        receiverAddress: "EQAjYQUL8px7oz4nf2i7lgWT70wZ236EKbiOOpbfj8zusDvH",
+      });
+
+      expect(params.to.toString()).toMatchInlineSnapshot(
+        '"EQAvBlP_FK6SQQRtkoLsO8U-Ycvmdxrrdopx_xxaTumvs26X"',
+      );
+      expect(params.body?.toBoc().toString("base64")).toMatchInlineSnapshot(
+        `"te6cckEBAwEA+wABsA+KfqUAAAAAAAAAAEHc1lAIABcPxIIJBRXcFelHACr/pLM4lgs7tR2lSYWSfwf2QNi1AAQnxLqlX2B6w4jQzzzPWA8eyWZVZBz6Y0D/8noARLOaCBycOAEBAeFmZN4qgAtkxztQgmDNmKE4QgLlz+AxRQODLmEwpBaS9hgwusAA0ABCfEuqVfYHrDiNDPPM9YDx7JZlVkHPpjQP/yegBEs5ogAIT4l1Sr7A9YcRoZ55nrAePZLMqsg59MaB/+T0AIlnNAAAAAAAAAHCQAIAU0C+vCAIAEbCChflOPdGfE7+0XcsCyfemDO2/QhTcRx1Lb8fmd1gAAAFECvdwGo="`,
+      );
+      expect(params.value).toMatchInlineSnapshot("300000000n");
+    });
+
     it("should throw UnmatchedPtonVersion error when pTON version does not match", async () => {
       const contract = provider.open(BaseRouterV2_1.create(ROUTER_ADDRESS));
 
@@ -726,6 +760,23 @@ describe("BaseRouterV2_1", () => {
         '"te6cckEBAwEA1QABZAHzg10AAAAAAAAAAEHc1lAIACE+JdUq+wPWHEaGeeZ6wHj2SzKrIOfTGgf/k9ACJZzRAQHhZmTeKoAOHVtw9k5i6efu1Ofm2mbqbMyLChv0FZFYxaypjToz1nAAQnxLqlX2B6w4jQzzzPWA8eyWZVZBz6Y0D/8noARLOaIACE+JdUq+wPWHEaGeeZ6wHj2SzKrIOfTGgf/k9ACJZzQAAAAAAAABwkACAFNAvrwgCAAhPiXVKvsD1hxGhnnmesB49ksyqyDn0xoH/5PQAiWc0AAABRAK+HJz"',
       );
       expect(params.value).toMatchInlineSnapshot("510000001n");
+    });
+
+    it("should build expected tx params when custom receiverAddress is defined", async () => {
+      const contract = provider.open(BaseRouterV2_1.create(ROUTER_ADDRESS));
+
+      const params = await contract.getSwapTonToJettonTxParams({
+        ...txArguments,
+        receiverAddress: "EQAjYQUL8px7oz4nf2i7lgWT70wZ236EKbiOOpbfj8zusDvH",
+      });
+
+      expect(params.to.toString()).toMatchInlineSnapshot(
+        '"EQBbJjnahBMGbMUJwhAXLn8BiigcGXMJhSC0l7DBhdYABqox"',
+      );
+      expect(params.body?.toBoc().toString("base64")).toMatchInlineSnapshot(
+        `"te6cckEBAwEA1QABZAHzg10AAAAAAAAAAEHc1lAIACE+JdUq+wPWHEaGeeZ6wHj2SzKrIOfTGgf/k9ACJZzRAQHhZmTeKoAOHVtw9k5i6efu1Ofm2mbqbMyLChv0FZFYxaypjToz1nAAQnxLqlX2B6w4jQzzzPWA8eyWZVZBz6Y0D/8noARLOaIACE+JdUq+wPWHEaGeeZ6wHj2SzKrIOfTGgf/k9ACJZzQAAAAAAAABwkACAFNAvrwgCABGwgoX5Tj3RnxO/tF3LAsn3pgztv0IU3EcdS2/H5ndYAAABRBAyx+w"`,
+      );
+      expect(params.value).toMatchInlineSnapshot("810000000n");
     });
 
     it("should throw UnmatchedPtonVersion error when pTON version does not match", async () => {
@@ -912,6 +963,23 @@ describe("BaseRouterV2_1", () => {
       );
       expect(params.value).toMatchInlineSnapshot("300000000n");
     });
+
+    it("should build expected tx params when custom receiverAddress is defined", async () => {
+      const contract = provider.open(BaseRouterV2_1.create(ROUTER_ADDRESS));
+
+      const params = await contract.getProvideLiquidityJettonTxParams({
+        ...txArguments,
+        receiverAddress: "EQAjYQUL8px7oz4nf2i7lgWT70wZ236EKbiOOpbfj8zusDvH",
+      });
+
+      expect(params.to.toString()).toMatchInlineSnapshot(
+        '"EQAvBlP_FK6SQQRtkoLsO8U-Ycvmdxrrdopx_xxaTumvs26X"',
+      );
+      expect(params.body?.toBoc().toString("base64")).toMatchInlineSnapshot(
+        `"te6cckEBAwEA9QABsA+KfqUAAAAAAAAAAEHc1lAIABcPxIIJBRXcFelHACr/pLM4lgs7tR2lSYWSfwf2QNi1AAQnxLqlX2B6w4jQzzzPWA8eyWZVZBz6Y0D/8noARLOaCBwDoYEBAeE3wJbfgA4dW3D2TmLp5+7U5+baZupszIsKG/QVkVjFrKmNOjPWcABCfEuqVfYHrDiNDPPM9YDx7JZlVkHPpjQP/yegBEs5ogAIT4l1Sr7A9YcRoZ55nrAePZLMqsg59MaB/+T0AIlnNAAAAAAAAAHCQAIARxAYAEbCChflOPdGfE7+0XcsCyfemDO2/QhTcRx1Lb8fmd1hBJit5UM="`,
+      );
+      expect(params.value).toMatchInlineSnapshot("300000000n");
+    });
   });
 
   describe("sendProvideLiquidityJetton", () => {
@@ -1028,6 +1096,23 @@ describe("BaseRouterV2_1", () => {
         '"te6cckEBAwEAzwABZAHzg10AAAAAAAAAAEHc1lAIACE+JdUq+wPWHEaGeeZ6wHj2SzKrIOfTGgf/k9ACJZzRAQHhN8CW34AbODBzUaSK5j0GzCBQi97jKeks860gYcTemIQLL7ZKxZAAQnxLqlX2B6w4jQzzzPWA8eyWZVZBz6Y0D/8noARLOaIACE+JdUq+wPWHEaGeeZ6wHj2SzKrIOfTGgf/k9ACJZzQAAAAAAAABwkACAEcQGAAhPiXVKvsD1hxGhnnmesB49ksyqyDn0xoH/5PQAiWc0QRdMlyp"',
       );
       expect(params.value).toMatchInlineSnapshot("510000002n");
+    });
+
+    it("should build expected tx params when custom receiverAddress is defined", async () => {
+      const contract = provider.open(BaseRouterV2_1.create(ROUTER_ADDRESS));
+
+      const params = await contract.getProvideLiquidityTonTxParams({
+        ...txArguments,
+        receiverAddress: "EQAjYQUL8px7oz4nf2i7lgWT70wZ236EKbiOOpbfj8zusDvH",
+      });
+
+      expect(params.to.toString()).toMatchInlineSnapshot(
+        '"EQBbJjnahBMGbMUJwhAXLn8BiigcGXMJhSC0l7DBhdYABqox"',
+      );
+      expect(params.body?.toBoc().toString("base64")).toMatchInlineSnapshot(
+        `"te6cckEBAwEAzwABZAHzg10AAAAAAAAAAEHc1lAIACE+JdUq+wPWHEaGeeZ6wHj2SzKrIOfTGgf/k9ACJZzRAQHhN8CW34AbODBzUaSK5j0GzCBQi97jKeks860gYcTemIQLL7ZKxZAAQnxLqlX2B6w4jQzzzPWA8eyWZVZBz6Y0D/8noARLOaIACE+JdUq+wPWHEaGeeZ6wHj2SzKrIOfTGgf/k9ACJZzQAAAAAAAABwkACAEcQGABGwgoX5Tj3RnxO/tF3LAsn3pgztv0IU3EcdS2/H5ndYQTmM8Qn"`,
+      );
+      expect(params.value).toMatchInlineSnapshot("810000000n");
     });
 
     it("should throw UnmatchedPtonVersion error when pTON version does not match", async () => {
@@ -1207,6 +1292,25 @@ describe("BaseRouterV2_1", () => {
       );
       expect(params.value).toMatchInlineSnapshot("1000000000n");
     });
+
+    it("should build expected tx params when custom receiverAddress is defined", async () => {
+      const contract = provider.open(BaseRouterV2_1.create(ROUTER_ADDRESS));
+
+      const params = await contract.getSingleSideProvideLiquidityJettonTxParams(
+        {
+          ...txArguments,
+          receiverAddress: "EQAjYQUL8px7oz4nf2i7lgWT70wZ236EKbiOOpbfj8zusDvH",
+        },
+      );
+
+      expect(params.to.toString()).toMatchInlineSnapshot(
+        `"EQAvBlP_FK6SQQRtkoLsO8U-Ycvmdxrrdopx_xxaTumvs26X"`,
+      );
+      expect(params.body?.toBoc().toString("base64")).toMatchInlineSnapshot(
+        `"te6cckEBAwEA9QABsA+KfqUAAAAAAAAAAEHc1lAIABcPxIIJBRXcFelHACr/pLM4lgs7tR2lSYWSfwf2QNi1AAQnxLqlX2B6w4jQzzzPWA8eyWZVZBz6Y0D/8noARLOaCF9eEAEBAeE3wJbfgA4dW3D2TmLp5+7U5+baZupszIsKG/QVkVjFrKmNOjPWcABCfEuqVfYHrDiNDPPM9YDx7JZlVkHPpjQP/yegBEs5ogAIT4l1Sr7A9YcRoZ55nrAePZLMqsg59MaB/+T0AIlnNAAAAAAAAAHCQAIARxAYAEbCChflOPdGfE7+0XcsCyfemDO2/QhTcRx1Lb8fmd1gBHJ6ZBI="`,
+      );
+      expect(params.value).toMatchInlineSnapshot("1000000000n");
+    });
   });
 
   describe("sendSingleSideProvideLiquidityJetton", () => {
@@ -1345,6 +1449,23 @@ describe("BaseRouterV2_1", () => {
           received: pTON.v1.version,
         }),
       );
+    });
+
+    it("should build expected tx params when custom receiverAddress is defined", async () => {
+      const contract = provider.open(BaseRouterV2_1.create(ROUTER_ADDRESS));
+
+      const params = await contract.getSingleSideProvideLiquidityTonTxParams({
+        ...txArguments,
+        receiverAddress: "EQAjYQUL8px7oz4nf2i7lgWT70wZ236EKbiOOpbfj8zusDvH",
+      });
+
+      expect(params.to.toString()).toMatchInlineSnapshot(
+        `"EQBbJjnahBMGbMUJwhAXLn8BiigcGXMJhSC0l7DBhdYABqox"`,
+      );
+      expect(params.body?.toBoc().toString("base64")).toMatchInlineSnapshot(
+        `"te6cckEBAwEAzwABZAHzg10AAAAAAAAAAEHc1lAIACE+JdUq+wPWHEaGeeZ6wHj2SzKrIOfTGgf/k9ACJZzRAQHhN8CW34AbODBzUaSK5j0GzCBQi97jKeks860gYcTemIQLL7ZKxZAAQnxLqlX2B6w4jQzzzPWA8eyWZVZBz6Y0D/8noARLOaIACE+JdUq+wPWHEaGeeZ6wHj2SzKrIOfTGgf/k9ACJZzQAAAAAAAABwkACAEcQGABGwgoX5Tj3RnxO/tF3LAsn3pgztv0IU3EcdS2/H5ndYASRq2Y0"`,
+      );
+      expect(params.value).toMatchInlineSnapshot("1310000000n");
     });
   });
 

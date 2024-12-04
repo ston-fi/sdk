@@ -1,5 +1,15 @@
 # Changelog
 
+## [2.1.0]
+
+### Added
+
+- new [stable swap](https://docs.ston.fi/docs/developer-section/architecture#stableswap) contracts `DEX.v2_*.Router.Stable` and `DEX.v2_*.Pool.Stable`
+
+### Fixed
+
+- `DEX.v2_2.Pool.getLpAccount` now will return correct `LpAccountV2_2` instance instead of `LpAccountV2_1`
+
 ## [2.0.1]
 
 ### Fixed
