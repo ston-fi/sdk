@@ -602,17 +602,19 @@ describe("BaseRouterV2_1", () => {
     it("should throw UnmatchedPtonVersion error when pTON version does not match", async () => {
       const contract = provider.open(BaseRouterV2_1.create(ROUTER_ADDRESS));
 
+      const proxyTon = pTON.v1.create(
+        PTON_CONTRACT.address,
+      ) as typeof PTON_CONTRACT;
+
       await expect(
         contract.getSwapJettonToTonTxParams({
           ...txArguments,
-          proxyTon: pTON.v1.create(
-            PTON_CONTRACT.address,
-          ) as typeof PTON_CONTRACT,
+          proxyTon,
         }),
       ).rejects.toThrowError(
         new Errors.UnmatchedPtonVersion({
-          expected: BaseRouterV2_1.version,
-          received: pTON.v1.version,
+          expected: pTON.v2_1.version,
+          received: proxyTon.version,
         }),
       );
     });
@@ -782,17 +784,19 @@ describe("BaseRouterV2_1", () => {
     it("should throw UnmatchedPtonVersion error when pTON version does not match", async () => {
       const contract = provider.open(BaseRouterV2_1.create(ROUTER_ADDRESS));
 
+      const proxyTon = pTON.v1.create(
+        PTON_CONTRACT.address,
+      ) as typeof PTON_CONTRACT;
+
       await expect(
         contract.getSwapTonToJettonTxParams({
           ...txArguments,
-          proxyTon: pTON.v1.create(
-            PTON_CONTRACT.address,
-          ) as typeof PTON_CONTRACT,
+          proxyTon,
         }),
       ).rejects.toThrowError(
         new Errors.UnmatchedPtonVersion({
-          expected: BaseRouterV2_1.version,
-          received: pTON.v1.version,
+          expected: pTON.v2_1.version,
+          received: proxyTon.version,
         }),
       );
     });
@@ -1118,17 +1122,19 @@ describe("BaseRouterV2_1", () => {
     it("should throw UnmatchedPtonVersion error when pTON version does not match", async () => {
       const contract = provider.open(BaseRouterV2_1.create(ROUTER_ADDRESS));
 
+      const proxyTon = pTON.v1.create(
+        PTON_CONTRACT.address,
+      ) as typeof PTON_CONTRACT;
+
       await expect(
         contract.getProvideLiquidityTonTxParams({
           ...txArguments,
-          proxyTon: pTON.v1.create(
-            PTON_CONTRACT.address,
-          ) as typeof PTON_CONTRACT,
+          proxyTon,
         }),
       ).rejects.toThrowError(
         new Errors.UnmatchedPtonVersion({
-          expected: BaseRouterV2_1.version,
-          received: pTON.v1.version,
+          expected: pTON.v2_1.version,
+          received: proxyTon.version,
         }),
       );
     });
@@ -1436,17 +1442,19 @@ describe("BaseRouterV2_1", () => {
     it("should throw UnmatchedPtonVersion error when pTON version does not match", async () => {
       const contract = provider.open(BaseRouterV2_1.create(ROUTER_ADDRESS));
 
+      const proxyTon = pTON.v1.create(
+        PTON_CONTRACT.address,
+      ) as typeof PTON_CONTRACT;
+
       await expect(
         contract.getSingleSideProvideLiquidityTonTxParams({
           ...txArguments,
-          proxyTon: pTON.v1.create(
-            PTON_CONTRACT.address,
-          ) as typeof PTON_CONTRACT,
+          proxyTon,
         }),
       ).rejects.toThrowError(
         new Errors.UnmatchedPtonVersion({
-          expected: BaseRouterV2_1.version,
-          received: pTON.v1.version,
+          expected: pTON.v2_1.version,
+          received: proxyTon.version,
         }),
       );
     });

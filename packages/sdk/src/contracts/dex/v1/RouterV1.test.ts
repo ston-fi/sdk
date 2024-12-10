@@ -454,17 +454,19 @@ describe("RouterV1", () => {
     it("should throw UnmatchedPtonVersion error when pTON version does not match", async () => {
       const contract = provider.open(new RouterV1());
 
+      const proxyTon = pTON.v2_1.create(
+        PTON_CONTRACT.address,
+      ) as typeof PTON_CONTRACT;
+
       await expect(
         contract.getSwapJettonToTonTxParams({
           ...txArgs,
-          proxyTon: pTON.v2_1.create(
-            PTON_CONTRACT.address,
-          ) as typeof PTON_CONTRACT,
+          proxyTon,
         }),
       ).rejects.toThrowError(
         new Errors.UnmatchedPtonVersion({
-          expected: RouterV1.version,
-          received: pTON.v2_1.version,
+          expected: pTON.v1.version,
+          received: proxyTon.version,
         }),
       );
     });
@@ -616,17 +618,19 @@ describe("RouterV1", () => {
     it("should throw UnmatchedPtonVersion error when pTON version does not match", async () => {
       const contract = provider.open(new RouterV1());
 
+      const proxyTon = pTON.v2_1.create(
+        PTON_CONTRACT.address,
+      ) as typeof PTON_CONTRACT;
+
       await expect(
         contract.getSwapTonToJettonTxParams({
           ...txArgs,
-          proxyTon: pTON.v2_1.create(
-            PTON_CONTRACT.address,
-          ) as typeof PTON_CONTRACT,
+          proxyTon,
         }),
       ).rejects.toThrowError(
         new Errors.UnmatchedPtonVersion({
-          expected: RouterV1.version,
-          received: pTON.v2_1.version,
+          expected: pTON.v1.version,
+          received: proxyTon.version,
         }),
       );
     });
@@ -914,17 +918,19 @@ describe("RouterV1", () => {
     it("should throw UnmatchedPtonVersion error when pTON version does not match", async () => {
       const contract = provider.open(new RouterV1());
 
+      const proxyTon = pTON.v2_1.create(
+        PTON_CONTRACT.address,
+      ) as typeof PTON_CONTRACT;
+
       await expect(
         contract.getProvideLiquidityTonTxParams({
           ...txArgs,
-          proxyTon: pTON.v2_1.create(
-            PTON_CONTRACT.address,
-          ) as typeof PTON_CONTRACT,
+          proxyTon,
         }),
       ).rejects.toThrowError(
         new Errors.UnmatchedPtonVersion({
-          expected: RouterV1.version,
-          received: pTON.v2_1.version,
+          expected: pTON.v1.version,
+          received: proxyTon.version,
         }),
       );
     });

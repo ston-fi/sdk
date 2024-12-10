@@ -13,7 +13,8 @@ import { createJettonTransferMessage } from "../../../../utils/createJettonTrans
 import { toAddress } from "../../../../utils/toAddress";
 import { Contract, type ContractOptions } from "../../../core/Contract";
 import { JettonMinter } from "../../../core/JettonMinter";
-import type { PtonV2_1 } from "../../../pTON/v2_1/PtonV2_1";
+import { pTON_VERSION } from "../../../pTON";
+import type { AbstractPton } from "../../../pTON/AbstractPton";
 import { type DEX_TYPE, DEX_VERSION } from "../../constants";
 import * as Errors from "../../errors";
 import { ROUTER_ADDRESS as ROUTER_v1_ADDRESS } from "../../v1/constants";
@@ -263,7 +264,7 @@ export class BaseRouterV2_1 extends Contract {
       userWalletAddress: AddressType;
       receiverAddress?: AddressType;
       offerJettonAddress: AddressType;
-      proxyTon: PtonV2_1;
+      proxyTon: AbstractPton;
       offerAmount: AmountType;
       minAskAmount: AmountType;
       refundAddress?: AddressType;
@@ -281,12 +282,7 @@ export class BaseRouterV2_1 extends Contract {
       jettonCustomPayload?: Cell;
     },
   ): Promise<SenderArguments> {
-    if (params.proxyTon.version !== BasePoolV2_1.version) {
-      throw new Errors.UnmatchedPtonVersion({
-        expected: BasePoolV2_1.version,
-        received: params.proxyTon.version,
-      });
-    }
+    this.assertProxyTon(params.proxyTon);
 
     return await this.getSwapJettonToJettonTxParams(provider, {
       ...params,
@@ -314,7 +310,7 @@ export class BaseRouterV2_1 extends Contract {
     params: {
       userWalletAddress: AddressType;
       receiverAddress?: AddressType;
-      proxyTon: PtonV2_1;
+      proxyTon: AbstractPton;
       askJettonAddress: AddressType;
       offerAmount: AmountType;
       minAskAmount: AmountType;
@@ -331,12 +327,7 @@ export class BaseRouterV2_1 extends Contract {
       queryId?: QueryIdType;
     },
   ): Promise<SenderArguments> {
-    if (params.proxyTon.version !== BasePoolV2_1.version) {
-      throw new Errors.UnmatchedPtonVersion({
-        expected: BasePoolV2_1.version,
-        received: params.proxyTon.version,
-      });
-    }
+    this.assertProxyTon(params.proxyTon);
 
     const contractAddress = this.address;
 
@@ -563,7 +554,7 @@ export class BaseRouterV2_1 extends Contract {
     params: {
       userWalletAddress: AddressType;
       receiverAddress?: AddressType;
-      proxyTon: PtonV2_1;
+      proxyTon: AbstractPton;
       otherTokenAddress: AddressType;
       sendAmount: AmountType;
       minLpOut: AmountType;
@@ -604,7 +595,7 @@ export class BaseRouterV2_1 extends Contract {
     params: {
       userWalletAddress: AddressType;
       receiverAddress?: AddressType;
-      proxyTon: PtonV2_1;
+      proxyTon: AbstractPton;
       otherTokenAddress: AddressType;
       sendAmount: AmountType;
       minLpOut: AmountType;
@@ -649,12 +640,7 @@ export class BaseRouterV2_1 extends Contract {
       bothPositive: boolean;
     },
   ) {
-    if (params.proxyTon.version !== BasePoolV2_1.version) {
-      throw new Errors.UnmatchedPtonVersion({
-        expected: BasePoolV2_1.version,
-        received: params.proxyTon.version,
-      });
-    }
+    this.assertProxyTon(params.proxyTon);
 
     const contractAddress = this.address;
 
@@ -688,6 +674,15 @@ export class BaseRouterV2_1 extends Contract {
 
   private get defaultDeadline() {
     return Math.floor(Date.now() / 1000) + this.txDeadline;
+  }
+
+  private assertProxyTon(proxyTon: AbstractPton) {
+    if (proxyTon.version !== pTON_VERSION.v2_1) {
+      throw new Errors.UnmatchedPtonVersion({
+        expected: pTON_VERSION.v2_1,
+        received: proxyTon.version,
+      });
+    }
   }
 
   public async getPoolAddress(

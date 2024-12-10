@@ -9,6 +9,7 @@ import {
 
 import type { AddressType, AmountType, QueryIdType } from "../../../types";
 import { toAddress } from "../../../utils/toAddress";
+import type { AbstractPton } from "../AbstractPton";
 import { pTON_VERSION } from "../constants";
 import { PtonV1, type PtonV1Options } from "../v1/PtonV1";
 import { pTON_OP_CODES } from "./constants";
@@ -17,7 +18,7 @@ export interface PtonV2_1Options extends PtonV1Options {
   gasConstants?: Partial<typeof PtonV2_1.gasConstants>;
 }
 
-export class PtonV2_1 extends PtonV1 {
+export class PtonV2_1 extends PtonV1 implements AbstractPton {
   public static override readonly version = pTON_VERSION.v2_1;
 
   public static override readonly gasConstants = {

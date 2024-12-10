@@ -1,8 +1,13 @@
 {
   "name": "@ston-fi/sdk",
-  "version": "2.1.0",
+  "version": "2.2.0",
   "description": "Typescript SDK to interact with the Ston.fi DEX",
   "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/ston-fi/sdk.git",
+    "directory": "packages/sdk"
+  },
   "type": "module",
   "packageManager": "pnpm@9.0.0",
   "files": ["dist", "package.json", "README.md"],
@@ -24,6 +29,10 @@
       "import": "./dist/contracts/dex/v2_1/index.js",
       "default": "./dist/contracts/dex/v2_1/index.cjs"
     },
+    "./dex/v2_2": {
+      "import": "./dist/contracts/dex/v2_2/index.js",
+      "default": "./dist/contracts/dex/v2_2/index.cjs"
+    },
     "./farm/v1": {
       "import": "./dist/contracts/farm/v1/index.js",
       "default": "./dist/contracts/farm/v1/index.cjs"
@@ -42,7 +51,7 @@
     "build": "tsup",
     "inspect:unused-code": "pnpm dlx knip",
     "inspect:circular-dependencies": "npx --yes madge --circular --extensions js,ts .",
-    "prepublishOnly": "pnpm i && npx --yes biome check && tsc --noEmit --pretty && pnpm run test --run && pnpm run build && npx --yes publint"
+    "prepublishOnly": "pnpm i && tsc --noEmit --pretty && pnpm run test --run && pnpm run build && npx --yes publint"
   },
   "peerDependencies": {
     "@ston-fi/api": ">=0.7.0 <1.0.0",

@@ -1,14 +1,10 @@
 {
   "name": "root",
   "private": true,
-  "repository": {
-    "type": "git",
-    "url": "git+https://github.com/ston-fi/sdk.git"
-  },
   "scripts": {
     "preinstall": "npx only-allow pnpm",
     "prepare": "lefthook install",
-    "cleanup": "rm -rf .turbo node_modules ./{examples,packages}/**/{.next,.turbo,node_modules,dist} ./packages/**/build-report.html"
+    "cleanup": "rm -rf .turbo node_modules ./{examples,packages}/**/{.next,.turbo,coverage,dist,node_modules} ./{examples,packages}/**/{.next,.turbo,coverage,dist,node_modules} ./packages/**/build-report.html"
   },
   "devDependencies": {
     "@biomejs/biome": "1.9.4",

@@ -13,6 +13,7 @@ import { createJettonTransferMessage } from "../../../utils/createJettonTransfer
 import { toAddress } from "../../../utils/toAddress";
 import type { ContractOptions } from "../../core/Contract";
 import { JettonMinter } from "../../core/JettonMinter";
+import type { AbstractPton } from "../AbstractPton";
 import { pTON_VERSION } from "../constants";
 import { pTON_OP_CODES } from "./constants";
 
@@ -20,7 +21,7 @@ export interface PtonV1Options extends ContractOptions {
   gasConstants?: Partial<typeof PtonV1.gasConstants>;
 }
 
-export class PtonV1 extends JettonMinter {
+export class PtonV1 extends JettonMinter implements AbstractPton {
   public static readonly version: pTON_VERSION = pTON_VERSION.v1;
 
   public static readonly address = address(

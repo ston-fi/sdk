@@ -13,7 +13,8 @@ import { createJettonTransferMessage } from "../../../utils/createJettonTransfer
 import { toAddress } from "../../../utils/toAddress";
 import { Contract, type ContractOptions } from "../../core/Contract";
 import { JettonMinter } from "../../core/JettonMinter";
-import type { PtonV1 } from "../../pTON/v1/PtonV1";
+import { pTON_VERSION } from "../../pTON";
+import type { AbstractPton } from "../../pTON/AbstractPton";
 import { DEX_VERSION } from "../constants";
 import * as Errors from "../errors";
 import { PoolV1 } from "./PoolV1";
@@ -196,7 +197,7 @@ export class RouterV1 extends Contract {
     params: {
       userWalletAddress: AddressType;
       offerJettonAddress: AddressType;
-      proxyTon: PtonV1;
+      proxyTon: AbstractPton;
       offerAmount: AmountType;
       minAskAmount: AmountType;
       referralAddress?: AddressType;
@@ -206,12 +207,7 @@ export class RouterV1 extends Contract {
       jettonCustomPayload?: Cell;
     },
   ): Promise<SenderArguments> {
-    if (params.proxyTon.version !== RouterV1.version) {
-      throw new Errors.UnmatchedPtonVersion({
-        expected: RouterV1.version,
-        received: params.proxyTon.version,
-      });
-    }
+    this.assertProxyTon(params.proxyTon);
 
     return await this.getSwapJettonToJettonTxParams(provider, {
       ...params,
@@ -252,7 +248,7 @@ export class RouterV1 extends Contract {
     provider: ContractProvider,
     params: {
       userWalletAddress: AddressType;
-      proxyTon: PtonV1;
+      proxyTon: AbstractPton;
       askJettonAddress: AddressType;
       offerAmount: AmountType;
       minAskAmount: AmountType;
@@ -261,12 +257,7 @@ export class RouterV1 extends Contract {
       queryId?: QueryIdType;
     },
   ): Promise<SenderArguments> {
-    if (params.proxyTon.version !== RouterV1.version) {
-      throw new Errors.UnmatchedPtonVersion({
-        expected: RouterV1.version,
-        received: params.proxyTon.version,
-      });
-    }
+    this.assertProxyTon(params.proxyTon);
 
     const askJettonWalletAddress = await provider
       .open(JettonMinter.create(params.askJettonAddress))
@@ -414,7 +405,7 @@ export class RouterV1 extends Contract {
     provider: ContractProvider,
     params: {
       userWalletAddress: AddressType;
-      proxyTon: PtonV1;
+      proxyTon: AbstractPton;
       otherTokenAddress: AddressType;
       sendAmount: AmountType;
       minLpOut: AmountType;
@@ -422,12 +413,7 @@ export class RouterV1 extends Contract {
       queryId?: QueryIdType;
     },
   ): Promise<SenderArguments> {
-    if (params.proxyTon.version !== RouterV1.version) {
-      throw new Errors.UnmatchedPtonVersion({
-        expected: RouterV1.version,
-        received: params.proxyTon.version,
-      });
-    }
+    this.assertProxyTon(params.proxyTon);
 
     const routerWalletAddress = await provider
       .open(JettonMinter.create(params.otherTokenAddress))
@@ -464,6 +450,15 @@ export class RouterV1 extends Contract {
     );
 
     return via.send(txParams);
+  }
+
+  private assertProxyTon(proxyTon: AbstractPton) {
+    if (proxyTon.version !== pTON_VERSION.v1) {
+      throw new Errors.UnmatchedPtonVersion({
+        expected: pTON_VERSION.v1,
+        received: proxyTon.version,
+      });
+    }
   }
 
   /**

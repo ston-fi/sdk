@@ -12,22 +12,6 @@ import type { AddressType } from "./types";
  * @returns The set of contracts for the given version.
  */
 export function dexFactory(config: {
-  majorVersion: 1;
-  minorVersion: 0;
-}): typeof DEX.v1;
-export function dexFactory(config: {
-  majorVersion: 2;
-  minorVersion: 1;
-}): typeof DEX.v2_1;
-export function dexFactory(config: {
-  majorVersion: 2;
-  minorVersion: 2;
-}): typeof DEX.v2_2;
-export function dexFactory(config: {
-  majorVersion: number;
-  minorVersion: number;
-}): typeof DEX.v1 | typeof DEX.v2_1 | typeof DEX.v2_2;
-export function dexFactory(config: {
   majorVersion: number;
   minorVersion: number;
 }) {

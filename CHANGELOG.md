@@ -1,5 +1,21 @@
 # Changelog
 
+## [2.2.0]
+
+### Changed
+
+- Instead of specific Pton contracts, Router methods will accept any Pton contract that implements the `AbstractPton` interface. We were forced to implement this solution besides the fact that now you will not get the TS error during the development if the unmatched Pton contract is passed to the Router contract. But we implemented the runtime validation of the Pton version to prevent the appearance of transactions with the unmatched pTON version
+
+### Added
+
+- even more tests for CIP and StableSwap contracts
+- added import of only `v2_2` DEX contracts from sdk via submodule
+
+### Fixed
+
+- `UnmatchedPtonVersion` expected and received fields now type of `pTON_VERSION` instead of `DEX_VERSION`
+- correct `repository` field in sdk package.json file
+
 ## [2.1.0]
 
 ### Added
