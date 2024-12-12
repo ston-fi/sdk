@@ -1,6 +1,6 @@
 {
   "name": "@ston-fi/sdk",
-  "version": "2.2.0",
+  "version": "2.2.1",
   "description": "Typescript SDK to interact with the Ston.fi DEX",
   "license": "MIT",
   "repository": {
@@ -54,7 +54,7 @@
     "prepublishOnly": "pnpm i && tsc --noEmit --pretty && pnpm run test --run && pnpm run build && npx --yes publint"
   },
   "peerDependencies": {
-    "@ston-fi/api": ">=0.7.0 <1.0.0",
+    "@ston-fi/api": "^0",
     "@ton/ton": "^13.9.0 || ^14.0.0 || ^15.0.0"
   },
   "devDependencies": {

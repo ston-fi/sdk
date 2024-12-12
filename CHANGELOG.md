@@ -1,5 +1,11 @@
 # Changelog
 
+## [2.2.1]
+
+### Changed
+
+- since the SDK package expects `@ston-fi/api@0.7.0` as peer dependency and this version was the first one ever released, the version declaration for api package was simplified from `>=0.7.0 <1.0.0` to just `^0`
+
 ## [2.2.0]
 
 ### Changed
