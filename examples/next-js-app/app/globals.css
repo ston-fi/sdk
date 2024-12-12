@@ -1,0 +1,56 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    --test: 0 100% 50%;
+
+    --background: 0 0% 100%;
+    --foreground: 240 4% 5%;
+
+    --card: var(--background);
+    --card-foreground: var(--foreground);
+
+    --popover: var(--background);
+    --popover-foreground: var(--foreground);
+
+    --primary: 210 100% 50%;
+    --primary-foreground: 0 0% 100%;
+
+    --secondary: 210 40% 96.1%;
+    --secondary-foreground: var(--foreground);
+
+    --muted: 210 40% 96.1%;
+    --muted-foreground: var(--foreground);
+
+    --accent: 210 40% 96.1%;
+    --accent-foreground: var(--foreground);
+
+    --destructive: 353 80% 56%;
+    --destructive-foreground: 0 0% 100%;
+
+    --border: 214.3 31.8% 91.4%;
+    --input: 214.3 31.8% 91.4%;
+    --ring: 222.2 84% 4.9%;
+
+    --radius: 0.5rem;
+  }
+}
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+  body {
+    @apply bg-background text-foreground;
+  }
+}
+
+button[data-tc-connect-button] {
+  @apply bg-primary !transform-none;
+}
+
+button[data-tc-dropdown-button] {
+  @apply shadow-md !transform-none;
+}

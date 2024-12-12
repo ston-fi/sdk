@@ -36,6 +36,12 @@ pnpm install @ston-fi/sdk
 
 ## Next steps
 
+### Take a look at the demo app
+
+We are providing a simple but fully functional demo app with the SDK usage in the next.js app to demonstrate the SDK functionality. The source code is open-sourced and can be found [here](https://github.com/ston-fi/sdk/tree/main/examples/next-js-app). Try this app at https://sdk-demo-app.ston.fi
+
+### Dive deep into the documentation
+
 - [DEX guide](https://docs.ston.fi/docs/developer-section/sdk)
 - [Swap](https://docs.ston.fi/docs/developer-section/sdk/dex-v2/swap)
 - [Provide liquidity](https://docs.ston.fi/docs/developer-section/sdk/dex-v2/lp_provide)

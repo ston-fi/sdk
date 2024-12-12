@@ -3,7 +3,7 @@
   "files": {
     "ignoreUnknown": true,
     "include": ["./examples/**", "./packages/**"],
-    "ignore": ["node_modules", ".turbo", "dist", "coverage"]
+    "ignore": ["node_modules", ".turbo", ".next", "dist", "coverage"]
   },
   "organizeImports": {
     "enabled": true
