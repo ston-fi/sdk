@@ -3,6 +3,7 @@
   "version": "2.2.1",
   "description": "Typescript SDK to interact with the Ston.fi DEX",
   "license": "MIT",
+  "homepage": "https://github.com/ston-fi/sdk#readme",
   "repository": {
     "type": "git",
     "url": "git+https://github.com/ston-fi/sdk.git",
@@ -47,11 +48,16 @@
     }
   },
   "scripts": {
-    "test": "vitest",
-    "build": "tsup",
+    "format": "pnpm run /^format:.*/",
+    "format:biome": "biome format --write",
+    "lint": "pnpm run /^lint:.*/",
+    "lint:tsc": "tsc --noEmit --pretty",
+    "lint:biome": "biome check",
     "inspect:unused-code": "pnpm dlx knip",
     "inspect:circular-dependencies": "npx --yes madge --circular --extensions js,ts .",
-    "prepublishOnly": "pnpm i && tsc --noEmit --pretty && pnpm run test --run && pnpm run build && npx --yes publint"
+    "test": "vitest",
+    "build": "tsup",
+    "prepublishOnly": "pnpm i && pnpm run format && pnpm run lint && pnpm run test --run && pnpm run build && npx --yes @arethetypeswrong/cli --pack . --profile node16 && npx --yes publint"
   },
   "peerDependencies": {
     "@ston-fi/api": "^0",
@@ -61,7 +67,6 @@
     "@ston-fi/typescript-config": "workspace:*",
     "esbuild-analyzer": "^0.2.0",
     "tsup": "8.3.5",
-    "typescript": "^5.4.2",
     "vitest": "2.1.5"
   }
 }
