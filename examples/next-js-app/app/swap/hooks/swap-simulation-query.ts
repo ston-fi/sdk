@@ -42,10 +42,21 @@ export function useSwapSimulation(
       swapFormState.offerAsset &&
       (swapFormState.askAmount || swapFormState.offerAmount)
         ? async () => {
-            const { askAsset, offerAsset, askAmount, offerAmount } =
-              swapFormState;
+            const {
+              askAsset,
+              offerAsset,
+              askAmount,
+              offerAmount,
+              referralAddress,
+              referralValue,
+            } = swapFormState;
 
             const shared = {
+              referralAddress,
+              referralFeeBps:
+                referralAddress && referralValue
+                  ? referralValue.toString()
+                  : undefined,
               slippageTolerance: (slippageTolerance / 100).toString(),
               dexV2: true,
             } as const;

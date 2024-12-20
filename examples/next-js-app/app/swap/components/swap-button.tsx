@@ -16,7 +16,14 @@ import { useSetSwapTransactionDetails } from "../providers/swap-transaction";
 export function SwapButton() {
   const walletAddress = useTonAddress();
   const [tonConnectUI] = useTonConnectUI();
-  const { offerAmount, offerAsset, askAsset, askAmount } = useSwapForm();
+  const {
+    offerAmount,
+    offerAsset,
+    askAsset,
+    askAmount,
+    referralValue,
+    referralAddress,
+  } = useSwapForm();
   const swapSimulationQuery = useSwapSimulation();
   const setSwapTransaction = useSetSwapTransactionDetails();
   const swapStatusQuery = useSwapStatusQuery();
@@ -36,7 +43,11 @@ export function SwapButton() {
       const messages = await buildSwapTransaction(
         swapSimulationQuery.data,
         walletAddress,
-        { queryId },
+        {
+          queryId,
+          referralAddress,
+          referralValue,
+        },
       );
 
       await tonConnectUI.sendTransaction({

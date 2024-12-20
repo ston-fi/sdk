@@ -15,6 +15,8 @@ type SwapState = {
   askAsset: AssetInfo | null;
   offerAmount: string;
   askAmount: string;
+  referralAddress?: string;
+  referralValue?: number;
 };
 
 const initialState: SwapState = {
@@ -32,7 +34,9 @@ type IAction =
   | {
       type: "SET_OFFER_AMOUNT" | "SET_ASK_AMOUNT";
       payload: string;
-    };
+    }
+  | { type: "SET_REFERRAL_ADDRESS"; payload: string | undefined }
+  | { type: "SET_REFERRAL_VALUE"; payload: number | undefined };
 
 const SwapContext = createContext<SwapState>(initialState);
 const SwapContextDispatch = createContext<Dispatch<IAction>>(() => {});
@@ -60,6 +64,14 @@ const swapReducer = (state: SwapState, action: IAction): SwapState => {
 
   if (action.type === "SET_ASK_AMOUNT") {
     return { ...state, askAmount: action.payload, offerAmount: "" };
+  }
+
+  if (action.type === "SET_REFERRAL_ADDRESS") {
+    return { ...state, referralAddress: action.payload };
+  }
+
+  if (action.type === "SET_REFERRAL_VALUE") {
+    return { ...state, referralValue: action.payload };
   }
 
   return state;

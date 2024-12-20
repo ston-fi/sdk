@@ -1,3 +1,4 @@
+import { TonAddressRegex } from "@/constants";
 import { type ClassValue, clsx } from "clsx";
 import { twMerge } from "tailwind-merge";
 
@@ -56,3 +57,17 @@ export function bigNumberToFloat(value: bigint | string, decimals: number) {
     fraction ? `.${fraction}` : ""
   }`;
 }
+
+export function validateFloatValue(value: string, decimals?: number) {
+  const decimalsLimit = decimals ? `{0,${decimals}}` : "*";
+  const regex = new RegExp(`^([0-9]+([.][0-9]${decimalsLimit})?|[.][0-9]+)$`);
+  return regex.test(value);
+}
+
+/** convert from percent value in range 0.0 - 1.0 to BPS */
+export function percentToBps(percent: number) {
+  return Math.floor(percent * 10000);
+}
+
+export const isValidAddress = (address: string) =>
+  TonAddressRegex.test(address);

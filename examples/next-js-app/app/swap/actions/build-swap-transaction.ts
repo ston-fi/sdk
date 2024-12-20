@@ -1,10 +1,15 @@
 "use server";
 
 import type { SwapSimulation } from "@ston-fi/api";
-import { type QueryIdType, dexFactory } from "@ston-fi/sdk";
+import {
+  type AddressType,
+  type AmountType,
+  type QueryIdType,
+  dexFactory,
+} from "@ston-fi/sdk";
 import type { SendTransactionRequest } from "@tonconnect/ui-react";
 
-import { stonApiClient } from "@/lib/ston-api-client";
+import { getRouter } from "@/lib/routers-repository";
 import { tonApiClient } from "@/lib/ton-api-client";
 
 import { TON_ADDRESS } from "@/constants";
@@ -12,11 +17,17 @@ import { TON_ADDRESS } from "@/constants";
 const getSwapTxParams = async (
   simulation: SwapSimulation,
   walletAddress: string,
-  params?: { queryId?: QueryIdType },
+  params?: {
+    queryId?: QueryIdType;
+    referralAddress?: AddressType;
+    referralValue?: AmountType;
+  },
 ) => {
-  const routerMetadata = await stonApiClient.getRouter(
-    simulation.routerAddress,
-  );
+  const routerMetadata = await getRouter(simulation.routerAddress);
+
+  if (!routerMetadata) {
+    throw new Error(`Router ${simulation.routerAddress} not found`);
+  }
 
   const dexContracts = dexFactory(routerMetadata);
 
@@ -64,7 +75,11 @@ const getSwapTxParams = async (
 export const buildSwapTransaction = async (
   simulation: SwapSimulation,
   walletAddress: string,
-  params?: { queryId?: QueryIdType },
+  params?: {
+    queryId?: QueryIdType;
+    referralAddress?: AddressType;
+    referralValue?: AmountType;
+  },
 ) => {
   const txParams = await getSwapTxParams(simulation, walletAddress, params);
 

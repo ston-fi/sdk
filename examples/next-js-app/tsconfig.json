@@ -10,6 +10,7 @@
         "name": "next"
       }
     ],
+    "target": "ESNext",
     "module": "ESNext",
     "moduleResolution": "Bundler",
     "jsx": "preserve",

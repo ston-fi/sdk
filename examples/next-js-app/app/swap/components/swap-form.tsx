@@ -6,7 +6,7 @@ import { AssetSelect } from "@/components/asset-select";
 import { Card, CardContent } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { type AssetInfo, useAssetsQuery } from "@/hooks/use-assets-query";
-import { cn } from "@/lib/utils";
+import { cn, validateFloatValue } from "@/lib/utils";
 
 import { useSwapForm, useSwapFormDispatch } from "../providers/swap-form";
 
@@ -18,10 +18,6 @@ function sortAssets(a: AssetInfo, b: AssetInfo): number {
   }
 
   return 0;
-}
-
-function validateFloatValue(value: string) {
-  return /^([0-9]+([.][0-9]*)?|[.][0-9]+)$/.test(value);
 }
 
 export const SwapForm = (props: { className?: string }) => {
