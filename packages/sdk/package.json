@@ -57,15 +57,17 @@
     "inspect:circular-dependencies": "npx --yes madge --circular --extensions js,ts .",
     "test": "vitest",
     "build": "tsup",
-    "prepublishOnly": "pnpm i && pnpm run format && pnpm run lint && pnpm run test --run && pnpm run build && npx --yes @arethetypeswrong/cli --pack . --profile node16 && npx --yes publint"
+    "prepublishOnly": "pnpm install && pnpm run format && pnpm run lint && pnpm run test --run && pnpm run build && pnpm attw --pack . --profile node16 && pnpm publint"
   },
   "peerDependencies": {
     "@ston-fi/api": "^0",
     "@ton/ton": "^13.9.0 || ^14.0.0 || ^15.0.0"
   },
   "devDependencies": {
+    "@arethetypeswrong/cli": "^0.17.2",
     "@ston-fi/typescript-config": "workspace:*",
     "esbuild-analyzer": "^0.2.0",
+    "publint": "^0.2.12",
     "tsup": "8.3.5",
     "vitest": "2.1.5"
   }

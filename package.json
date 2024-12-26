@@ -8,7 +8,7 @@
   },
   "devDependencies": {
     "@biomejs/biome": "1.9.4",
-    "lefthook": "1.9.3",
+    "lefthook": "1.10.0",
     "turbo": "2.3.3",
     "typescript": "^5"
   },
