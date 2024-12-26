@@ -8,8 +8,11 @@ export const ASSETS_QUERY_KEY = "assets";
 
 export type { AssetInfo };
 
-export const useAssetsQuery = (
-  options?: Omit<UseQueryOptions<AssetInfo[]>, "queryKey" | "queryFn">,
+export const useAssetsQuery = <TError = Error, TData = AssetInfo[]>(
+  options?: Omit<
+    UseQueryOptions<AssetInfo[], TError, TData>,
+    "queryKey" | "queryFn"
+  >,
 ) => {
   const isConnectionRestored = useIsConnectionRestored();
   const walletAddress = useTonAddress();

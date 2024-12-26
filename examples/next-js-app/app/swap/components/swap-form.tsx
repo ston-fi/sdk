@@ -1,12 +1,12 @@
 "use client";
 
-import { type ChangeEvent, useMemo } from "react";
+import type { ChangeEvent } from "react";
 
 import { AssetSelect } from "@/components/asset-select";
 import { Card, CardContent } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { type AssetInfo, useAssetsQuery } from "@/hooks/use-assets-query";
-import { cn, validateFloatValue, bigNumberToFloat } from "@/lib/utils";
+import { bigNumberToFloat, cn, validateFloatValue } from "@/lib/utils";
 
 import { useSwapForm, useSwapFormDispatch } from "../providers/swap-form";
 
@@ -76,14 +76,9 @@ const OfferAssetSelect = (props: { className?: string }) => {
   const { offerAsset } = useSwapForm();
   const dispatch = useSwapFormDispatch();
 
-  const assetsQueryOptions = useMemo<Parameters<typeof useAssetsQuery>[0]>(
-    () => ({
-      select: (data) => data.sort(sortAssets),
-    }),
-    [],
-  );
-
-  const { data, isLoading } = useAssetsQuery(assetsQueryOptions);
+  const { data, isLoading } = useAssetsQuery({
+    select: (data) => data.sort(sortAssets),
+  });
 
   const handleAssetSelect = (asset: AssetInfo | null) => {
     dispatch({ type: "SET_OFFER_ASSET", payload: asset });
@@ -138,17 +133,12 @@ const AskAssetSelect = (props: { className?: string }) => {
   const { askAsset, offerAsset } = useSwapForm();
   const dispatch = useSwapFormDispatch();
 
-  const assetsQueryOptions = useMemo<Parameters<typeof useAssetsQuery>[0]>(
-    () => ({
-      select: (data) =>
-        data
-          .filter((a) => a.contractAddress !== offerAsset?.contractAddress)
-          .sort(sortAssets),
-    }),
-    [offerAsset?.contractAddress],
-  );
-
-  const { data, isLoading } = useAssetsQuery(assetsQueryOptions);
+  const { data, isLoading } = useAssetsQuery({
+    select: (data) =>
+      data
+        .filter((a) => a.contractAddress !== offerAsset?.contractAddress)
+        .sort(sortAssets),
+  });
 
   const handleAssetSelect = (asset: AssetInfo | null) => {
     dispatch({ type: "SET_ASK_ASSET", payload: asset });

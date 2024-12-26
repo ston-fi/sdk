@@ -10,6 +10,10 @@ export type { RouterInfo };
 
 export const getRouter = async (routerAddress: string) => {
   try {
+    if (!routersCache.size) {
+      await getRouters();
+    }
+
     const routerFromCache = routersCache.get(routerAddress);
 
     if (routerFromCache) return routerFromCache;
