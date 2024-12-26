@@ -31,7 +31,16 @@ export const useAssetsQuery = (
         walletAddress,
       });
 
-      return assets;
+      return assets.sort((a, b) => {
+        if (a.popularityIndex && b.popularityIndex) {
+          return b.popularityIndex - a.popularityIndex;
+        }
+
+        if (a.popularityIndex && !b.popularityIndex) return -1;
+        if (!a.popularityIndex && b.popularityIndex) return 1;
+
+        return 0;
+      });
     },
   });
 };

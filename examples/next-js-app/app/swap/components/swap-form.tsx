@@ -6,16 +6,30 @@ import { AssetSelect } from "@/components/asset-select";
 import { Card, CardContent } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { type AssetInfo, useAssetsQuery } from "@/hooks/use-assets-query";
-import { cn, validateFloatValue } from "@/lib/utils";
+import { cn, validateFloatValue, bigNumberToFloat } from "@/lib/utils";
 
 import { useSwapForm, useSwapFormDispatch } from "../providers/swap-form";
 
+function assetUsdValue(asset: AssetInfo) {
+  const balance = asset.balance;
+  const decimals = asset.meta?.decimals ?? 9;
+  const priceUsd = asset.dexPriceUsd;
+
+  if (!balance || !priceUsd) return 0;
+
+  return Number(bigNumberToFloat(balance, decimals)) * Number(priceUsd);
+}
+
 function sortAssets(a: AssetInfo, b: AssetInfo): number {
-  if (a.balance && !b.balance) return -1;
-  if (!a.balance && b.balance) return 1;
-  if (a.balance && b.balance) {
-    return Number(b.balance) - Number(a.balance);
+  const aUsdValue = assetUsdValue(a);
+  const bUsdValue = assetUsdValue(b);
+
+  if (aUsdValue && bUsdValue) {
+    return bUsdValue - aUsdValue;
   }
+
+  if (aUsdValue && !bUsdValue) return -1;
+  if (!aUsdValue && bUsdValue) return 1;
 
   return 0;
 }

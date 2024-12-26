@@ -17,7 +17,7 @@
     "@radix-ui/react-popover": "^1.1.2",
     "@radix-ui/react-slot": "^1.1.0",
     "@radix-ui/react-toast": "^1.2.2",
-    "@ston-fi/api": "^0.14.0",
+    "@ston-fi/api": "^0.16.0",
     "@ston-fi/sdk": "workspace:*",
     "@tanstack/react-query": "^5.62.7",
     "@ton/core": "^0.59.0",
