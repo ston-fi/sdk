@@ -35,17 +35,21 @@ const getSwapTxParams = async (
     dexContracts.Router.create(routerMetadata.address),
   );
 
+  const sharedTxParams = {
+    ...params,
+    userWalletAddress: walletAddress,
+    offerAmount: simulation.offerUnits,
+    minAskAmount: simulation.minAskUnits,
+  };
+
   if (
     simulation.askAddress !== TON_ADDRESS &&
     simulation.offerAddress !== TON_ADDRESS
   ) {
     return router.getSwapJettonToJettonTxParams({
-      userWalletAddress: walletAddress,
+      ...sharedTxParams,
       offerJettonAddress: simulation.offerAddress,
-      offerAmount: simulation.offerUnits,
       askJettonAddress: simulation.askAddress,
-      minAskAmount: simulation.minAskUnits,
-      ...params,
     });
   }
 
@@ -53,23 +57,17 @@ const getSwapTxParams = async (
 
   if (simulation.offerAddress === TON_ADDRESS) {
     return router.getSwapTonToJettonTxParams({
-      userWalletAddress: walletAddress,
+      ...sharedTxParams,
       proxyTon,
-      offerAmount: simulation.offerUnits,
       askJettonAddress: simulation.askAddress,
-      minAskAmount: simulation.minAskUnits,
-      ...params,
+    });
+  } else {
+    return router.getSwapJettonToTonTxParams({
+      ...sharedTxParams,
+      proxyTon,
+      offerJettonAddress: simulation.offerAddress,
     });
   }
-
-  return router.getSwapJettonToTonTxParams({
-    userWalletAddress: walletAddress,
-    proxyTon,
-    offerAmount: simulation.offerUnits,
-    offerJettonAddress: simulation.offerAddress,
-    minAskAmount: simulation.minAskUnits,
-    ...params,
-  });
 };
 
 export const buildSwapTransaction = async (
