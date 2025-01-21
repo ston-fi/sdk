@@ -61,7 +61,7 @@ const ReferralAddressInput: React.FC<
         Referral address:
       </label>
       <Input
-        className={cn("placeholder:text-secondary/1", {
+        className={cn({
           "border-[red]": !isValid,
         })}
         placeholder="EQ…"
@@ -119,10 +119,10 @@ const ReferralValueInput: React.FC<
         Referral percentage:
       </label>
       <Input
-        className={cn("placeholder:text-secondary/1", {
+        className={cn({
           "border-[red]": !isValidReferralValue,
         })}
-        placeholder="EQ…"
+        placeholder={`${MIN_REFERRAL_VALUE_PERCENT}-${MAX_REFERRAL_VALUE_PERCENT}%`}
         id={id}
         name="referral_percentage"
         onChange={handleChange}
