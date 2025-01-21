@@ -2,14 +2,16 @@
 
 import type React from "react";
 
-import { Card, CardContent, CardHeader } from "@/components/ui/card";
+import { Card, CardContent } from "@/components/ui/card";
 import { useAssetsQuery } from "@/hooks/use-assets-query";
 import { usePoolQuery } from "@/hooks/use-pool-query";
 import { useRouters } from "@/hooks/use-routers";
 import { bigNumberToFloat, cn } from "@/lib/utils";
-
 import { useBlockchainExplorer } from "@/hooks/use-blockchain-explorer";
+
 import { useVaultQuery } from "../hooks/use-vault-query";
+import { useVaultClaimParams } from "../providers";
+
 import { ClaimBothFeeButton } from "./claim-both-fee-button";
 import { ClaimWithdrawalFeeButton } from "./claim-fee-button";
 
@@ -83,12 +85,15 @@ const VaultInfo: React.FC<
 };
 
 export const PoolVaultsInfo: React.FC<
-  Omit<React.ComponentPropsWithoutRef<"div">, "children"> & {
-    poolAddress: string;
-  }
-> = ({ poolAddress, ...props }) => {
+  Omit<React.ComponentPropsWithoutRef<"div">, "children">
+> = () => {
+  const { poolAddress, walletAddress } = useVaultClaimParams();
   const routersQuery = useRouters();
   const poolQuery = usePoolQuery(poolAddress);
+
+  if (!poolAddress || !walletAddress) {
+    return null;
+  }
 
   if (!poolQuery.data) {
     return <div>Fetching pool...</div>;

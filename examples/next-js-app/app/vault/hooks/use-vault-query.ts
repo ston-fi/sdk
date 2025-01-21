@@ -5,9 +5,9 @@ import {
   skipToken,
   useQuery,
 } from "@tanstack/react-query";
-import { useTonAddress } from "@tonconnect/ui-react";
 
 import { getVaultData } from "../actions/get-vault-data";
+import { useVaultClaimParams } from "../providers";
 
 export const VAULT_QUERY_KEY = "vault";
 
@@ -23,7 +23,7 @@ export const useVaultQuery = (
   },
   options?: Omit<UseQueryResult<VaultData>, "queryKey" | "queryFn">,
 ) => {
-  const userWalletAddress = useTonAddress();
+  const { walletAddress: userWalletAddress } = useVaultClaimParams();
 
   return useQuery({
     ...options,

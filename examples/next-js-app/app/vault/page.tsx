@@ -1,13 +1,11 @@
 "use client";
 
-import { useState, useCallback } from "react";
-import { useRouter, usePathname, useSearchParams } from "next/navigation";
-
 import { Card } from "@/components/ui/card";
 import { WalletGuard } from "@/components/wallet-guard";
 
-import PoolAddressForm from "./components/pool-address-form";
 import { PoolVaultsInfo } from "./components/vault-info";
+import { VaultClaimParamsProvider } from "./providers";
+import { VaultClaimParamsForm } from "./components/vault-claim-params-form";
 
 export default function VaultPage() {
   return (
@@ -34,36 +32,11 @@ export default function VaultPage() {
 }
 
 function VaultPageContentWithWallet() {
-  const router = useRouter();
-  const pathname = usePathname();
-  const searchParams = useSearchParams();
-
-  const [poolAddress, _setPoolAddress] = useState(
-    searchParams.get("pool") ?? "",
-  );
-
-  const setPoolAddress = useCallback(
-    (address: typeof poolAddress) => {
-      _setPoolAddress(address);
-
-      const params = new URLSearchParams(searchParams.toString());
-
-      if (address) {
-        params.set("pool", address);
-      } else {
-        params.delete("pool");
-      }
-
-      router.replace(pathname + "?" + params.toString());
-    },
-    [router, pathname, searchParams],
-  );
-
   return (
-    <>
-      <PoolAddressForm address={poolAddress} onAddressChange={setPoolAddress} />
-      {poolAddress ? <PoolVaultsInfo poolAddress={poolAddress} /> : null}
-    </>
+    <VaultClaimParamsProvider>
+      <VaultClaimParamsForm />
+      <PoolVaultsInfo />
+    </VaultClaimParamsProvider>
   );
 }
 

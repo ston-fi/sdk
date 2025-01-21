@@ -5,12 +5,10 @@ import {
   skipToken,
   useQuery,
 } from "@tanstack/react-query";
-import {
-  type SendTransactionRequest,
-  useTonAddress,
-} from "@tonconnect/ui-react";
+import type { SendTransactionRequest } from "@tonconnect/ui-react";
 
 import { buildVaultWithdrawalFeeTx } from "../actions/get-vault-data";
+import { useVaultClaimParams } from "../providers";
 
 export const VAULT_WITHDRAWAL_FEE_QUERY_KEY = "vault-withdrawal-fee-params";
 
@@ -27,7 +25,7 @@ export const useWithdrawalFeeParams = (
     "queryKey" | "queryFn"
   >,
 ) => {
-  const userWalletAddress = useTonAddress();
+  const { walletAddress: userWalletAddress } = useVaultClaimParams();
 
   return useQuery({
     ...options,
