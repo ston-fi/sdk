@@ -102,6 +102,7 @@ export class PoolV1 extends JettonMinter {
       .storeUint(params?.queryId ?? 0, 64)
       .storeCoins(BigInt(params.amount))
       .storeAddress(toAddress(params.responseAddress))
+      .storeMaybeRef()
       .endCell();
   }
 

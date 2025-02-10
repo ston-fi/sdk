@@ -1,5 +1,12 @@
 # Changelog
 
+## [2.2.2]
+
+### Fixed
+
+- correct "Jetton Burn" message creation according to the [standard](https://github.com/ton-blockchain/TEPs/blob/master/text/0074-jettons-standard.md#2-burn) creation for `PoolV1` contract.
+- we found that `BaseRouterV2_1.getProvideLiquidityTonTxParams` and `BaseRouterV2_1.getSingleSideProvideLiquidityTonTxParams` methods had unused `bothPositive` arguments that are not intended to be configurable. To avoid breaking existing code bases, instead of deleting them, we deprecated these fields.
+
 ## [2.2.1]
 
 ### Changed

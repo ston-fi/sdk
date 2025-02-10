@@ -189,7 +189,7 @@ describe("PoolV1", () => {
       });
 
       expect(body.toBoc().toString("base64")).toMatchInlineSnapshot(
-        '"te6cckEBAQEANAAAY1lfB7wAAAAAAAAAAEO5rKAIACE+JdUq+wPWHEaGeeZ6wHj2SzKrIOfTGgf/k9ACJZzRhaz3TA=="',
+        `"te6cckEBAQEANAAAZFlfB7wAAAAAAAAAAEO5rKAIACE+JdUq+wPWHEaGeeZ6wHj2SzKrIOfTGgf/k9ACJZzQFIpEEQ=="`,
       );
     });
 
@@ -202,7 +202,7 @@ describe("PoolV1", () => {
       });
 
       expect(body.toBoc().toString("base64")).toMatchInlineSnapshot(
-        '"te6cckEBAQEANAAAY1lfB7wAAAAAAAAwOUO5rKAIACE+JdUq+wPWHEaGeeZ6wHj2SzKrIOfTGgf/k9ACJZzRGnDxRA=="',
+        `"te6cckEBAQEANAAAZFlfB7wAAAAAAAAwOUO5rKAIACE+JdUq+wPWHEaGeeZ6wHj2SzKrIOfTGgf/k9ACJZzQi1ZCGQ=="`,
       );
     });
   });
@@ -235,7 +235,7 @@ describe("PoolV1", () => {
         '"EQBWWhs7gJjrC__mKG6xFf1vq4Sji3QqY4u072A7RmWxUoT1"',
       );
       expect(txParams.body?.toBoc().toString("base64")).toMatchInlineSnapshot(
-        '"te6cckEBAQEANAAAY1lfB7wAAAAAAAAAAEO5rKAIACE+JdUq+wPWHEaGeeZ6wHj2SzKrIOfTGgf/k9ACJZzRhaz3TA=="',
+        `"te6cckEBAQEANAAAZFlfB7wAAAAAAAAAAEO5rKAIACE+JdUq+wPWHEaGeeZ6wHj2SzKrIOfTGgf/k9ACJZzQFIpEEQ=="`,
       );
       expect(txParams.value).toMatchInlineSnapshot("500000000n");
     });
@@ -252,7 +252,7 @@ describe("PoolV1", () => {
         '"EQBWWhs7gJjrC__mKG6xFf1vq4Sji3QqY4u072A7RmWxUoT1"',
       );
       expect(txParams.body?.toBoc().toString("base64")).toMatchInlineSnapshot(
-        '"te6cckEBAQEANAAAY1lfB7wAAAAAAAAwOUO5rKAIACE+JdUq+wPWHEaGeeZ6wHj2SzKrIOfTGgf/k9ACJZzRGnDxRA=="',
+        `"te6cckEBAQEANAAAZFlfB7wAAAAAAAAwOUO5rKAIACE+JdUq+wPWHEaGeeZ6wHj2SzKrIOfTGgf/k9ACJZzQi1ZCGQ=="`,
       );
       expect(txParams.value).toMatchInlineSnapshot("500000000n");
     });
@@ -269,7 +269,7 @@ describe("PoolV1", () => {
         '"EQBWWhs7gJjrC__mKG6xFf1vq4Sji3QqY4u072A7RmWxUoT1"',
       );
       expect(txParams.body?.toBoc().toString("base64")).toMatchInlineSnapshot(
-        '"te6cckEBAQEANAAAY1lfB7wAAAAAAAAAAEO5rKAIACE+JdUq+wPWHEaGeeZ6wHj2SzKrIOfTGgf/k9ACJZzRhaz3TA=="',
+        `"te6cckEBAQEANAAAZFlfB7wAAAAAAAAAAEO5rKAIACE+JdUq+wPWHEaGeeZ6wHj2SzKrIOfTGgf/k9ACJZzQFIpEEQ=="`,
       );
       expect(txParams.value).toMatchInlineSnapshot("1n");
     });

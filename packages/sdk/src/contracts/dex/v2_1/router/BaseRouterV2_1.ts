@@ -560,6 +560,7 @@ export class BaseRouterV2_1 extends Contract {
       minLpOut: AmountType;
       refundAddress?: AddressType;
       excessesAddress?: AddressType;
+      /* @deprecated: this field is internal and will be always true for this function. Could not be overridden from the outside and should be used. */
       bothPositive?: boolean;
       dexCustomPayload?: Cell;
       dexCustomPayloadForwardGasAmount?: AmountType;
@@ -601,6 +602,7 @@ export class BaseRouterV2_1 extends Contract {
       minLpOut: AmountType;
       refundAddress?: AddressType;
       excessesAddress?: AddressType;
+      /* @deprecated: this field is internal and will be always false for this function. Could not be overridden from the outside and should be used. */
       bothPositive?: boolean;
       dexCustomPayload?: Cell;
       dexCustomPayloadForwardGasAmount?: AmountType;
