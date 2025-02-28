@@ -13,6 +13,7 @@ import { createJettonTransferMessage } from "../../../../utils/createJettonTrans
 import { toAddress } from "../../../../utils/toAddress";
 import { Contract, type ContractOptions } from "../../../core/Contract";
 import { JettonMinter } from "../../../core/JettonMinter";
+import { HOLE_ADDRESS } from "../../../core/constants";
 import { pTON_VERSION } from "../../../pTON";
 import type { AbstractPton } from "../../../pTON/AbstractPton";
 import { type DEX_TYPE, DEX_VERSION } from "../../constants";
@@ -119,9 +120,7 @@ export class BaseRouterV2_1 extends Contract {
           .storeCoins(BigInt(params.refundForwardGasAmount ?? 0))
           .storeMaybeRef(params.refundPayload)
           .storeUint(BigInt(params.referralValue ?? 10), 16)
-          .storeAddress(
-            params.referralAddress ? toAddress(params.referralAddress) : null,
-          )
+          .storeAddress(this.maybeReferralAddress(params.referralAddress))
           .endCell(),
       )
       .endCell();
@@ -163,9 +162,7 @@ export class BaseRouterV2_1 extends Contract {
           .storeCoins(BigInt(params.refundForwardGasAmount ?? 0))
           .storeMaybeRef(params.refundPayload)
           .storeUint(BigInt(params.referralValue ?? 10), 16)
-          .storeAddress(
-            params.referralAddress ? toAddress(params.referralAddress) : null,
-          )
+          .storeAddress(this.maybeReferralAddress(params.referralAddress))
           .endCell(),
       )
       .endCell();
@@ -672,6 +669,17 @@ export class BaseRouterV2_1 extends Contract {
       forwardPayload,
       forwardTonAmount,
     });
+  }
+
+  private maybeReferralAddress(referralAddress: AddressType | undefined) {
+    if (!referralAddress) return null;
+
+    const referralAddressParsed = toAddress(referralAddress);
+
+    // ignore hole address as referral address
+    if (referralAddressParsed.equals(HOLE_ADDRESS)) return null;
+
+    return referralAddressParsed;
   }
 
   private get defaultDeadline() {

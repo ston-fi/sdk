@@ -1,0 +1,5 @@
+import { Address } from "@ton/ton";
+
+export const HOLE_ADDRESS = Address.parse(
+  "0:0000000000000000000000000000000000000000000000000000000000000000",
+);

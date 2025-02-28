@@ -13,6 +13,7 @@ import { createJettonTransferMessage } from "../../../utils/createJettonTransfer
 import { toAddress } from "../../../utils/toAddress";
 import { Contract, type ContractOptions } from "../../core/Contract";
 import { JettonMinter } from "../../core/JettonMinter";
+import { HOLE_ADDRESS } from "../../core/constants";
 import { pTON_VERSION } from "../../pTON";
 import type { AbstractPton } from "../../pTON/AbstractPton";
 import { DEX_VERSION } from "../constants";
@@ -82,9 +83,11 @@ export class RouterV1 extends Contract {
     builder.storeCoins(BigInt(params.minAskAmount));
     builder.storeAddress(toAddress(params.userWalletAddress));
 
-    if (params.referralAddress) {
+    const referralAddress = this.maybeReferralAddress(params.referralAddress);
+
+    if (referralAddress) {
       builder.storeUint(1, 1);
-      builder.storeAddress(toAddress(params.referralAddress));
+      builder.storeAddress(referralAddress);
     } else {
       builder.storeUint(0, 1);
     }
@@ -556,5 +559,16 @@ export class RouterV1 extends Contract {
       jettonLpWalletCode: result.stack.readCell(),
       lpAccountCode: result.stack.readCell(),
     };
+  }
+
+  private maybeReferralAddress(referralAddress: AddressType | undefined) {
+    if (!referralAddress) return null;
+
+    const referralAddressParsed = toAddress(referralAddress);
+
+    // ignore hole address as referral address
+    if (referralAddressParsed.equals(HOLE_ADDRESS)) return null;
+
+    return referralAddressParsed;
   }
 }

@@ -16,6 +16,7 @@ import {
   createProviderSnapshot,
   setup,
 } from "../../../../test-utils";
+import { HOLE_ADDRESS } from "../../../core/constants";
 import { pTON } from "../../../pTON";
 import { DEX_VERSION } from "../../constants";
 import * as Errors from "../../errors";
@@ -162,6 +163,19 @@ describe("BaseRouterV2_1", () => {
       );
     });
 
+    it("should ignore hole address as referralAddress", async () => {
+      const contract = BaseRouterV2_1.create(ROUTER_ADDRESS);
+
+      const body = await contract.createSwapBody({
+        ...txArguments,
+        referralAddress: HOLE_ADDRESS,
+      });
+
+      expect(body?.toBoc().toString("base64")).toMatchInlineSnapshot(
+        `"te6cckEBAgEAoAAB4WZk3iqAD+mcSkD3Vv8TNqd5ZpGULbUWJKyGfGAnZzcSNZdG5HnQAEJ8S6pV9gesOI0M88z1gPHslmVWQc+mNA//J6AESzmiAAhPiXVKvsD1hxGhnnmesB49ksyqyDn0xoH/5PQAiWc0AAAAAAAAAcJAAQBTQ1pOkAgAIT4l1Sr7A9YcRoZ55nrAePZLMqsg59MaB/+T0AIlnNAAAAUQsBQ24Q=="`,
+      );
+    });
+
     it("should throw error if referralValue not in range", async () => {
       const contract = BaseRouterV2_1.create(ROUTER_ADDRESS);
 
@@ -217,13 +231,26 @@ describe("BaseRouterV2_1", () => {
     it("should build expected tx body when referralAddress is defined", async () => {
       const contract = BaseRouterV2_1.create(ROUTER_ADDRESS);
 
-      const body = await contract.createSwapBody({
+      const body = await contract.createCrossSwapBody({
         ...txArguments,
         referralAddress: USER_WALLET_ADDRESS,
       });
 
       expect(body?.toBoc().toString("base64")).toMatchInlineSnapshot(
-        '"te6cckEBAgEAwQAB4WZk3iqAD+mcSkD3Vv8TNqd5ZpGULbUWJKyGfGAnZzcSNZdG5HnQAEJ8S6pV9gesOI0M88z1gPHslmVWQc+mNA//J6AESzmiAAhPiXVKvsD1hxGhnnmesB49ksyqyDn0xoH/5PQAiWc0AAAAAAAAAcJAAQCVQ1pOkAgAIT4l1Sr7A9YcRoZ55nrAePZLMqsg59MaB/+T0AIlnNAAAAVAAQnxLqlX2B6w4jQzzzPWA8eyWZVZBz6Y0D/8noARLOaIZMcmAw=="',
+        '"te6cckEBAgEAwQAB4WnPGluAD+mcSkD3Vv8TNqd5ZpGULbUWJKyGfGAnZzcSNZdG5HnQAEJ8S6pV9gesOI0M88z1gPHslmVWQc+mNA//J6AESzmiAAhPiXVKvsD1hxGhnnmesB49ksyqyDn0xoH/5PQAiWc0AAAAAAAAAcJAAQCVQ1pOkAgAIT4l1Sr7A9YcRoZ55nrAePZLMqsg59MaB/+T0AIlnNAAAAVAAQnxLqlX2B6w4jQzzzPWA8eyWZVZBz6Y0D/8noARLOaIwbL5jQ=="',
+      );
+    });
+
+    it("should ignore hole address as referralAddress", async () => {
+      const contract = BaseRouterV2_1.create(ROUTER_ADDRESS);
+
+      const body = await contract.createCrossSwapBody({
+        ...txArguments,
+        referralAddress: HOLE_ADDRESS,
+      });
+
+      expect(body?.toBoc().toString("base64")).toMatchInlineSnapshot(
+        `"te6cckEBAgEAoAAB4WnPGluAD+mcSkD3Vv8TNqd5ZpGULbUWJKyGfGAnZzcSNZdG5HnQAEJ8S6pV9gesOI0M88z1gPHslmVWQc+mNA//J6AESzmiAAhPiXVKvsD1hxGhnnmesB49ksyqyDn0xoH/5PQAiWc0AAAAAAAAAcJAAQBTQ1pOkAgAIT4l1Sr7A9YcRoZ55nrAePZLMqsg59MaB/+T0AIlnNAAAAUQBHeB8A=="`,
       );
     });
 

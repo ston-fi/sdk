@@ -1,5 +1,12 @@
 # Changelog
 
+## [2.2.3]
+
+### Fixed
+
+- we notices that more than 12k$ of swap fees was send to the [hole address](https://tonviewer.com/EQAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAM9c). Since those fees can never be claimed, they are lost forever. To prevent this loss, zero address will be ignored if used as a `referralAddress` for swap transactions.
+- fix one of the `BaseRouterV2_1.createCrossSwapBody` test cases
+
 ## [2.2.2]
 
 ### Fixed

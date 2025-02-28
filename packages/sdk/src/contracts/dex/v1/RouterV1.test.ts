@@ -8,6 +8,7 @@ import {
   createProviderSnapshot,
   setup,
 } from "../../../test-utils";
+import { HOLE_ADDRESS } from "../../core/constants";
 import { pTON } from "../../pTON";
 import { DEX_VERSION } from "../constants";
 import * as Errors from "../errors";
@@ -150,6 +151,19 @@ describe("RouterV1", () => {
 
       expect(body.toBoc().toString("base64")).toMatchInlineSnapshot(
         '"te6cckEBAQEAbwAA2SWThWGACv0V60urLvOuQaFkeeX50FwcarMh5eVv1pd07lIKUvSIa0nSAQAEJ8S6pV9gesOI0M88z1gPHslmVWQc+mNA//J6AESzmjAAQnxLqlX2B6w4jQzzzPWA8eyWZVZBz6Y0D/8noARLOaKezq+h"',
+      );
+    });
+
+    it("should build expected tx body when referralAddress is a hole address", async () => {
+      const contract = new RouterV1();
+
+      const body = await contract.createSwapBody({
+        ...txArgs,
+        referralAddress: HOLE_ADDRESS,
+      });
+
+      expect(body.toBoc().toString("base64")).toMatchInlineSnapshot(
+        '"te6cckEBAQEATgAAlyWThWGACv0V60urLvOuQaFkeeX50FwcarMh5eVv1pd07lIKUvSIa0nSAQAEJ8S6pV9gesOI0M88z1gPHslmVWQc+mNA//J6AESzmhCqzILs"',
       );
     });
   });
