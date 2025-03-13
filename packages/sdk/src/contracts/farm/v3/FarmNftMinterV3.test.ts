@@ -12,6 +12,9 @@ import { FARM_VERSION } from "../constants";
 import { FarmNftMinterV3 } from "./FarmNftMinterV3";
 
 const ADDRESS = "EQCp5szP3mCqAY11tzhdo7RElDzilThbPuzUF2zTeyYG5Vyz";
+const USER_WALLET_ADDRESS = "UQAQnxLqlX2B6w4jQzzzPWA8eyWZVZBz6Y0D_8noARLOaEAn";
+const EXCESS_WALLET_ADDRESS =
+  "UQClQ7VdpC3ZWgL0Tc7Mt71Rj0U9baNSXhhmo5358hBttZMq"; // should not be equal to `USER_WALLET_ADDRESS` because it is used as a fallback
 
 beforeAll(setup);
 
@@ -87,7 +90,7 @@ describe("FarmNftMinterV3", () => {
       const contract = new FarmNftMinterV3(ADDRESS);
 
       const body = await contract.createStakeBody({
-        ownerAddress: "EQAQnxLqlX2B6w4jQzzzPWA8eyWZVZBz6Y0D_8noARLOaB3i",
+        ownerAddress: USER_WALLET_ADDRESS,
       });
 
       expect(body.toBoc().toString("base64")).toMatchInlineSnapshot(
@@ -98,7 +101,7 @@ describe("FarmNftMinterV3", () => {
 
   describe("getStakeTxParams", () => {
     const txArgs = {
-      userWalletAddress: "EQAQnxLqlX2B6w4jQzzzPWA8eyWZVZBz6Y0D_8noARLOaB3i",
+      userWalletAddress: USER_WALLET_ADDRESS,
       jettonAddress: "EQDtZHOtVWaf9UIU6rmjLPNLTGxNLNogvK5xUZlMRgZwQ4Gt",
       jettonAmount: "1000000000",
       poolCount: 1,
@@ -135,7 +138,7 @@ describe("FarmNftMinterV3", () => {
 
       const txParams = await contract.getStakeTxParams({
         ...txArgs,
-        ownerAddress: "EQAQnxLqlX2B6w4jQzzzPWA8eyWZVZBz6Y0D_8noARLOaB3i",
+        ownerAddress: USER_WALLET_ADDRESS,
       });
 
       expect(txParams.to).toMatchInlineSnapshot(
@@ -186,6 +189,23 @@ describe("FarmNftMinterV3", () => {
         ),
       ).toEqual(poolsToGasMap.map(([_, gasAmount]) => gasAmount));
     });
+
+    it("should build expected tx params when transferExcessAddress is defined", async () => {
+      const contract = provider.open(FarmNftMinterV3.create(ADDRESS));
+
+      const txParams = await contract.getStakeTxParams({
+        ...txArgs,
+        transferExcessAddress: EXCESS_WALLET_ADDRESS,
+      });
+
+      expect(txParams.to).toMatchInlineSnapshot(
+        `"EQDioYuVa1k3o_rOusvouthb_37fWsfXJpA51OzltQy0kY_K"`,
+      );
+      expect(txParams.body?.toBoc().toString("base64")).toMatchInlineSnapshot(
+        `"te6cckEBAgEAYgABsA+KfqUAAAAAAAAAAEO5rKAIAVPNmZ+8wVQDGutucLtHaIkoecUqcLZ92agu2ab2TA3LAClQ7VdpC3ZWgL0Tc7Mt71Rj0U9baNSXhhmo5358hBttSBycOAEBAAluydxlIL5+qpI="`,
+      );
+      expect(txParams.value).toMatchInlineSnapshot("340000000n");
+    });
   });
 
   describe("sendStake", () => {
@@ -235,29 +255,40 @@ describe("FarmNftMinterV3", () => {
 
   describe("getFarmingMinterData", () => {
     it("should return data about the farm NFT contract state", async () => {
-      const snapshot = createProviderSnapshot()
-        .number("2259")
-        .number("1")
-        .number("3")
-        .number("248359521312")
-        .number("103037229")
-        .number("864000")
-        .cell(
-          "te6ccsEBAQEAJAAAAEOAB6QiQ0T/22/J+dCm9MMTbVU4qD4ojxQrph7+3gjW7q+QCf49AQ==",
-        )
-        .cell(
-          "te6ccsEBAQEAJAAAAEOAE1XEnRcjRVi9UD7WrYvKkVyYXqugt8gbjnnHwqvEhL6wioVD+g==",
-        )
-        .number("-1")
-        .number("-1")
-        .cell(
-          "te6ccsECCAEAAYcAAAAABQAKAA4AiQCNAQgBDAIBzQEGAgEgAgQBASADAPEAAAAAAAAAAAA23yPjcpaKGoAAAAAAAAAAAAAAAAAAAAPuFyutcAAAAAAAAAAAAqExE+k7MX4/iMAAAAAAAAAAAAe2FsLOQZKqRAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAZik3ToAQEgBQDxAAAAAAAAAAAAKloFj8KV7QAAAAAAAAAAAAAAAAAAAAADCIg3IIAAAAAAAAAAAAIHlyQrccQTlPJAAAAAAAAAAAAF86nbNP1sAeYAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAGYpN06AEBSAcA8QAAAAAAAAAAAAh4Z4NLTALKgAAAAAAAAAAAAAAAAAAAAHePkTPAAAAAAAAAAAAAV/Q9o73v1EmfwAAAAAAAAAAAAODc/cNWk3SaAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAABmKTdOh6Xm5I",
-        )
-        .cell(
-          "te6ccsEBCAEAxAAABQoOSEyGigIBzQEGAgEgAgQBASADAG8AAAAAAAAAAAAAAAHUPO36EjkQkAMAOevgarWLP/P2hL1ntIUBWX6WSBO92ecxt2sYIVc5dj5gIgEBIAUAbwAAAAAAAAAAAAAAAWlmldvRLTiQAwAcvewmHxjAY9t6LA5qs8aaoI2mVS+xBDKNyAvJWZOSGiAiAQFIBwBvAAAAAAAAAAAAAAAAbMlsqFVJlJADAAifWbxZ3ejqWZqGvBoCj7QafH5DzTJGXkbhA09Ad3ViICJCsQ3c",
-        );
+      const provider = createMockProviderFromSnapshot((address, method) => {
+        if (method === "get_farming_minter_data") {
+          return createProviderSnapshot()
+            .number("2259")
+            .number("1")
+            .number("3")
+            .number("248359521312")
+            .number("103037229")
+            .number("864000")
+            .cell(
+              "te6ccsEBAQEAJAAAAEOAB6QiQ0T/22/J+dCm9MMTbVU4qD4ojxQrph7+3gjW7q+QCf49AQ==",
+            )
+            .cell(
+              "te6ccsEBAQEAJAAAAEOAE1XEnRcjRVi9UD7WrYvKkVyYXqugt8gbjnnHwqvEhL6wioVD+g==",
+            )
+            .number("-1")
+            .number("-1")
+            .cell(
+              "te6ccsECCAEAAYcAAAAABQAKAA4AiQCNAQgBDAIBzQEGAgEgAgQBASADAPEAAAAAAAAAAAA23yPjcpaKGoAAAAAAAAAAAAAAAAAAAAPuFyutcAAAAAAAAAAAAqExE+k7MX4/iMAAAAAAAAAAAAe2FsLOQZKqRAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAZik3ToAQEgBQDxAAAAAAAAAAAAKloFj8KV7QAAAAAAAAAAAAAAAAAAAAADCIg3IIAAAAAAAAAAAAIHlyQrccQTlPJAAAAAAAAAAAAF86nbNP1sAeYAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAGYpN06AEBSAcA8QAAAAAAAAAAAAh4Z4NLTALKgAAAAAAAAAAAAAAAAAAAAHePkTPAAAAAAAAAAAAAV/Q9o73v1EmfwAAAAAAAAAAAAODc/cNWk3SaAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAABmKTdOh6Xm5I",
+            )
+            .cell(
+              "te6ccsEBCAEAxAAABQoOSEyGigIBzQEGAgEgAgQBASADAG8AAAAAAAAAAAAAAAHUPO36EjkQkAMAOevgarWLP/P2hL1ntIUBWX6WSBO92ecxt2sYIVc5dj5gIgEBIAUAbwAAAAAAAAAAAAAAAWlmldvRLTiQAwAcvewmHxjAY9t6LA5qs8aaoI2mVS+xBDKNyAvJWZOSGiAiAQFIBwBvAAAAAAAAAAAAAAAAbMlsqFVJlJADAAifWbxZ3ejqWZqGvBoCj7QafH5DzTJGXkbhA09Ad3ViICJCsQ3c",
+            );
+        }
 
-      const provider = createMockProviderFromSnapshot(snapshot);
+        if (method === "get_version") {
+          return createProviderSnapshot()
+            .number("3")
+            .number("0")
+            .cell("te6ccsEBAQEACQAAAA5yZWxlYXNlKoIKQw==");
+        }
+
+        throw new Error(`Unexpected call: ${address} ${method}`);
+      });
 
       const contract = provider.open(FarmNftMinterV3.create(ADDRESS));
 
@@ -285,6 +316,7 @@ describe("FarmNftMinterV3", () => {
             "adminFee": 0n,
             "canChangeFee": true,
             "nanorewardsPer24h": 2159366666666000000000n,
+            "rampDays": null,
             "rewardTokenWallet": "EQDnr4Gq1iz_z9oS9Z7SFAVl-lkgTvdnnMbdrGCFXOXY-ZgJ",
             "status": 1,
             "unrestrictedDepositRewards": true,
@@ -293,6 +325,7 @@ describe("FarmNftMinterV3", () => {
             "adminFee": 0n,
             "canChangeFee": true,
             "nanorewardsPer24h": 1666666666666000000000n,
+            "rampDays": null,
             "rewardTokenWallet": "EQBy97CYfGMBj23osDmqzxpqgjaZVL7EEMo3IC8lZk5IaIiP",
             "status": 1,
             "unrestrictedDepositRewards": true,
@@ -301,6 +334,7 @@ describe("FarmNftMinterV3", () => {
             "adminFee": 0n,
             "canChangeFee": true,
             "nanorewardsPer24h": 501690630186000000000n,
+            "rampDays": null,
             "rewardTokenWallet": "EQAifWbxZ3ejqWZqGvBoCj7QafH5DzTJGXkbhA09Ad3ViDBq",
             "status": 1,
             "unrestrictedDepositRewards": true,
@@ -344,25 +378,36 @@ describe("FarmNftMinterV3", () => {
     });
 
     it("should correctly return data about the farm NFT contract state with null dictionaries", async () => {
-      const snapshot = createProviderSnapshot()
-        .number("2259")
-        .number("1")
-        .number("3")
-        .number("248359521312")
-        .number("103037229")
-        .number("864000")
-        .cell(
-          "te6ccsEBAQEAJAAAAEOAB6QiQ0T/22/J+dCm9MMTbVU4qD4ojxQrph7+3gjW7q+QCf49AQ==",
-        )
-        .cell(
-          "te6ccsEBAQEAJAAAAEOAE1XEnRcjRVi9UD7WrYvKkVyYXqugt8gbjnnHwqvEhL6wioVD+g==",
-        )
-        .number("-1")
-        .number("-1")
-        .null()
-        .null();
+      const provider = createMockProviderFromSnapshot((address, method) => {
+        if (method === "get_farming_minter_data") {
+          return createProviderSnapshot()
+            .number("2259")
+            .number("1")
+            .number("3")
+            .number("248359521312")
+            .number("103037229")
+            .number("864000")
+            .cell(
+              "te6ccsEBAQEAJAAAAEOAB6QiQ0T/22/J+dCm9MMTbVU4qD4ojxQrph7+3gjW7q+QCf49AQ==",
+            )
+            .cell(
+              "te6ccsEBAQEAJAAAAEOAE1XEnRcjRVi9UD7WrYvKkVyYXqugt8gbjnnHwqvEhL6wioVD+g==",
+            )
+            .number("-1")
+            .number("-1")
+            .null()
+            .null();
+        }
 
-      const provider = createMockProviderFromSnapshot(snapshot);
+        if (method === "get_version") {
+          return createProviderSnapshot()
+            .number("3")
+            .number("0")
+            .cell("te6ccsEBAQEACQAAAA5yZWxlYXNlKoIKQw==");
+        }
+
+        throw new Error(`Unexpected call: ${address} ${method}`);
+      });
 
       const contract = provider.open(FarmNftMinterV3.create(ADDRESS));
 

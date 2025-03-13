@@ -1,5 +1,25 @@
 # Changelog
 
+## [2.3.0]
+
+### Added
+
+- for all operations that are jetton transfers new optional `transferExcessAddress` parameter was added. This new parameter allows to send jetton transfer excess gas to another wallet than the wallet that made the transfer
+  - `Router.getSwapJettonToJettonTxParams`
+  - `Router.getSwapJettonToTonTxParams`
+  - `Router.getProvideLiquidityJettonTxParams`
+  - `Router.getSingleSideProvideLiquidityJettonTxParams`
+  - `FarmMinter.getStakeTxParams`
+- for Farm v3 `getFarmingMinterData` method `farmDataParameters` obj was extended with the `rampDays` field for farms v3.2+
+
+### Fixed
+
+- correct type declaration for `FarmNftMinterV3.FarmDataParameters.status` in JsDoc comment
+
+### Chore
+
+- all non-build related dev dependencies updated to their latest versions
+
 ## [2.2.3]
 
 ### Fixed

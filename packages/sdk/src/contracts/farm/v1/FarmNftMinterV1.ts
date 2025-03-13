@@ -60,6 +60,7 @@ export class FarmNftMinterV1 extends Contract {
    * @param {bigint | number | string | undefined} params.gasAmount - Optional; Custom transaction gas amount (in nanoTons)
    * @param {bigint | number | string | undefined} params.forwardGasAmount - Optional; Custom transaction forward gas amount (in nanoTons)
    * @param {bigint | number | undefined} params.queryId - Optional; query id
+   * @param {Address | string | undefined} params.transferExcessAddress - Optional; address to transfer excess tokens
    *
    * @returns {SenderArguments} containing all data required to execute a jetton `stake` transaction
    */
@@ -72,6 +73,7 @@ export class FarmNftMinterV1 extends Contract {
       gasAmount?: AmountType;
       forwardGasAmount?: AmountType;
       queryId?: QueryIdType;
+      transferExcessAddress?: AddressType;
     },
   ): Promise<SenderArguments> {
     const [jettonWalletAddress, forwardPayload] = await Promise.all([
@@ -89,7 +91,8 @@ export class FarmNftMinterV1 extends Contract {
       queryId: params.queryId ?? 0,
       amount: params.jettonAmount,
       destination: this.address,
-      responseDestination: params.userWalletAddress,
+      responseDestination:
+        params.transferExcessAddress ?? params.userWalletAddress,
       forwardTonAmount,
       forwardPayload,
     });

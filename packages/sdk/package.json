@@ -1,6 +1,6 @@
 {
   "name": "@ston-fi/sdk",
-  "version": "2.2.3",
+  "version": "2.3.0",
   "description": "Typescript SDK to interact with the Ston.fi DEX",
   "license": "MIT",
   "homepage": "https://github.com/ston-fi/sdk#readme",
@@ -64,11 +64,11 @@
     "@ton/ton": "^13.9.0 || ^14.0.0 || ^15.0.0"
   },
   "devDependencies": {
-    "@arethetypeswrong/cli": "^0.17.2",
+    "@arethetypeswrong/cli": "^0.17.4",
     "@ston-fi/typescript-config": "workspace:*",
     "esbuild-analyzer": "^0.2.0",
-    "publint": "^0.2.12",
+    "publint": "^0.3.9",
     "tsup": "8.3.5",
-    "vitest": "2.1.5"
+    "vitest": "3.0.8"
   }
 }

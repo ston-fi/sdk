@@ -25,6 +25,8 @@ import { VaultV2_1 } from "../vault/VaultV2_1";
 import { BaseRouterV2_1 } from "./BaseRouterV2_1";
 
 const USER_WALLET_ADDRESS = "UQAQnxLqlX2B6w4jQzzzPWA8eyWZVZBz6Y0D_8noARLOaEAn";
+const EXCESS_WALLET_ADDRESS =
+  "UQClQ7VdpC3ZWgL0Tc7Mt71Rj0U9baNSXhhmo5358hBttZMq"; // should not be equal to `USER_WALLET_ADDRESS` because it is used as a fallback
 const ROUTER_ADDRESS = "kQALh-JBBIKK7gr0o4AVf9JZnEsFndqO0qTCyT-D-yBsWk0v";
 const OFFER_JETTON_ADDRESS = "kQDLvsZol3juZyOAVG8tWsJntOxeEZWEaWCbbSjYakQpuYN5"; // TestRED
 const ASK_JETTON_ADDRESS = "kQB_TOJSB7q3-Jm1O8s0jKFtqLElZDPjATs5uJGsujcjznq3"; // TestBLUE
@@ -434,6 +436,23 @@ describe("BaseRouterV2_1", () => {
       );
       expect(params.value).toMatchInlineSnapshot("300000000n");
     });
+
+    it("should build expected tx params when transferExcessAddress is defined", async () => {
+      const contract = provider.open(BaseRouterV2_1.create(ROUTER_ADDRESS));
+
+      const params = await contract.getSwapJettonToJettonTxParams({
+        ...txArguments,
+        transferExcessAddress: EXCESS_WALLET_ADDRESS,
+      });
+
+      expect(params.to.toString()).toMatchInlineSnapshot(
+        `"EQBB_eiDQ9YJ_7UiNsrVvhTKt2O0oKjKe76eVQ7QPS-oYPsi"`,
+      );
+      expect(params.body?.toBoc().toString("base64")).toMatchInlineSnapshot(
+        `"te6cckEBAwEA+wABsA+KfqUAAAAAAAAAAEHc1lAIABcPxIIJBRXcFelHACr/pLM4lgs7tR2lSYWSfwf2QNi1AClQ7VdpC3ZWgL0Tc7Mt71Rj0U9baNSXhhmo5358hBttSBycOAEBAeFmZN4qgAEAzmDZI8Xr3NC7nZo+aFkM7M/0vb5/f2/1dAy3bDlFsABCfEuqVfYHrDiNDPPM9YDx7JZlVkHPpjQP/yegBEs5ogAIT4l1Sr7A9YcRoZ55nrAePZLMqsg59MaB/+T0AIlnNAAAAAAAAAHCQAIAU0C+vCAIACE+JdUq+wPWHEaGeeZ6wHj2SzKrIOfTGgf/k9ACJZzQAAAFEBKzlrQ="`,
+      );
+      expect(params.value).toMatchInlineSnapshot("300000000n");
+    });
   });
 
   describe("sendSwapJettonToJetton", () => {
@@ -644,6 +663,23 @@ describe("BaseRouterV2_1", () => {
           received: proxyTon.version,
         }),
       );
+    });
+
+    it("should build expected tx params when transferExcessAddress is defined", async () => {
+      const contract = provider.open(BaseRouterV2_1.create(ROUTER_ADDRESS));
+
+      const params = await contract.getSwapJettonToTonTxParams({
+        ...txArguments,
+        transferExcessAddress: EXCESS_WALLET_ADDRESS,
+      });
+
+      expect(params.to.toString()).toMatchInlineSnapshot(
+        `"EQAvBlP_FK6SQQRtkoLsO8U-Ycvmdxrrdopx_xxaTumvs26X"`,
+      );
+      expect(params.body?.toBoc().toString("base64")).toMatchInlineSnapshot(
+        `"te6cckEBAwEA+wABsA+KfqUAAAAAAAAAAEHc1lAIABcPxIIJBRXcFelHACr/pLM4lgs7tR2lSYWSfwf2QNi1AClQ7VdpC3ZWgL0Tc7Mt71Rj0U9baNSXhhmo5358hBttSBycOAEBAeFmZN4qgAtkxztQgmDNmKE4QgLlz+AxRQODLmEwpBaS9hgwusAA0ABCfEuqVfYHrDiNDPPM9YDx7JZlVkHPpjQP/yegBEs5ogAIT4l1Sr7A9YcRoZ55nrAePZLMqsg59MaB/+T0AIlnNAAAAAAAAAHCQAIAU0C+vCAIACE+JdUq+wPWHEaGeeZ6wHj2SzKrIOfTGgf/k9ACJZzQAAAFEDOwY/Q="`,
+      );
+      expect(params.value).toMatchInlineSnapshot("300000000n");
     });
   });
 
@@ -1011,6 +1047,23 @@ describe("BaseRouterV2_1", () => {
       );
       expect(params.value).toMatchInlineSnapshot("300000000n");
     });
+
+    it("should build expected tx params when transferExcessAddress is defined", async () => {
+      const contract = provider.open(BaseRouterV2_1.create(ROUTER_ADDRESS));
+
+      const params = await contract.getProvideLiquidityJettonTxParams({
+        ...txArguments,
+        transferExcessAddress: EXCESS_WALLET_ADDRESS,
+      });
+
+      expect(params.to.toString()).toMatchInlineSnapshot(
+        `"EQAvBlP_FK6SQQRtkoLsO8U-Ycvmdxrrdopx_xxaTumvs26X"`,
+      );
+      expect(params.body?.toBoc().toString("base64")).toMatchInlineSnapshot(
+        `"te6cckEBAwEA9QABsA+KfqUAAAAAAAAAAEHc1lAIABcPxIIJBRXcFelHACr/pLM4lgs7tR2lSYWSfwf2QNi1AClQ7VdpC3ZWgL0Tc7Mt71Rj0U9baNSXhhmo5358hBttSBwDoYEBAeE3wJbfgA4dW3D2TmLp5+7U5+baZupszIsKG/QVkVjFrKmNOjPWcABCfEuqVfYHrDiNDPPM9YDx7JZlVkHPpjQP/yegBEs5ogAIT4l1Sr7A9YcRoZ55nrAePZLMqsg59MaB/+T0AIlnNAAAAAAAAAHCQAIARxAYACE+JdUq+wPWHEaGeeZ6wHj2SzKrIOfTGgf/k9ACJZzRBDixgZE="`,
+      );
+      expect(params.value).toMatchInlineSnapshot("300000000n");
+    });
   });
 
   describe("sendProvideLiquidityJetton", () => {
@@ -1341,6 +1394,25 @@ describe("BaseRouterV2_1", () => {
       );
       expect(params.body?.toBoc().toString("base64")).toMatchInlineSnapshot(
         `"te6cckEBAwEA9QABsA+KfqUAAAAAAAAAAEHc1lAIABcPxIIJBRXcFelHACr/pLM4lgs7tR2lSYWSfwf2QNi1AAQnxLqlX2B6w4jQzzzPWA8eyWZVZBz6Y0D/8noARLOaCF9eEAEBAeE3wJbfgA4dW3D2TmLp5+7U5+baZupszIsKG/QVkVjFrKmNOjPWcABCfEuqVfYHrDiNDPPM9YDx7JZlVkHPpjQP/yegBEs5ogAIT4l1Sr7A9YcRoZ55nrAePZLMqsg59MaB/+T0AIlnNAAAAAAAAAHCQAIARxAYAEbCChflOPdGfE7+0XcsCyfemDO2/QhTcRx1Lb8fmd1gBHJ6ZBI="`,
+      );
+      expect(params.value).toMatchInlineSnapshot("1000000000n");
+    });
+
+    it("should build expected tx params when transferExcessAddress is defined", async () => {
+      const contract = provider.open(BaseRouterV2_1.create(ROUTER_ADDRESS));
+
+      const params = await contract.getSingleSideProvideLiquidityJettonTxParams(
+        {
+          ...txArguments,
+          transferExcessAddress: EXCESS_WALLET_ADDRESS,
+        },
+      );
+
+      expect(params.to.toString()).toMatchInlineSnapshot(
+        `"EQAvBlP_FK6SQQRtkoLsO8U-Ycvmdxrrdopx_xxaTumvs26X"`,
+      );
+      expect(params.body?.toBoc().toString("base64")).toMatchInlineSnapshot(
+        `"te6cckEBAwEA9QABsA+KfqUAAAAAAAAAAEHc1lAIABcPxIIJBRXcFelHACr/pLM4lgs7tR2lSYWSfwf2QNi1AClQ7VdpC3ZWgL0Tc7Mt71Rj0U9baNSXhhmo5358hBttSF9eEAEBAeE3wJbfgA4dW3D2TmLp5+7U5+baZupszIsKG/QVkVjFrKmNOjPWcABCfEuqVfYHrDiNDPPM9YDx7JZlVkHPpjQP/yegBEs5ogAIT4l1Sr7A9YcRoZ55nrAePZLMqsg59MaB/+T0AIlnNAAAAAAAAAHCQAIARxAYACE+JdUq+wPWHEaGeeZ6wHj2SzKrIOfTGgf/k9ACJZzQBNJmAMA="`,
       );
       expect(params.value).toMatchInlineSnapshot("1000000000n");
     });

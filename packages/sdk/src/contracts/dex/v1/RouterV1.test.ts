@@ -18,6 +18,8 @@ import { RouterV1 } from "./RouterV1";
 const OFFER_JETTON_ADDRESS = "EQA2kCVNwVsil2EM2mB0SkXytxCqQjS4mttjDpnXmwG9T6bO"; // STON
 const ASK_JETTON_ADDRESS = "EQBX6K9aXVl3nXINCyPPL86C4ONVmQ8vK360u6dykFKXpHCa"; // GEMSTON
 const USER_WALLET_ADDRESS = "UQAQnxLqlX2B6w4jQzzzPWA8eyWZVZBz6Y0D_8noARLOaEAn";
+const EXCESS_WALLET_ADDRESS =
+  "UQClQ7VdpC3ZWgL0Tc7Mt71Rj0U9baNSXhhmo5358hBttZMq"; // should not be equal to `USER_WALLET_ADDRESS` because it is used as a fallback
 
 const PTON_CONTRACT = new pTON.v1();
 
@@ -299,6 +301,23 @@ describe("RouterV1", () => {
       );
       expect(txParams.value).toMatchInlineSnapshot("220000000n");
     });
+
+    it("should build expected tx params when transferExcessAddress is defined", async () => {
+      const contract = provider.open(new RouterV1());
+
+      const txParams = await contract.getSwapJettonToJettonTxParams({
+        ...txArgs,
+        transferExcessAddress: EXCESS_WALLET_ADDRESS,
+      });
+
+      expect(txParams.to).toMatchInlineSnapshot(
+        `"EQBB_eiDQ9YJ_7UiNsrVvhTKt2O0oKjKe76eVQ7QPS-oYPsi"`,
+      );
+      expect(txParams.body?.toBoc().toString("base64")).toMatchInlineSnapshot(
+        `"te6cckEBAgEAqQABsA+KfqUAAAAAAAAAAEHc1lAIAO87mQKicbKgHIk4pSPP4k5xhHqutqYgAB7USnesDnCdAClQ7VdpC3ZWgL0Tc7Mt71Rj0U9baNSXhhmo5358hBttSBTck4EBAJclk4VhgAEAzmDZI8Xr3NC7nZo+aFkM7M/0vb5/f2/1dAy3bDlFqBfXhAEABCfEuqVfYHrDiNDPPM9YDx7JZlVkHPpjQP/yegBEs5oQh9FOJg=="`,
+      );
+      expect(txParams.value).toMatchInlineSnapshot("220000000n");
+    });
   });
 
   describe("sendSwapJettonToJetton", () => {
@@ -483,6 +502,23 @@ describe("RouterV1", () => {
           received: proxyTon.version,
         }),
       );
+    });
+
+    it("should build expected tx params when transferExcessAddress is defined", async () => {
+      const contract = provider.open(new RouterV1());
+
+      const txParams = await contract.getSwapJettonToTonTxParams({
+        ...txArgs,
+        transferExcessAddress: EXCESS_WALLET_ADDRESS,
+      });
+
+      expect(txParams.to).toMatchInlineSnapshot(
+        `"EQBB_eiDQ9YJ_7UiNsrVvhTKt2O0oKjKe76eVQ7QPS-oYPsi"`,
+      );
+      expect(txParams.body?.toBoc().toString("base64")).toMatchInlineSnapshot(
+        `"te6cckEBAgEAqQABsA+KfqUAAAAAAAAAAEHc1lAIAO87mQKicbKgHIk4pSPP4k5xhHqutqYgAB7USnesDnCdAClQ7VdpC3ZWgL0Tc7Mt71Rj0U9baNSXhhmo5358hBttSA7msoEBAJclk4VhgAIqFqMWTE1aoxM/MRD/EEluAMqKyKvv/FAn4CTTNIDD6BfXhAEABCfEuqVfYHrDiNDPPM9YDx7JZlVkHPpjQP/yegBEs5oQiEfuFA=="`,
+      );
+      expect(txParams.value).toMatchInlineSnapshot("170000000n");
     });
   });
 
@@ -809,6 +845,23 @@ describe("RouterV1", () => {
       );
       expect(txParams.body?.toBoc().toString("base64")).toMatchInlineSnapshot(
         '"te6cckEBAwEAiAACsA+KfqUAAAAAAAAAAEHc1lAIAO87mQKicbKgHIk4pSPP4k5xhHqutqYgAB7USnesDnCdAAQnxLqlX2B6w4jQzzzPWA8eyWZVZBz6Y0D/8noARLOaKBycOAEBAgABwABN/Pnlj4ABAM5g2SPF69zQu52aPmhZDOzP9L2+f39v9XQMt2w5RaIDh3HFeg=="',
+      );
+      expect(txParams.value).toMatchInlineSnapshot("300000000n");
+    });
+
+    it("should build expected tx params when transferExcessAddress is defined", async () => {
+      const contract = provider.open(new RouterV1());
+
+      const txParams = await contract.getProvideLiquidityJettonTxParams({
+        ...txArgs,
+        transferExcessAddress: EXCESS_WALLET_ADDRESS,
+      });
+
+      expect(txParams.to).toMatchInlineSnapshot(
+        `"EQBB_eiDQ9YJ_7UiNsrVvhTKt2O0oKjKe76eVQ7QPS-oYPsi"`,
+      );
+      expect(txParams.body?.toBoc().toString("base64")).toMatchInlineSnapshot(
+        `"te6cckEBAgEAhAABsA+KfqUAAAAAAAAAAEHc1lAIAO87mQKicbKgHIk4pSPP4k5xhHqutqYgAB7USnesDnCdAClQ7VdpC3ZWgL0Tc7Mt71Rj0U9baNSXhhmo5358hBttSBycOAEBAE38+eWPgAEAzmDZI8Xr3NC7nZo+aFkM7M/0vb5/f2/1dAy3bDlFogM0SANZ"`,
       );
       expect(txParams.value).toMatchInlineSnapshot("300000000n");
     });

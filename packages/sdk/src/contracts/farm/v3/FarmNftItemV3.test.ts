@@ -514,6 +514,17 @@ describe("FarmNftItemV3", () => {
             );
         }
 
+        if (
+          toAddress(address).toString() ===
+            "EQCp5szP3mCqAY11tzhdo7RElDzilThbPuzUF2zTeyYG5Vyz" &&
+          method === "get_version"
+        ) {
+          return createProviderSnapshot()
+            .number("3")
+            .number("0")
+            .cell("te6ccsEBAQEACQAAAA5yZWxlYXNlKoIKQw==");
+        }
+
         if (address === ADDRESS && method === "get_nft_data") {
           return createProviderSnapshot()
             .number("-1")

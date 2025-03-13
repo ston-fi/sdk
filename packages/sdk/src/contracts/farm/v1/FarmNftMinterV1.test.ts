@@ -15,6 +15,8 @@ import { FarmNftMinterV1 } from "./FarmNftMinterV1";
 const FARM_MINTER_ADDRESS = "EQCgKwUFWHhKyUUYBeG1PokxWhAtFyp5VcxU-sMXBrqma80u"; // ston/ton v1 farm minter
 const FARM_TOKEN = "EQDtZHOtVWaf9UIU6rmjLPNLTGxNLNogvK5xUZlMRgZwQ4Gt"; // ston/ton LP token
 const USER_WALLET_ADDRESS = "UQAQnxLqlX2B6w4jQzzzPWA8eyWZVZBz6Y0D_8noARLOaEAn";
+const EXCESS_WALLET_ADDRESS =
+  "UQClQ7VdpC3ZWgL0Tc7Mt71Rj0U9baNSXhhmo5358hBttZMq"; // should not be equal to `USER_WALLET_ADDRESS` because it is used as a fallback
 
 describe("FarmNftMinterV1", () => {
   beforeAll(setup);
@@ -170,6 +172,25 @@ describe("FarmNftMinterV1", () => {
         '"te6cckEBAgEAXgABqg+KfqUAAAAAAAAAAEO5rKAIAUBWCgqw8JWSijALw2p9EmK0IFouVPKrmKn1hi4NdUzXAAQnxLqlX2B6w4jQzzzPWA8eyWZVZBz6Y0D/8noARLOaAgMBAAhuydxlXsFjsw=="',
       );
       expect(txParams.value).toBe(contract.gasConstants.stake);
+    });
+
+    it("should build expected tx params when transferExcessAddress is defined", async () => {
+      const contract = provider.open(
+        FarmNftMinterV1.create(FARM_MINTER_ADDRESS),
+      );
+
+      const txParams = await contract.getStakeTxParams({
+        ...txArgs,
+        transferExcessAddress: EXCESS_WALLET_ADDRESS,
+      });
+
+      expect(txParams.to).toMatchInlineSnapshot(
+        `"EQDioYuVa1k3o_rOusvouthb_37fWsfXJpA51OzltQy0kY_K"`,
+      );
+      expect(txParams.body?.toBoc().toString("base64")).toMatchInlineSnapshot(
+        `"te6cckEBAgEAYQABsA+KfqUAAAAAAAAAAEO5rKAIAUBWCgqw8JWSijALw2p9EmK0IFouVPKrmKn1hi4NdUzXAClQ7VdpC3ZWgL0Tc7Mt71Rj0U9baNSXhhmo5358hBttSB3NZQEBAAhuydxlKCOfAQ=="`,
+      );
+      expect(txParams.value).toMatchInlineSnapshot("300000000n");
     });
   });
 

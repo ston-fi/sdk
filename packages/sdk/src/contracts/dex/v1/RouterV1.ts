@@ -108,6 +108,7 @@ export class RouterV1 extends Contract {
    * @param {bigint | number | string | undefined} params.forwardGasAmount - Optional; Custom transaction forward gas amount (in nanoTons)
    * @param {bigint | number | undefined} params.queryId - Optional; query id
    * @param {Cell | undefined} params.jettonCustomPayload - Optional; custom payload for the jetton transfer message
+   * @param {Address | string | undefined} params.transferExcessAddress - Optional; address to transfer excess tokens
    *
    * @returns {SenderArguments} data required to execute a jetton `swap` transaction
    */
@@ -124,6 +125,7 @@ export class RouterV1 extends Contract {
       forwardGasAmount?: AmountType;
       queryId?: QueryIdType;
       jettonCustomPayload?: Cell;
+      transferExcessAddress?: AddressType;
     },
   ): Promise<SenderArguments> {
     const [offerJettonWalletAddress, askJettonWalletAddress] =
@@ -152,7 +154,8 @@ export class RouterV1 extends Contract {
       queryId: params.queryId ?? 0,
       amount: params.offerAmount,
       destination: this.address,
-      responseDestination: params.userWalletAddress,
+      responseDestination:
+        params.transferExcessAddress ?? params.userWalletAddress,
       customPayload: params.jettonCustomPayload,
       forwardTonAmount,
       forwardPayload,
@@ -192,6 +195,7 @@ export class RouterV1 extends Contract {
    * @param {bigint | number | string | undefined} params.forwardGasAmount - Optional; Custom transaction forward gas amount (in nanoTons)
    * @param {bigint | number | undefined} params.queryId - Optional; query id
    * @param {Cell | undefined} params.jettonCustomPayload - Optional; custom payload for the jetton transfer message
+   * @param {Address | string | undefined} params.transferExcessAddress - Optional; address to transfer excess tokens
    *
    * @returns {SenderArguments} data required to execute a jetton `swap` transaction
    */
@@ -208,6 +212,7 @@ export class RouterV1 extends Contract {
       forwardGasAmount?: AmountType;
       queryId?: QueryIdType;
       jettonCustomPayload?: Cell;
+      transferExcessAddress?: AddressType;
     },
   ): Promise<SenderArguments> {
     this.assertProxyTon(params.proxyTon);
@@ -336,6 +341,7 @@ export class RouterV1 extends Contract {
       forwardGasAmount?: AmountType;
       queryId?: QueryIdType;
       jettonCustomPayload?: Cell;
+      transferExcessAddress?: AddressType;
     },
   ): Promise<SenderArguments> {
     const [jettonWalletAddress, routerWalletAddress] = await Promise.all([
@@ -361,7 +367,8 @@ export class RouterV1 extends Contract {
       queryId: params.queryId ?? 0,
       amount: params.sendAmount,
       destination: this.address,
-      responseDestination: params.userWalletAddress,
+      responseDestination:
+        params.transferExcessAddress ?? params.userWalletAddress,
       customPayload: params.jettonCustomPayload,
       forwardTonAmount,
       forwardPayload,

@@ -46,7 +46,8 @@ export type FarmDataAccrued = {
  * @property {boolean} unrestrictedDepositRewards - If rewards can be deposited by anyone
  * @property {Address} rewardTokenWallet - Minter's reward jetton wallet
  * @property {boolean} canChangeFee - If can change fee
- * @property {bigint} status - Status of the contract
+ * @property {number} status - Status of the contract
+ * @property {number} rampDays - Days of ramp, affect deposit rewards @since v3.2
  */
 export type FarmDataParameters = {
   adminFee: bigint;
@@ -55,6 +56,7 @@ export type FarmDataParameters = {
   rewardTokenWallet: Address;
   canChangeFee: boolean;
   status: number;
+  rampDays: number | null;
 };
 
 export interface FarmNftMinterV3Options extends ContractOptions {
@@ -104,6 +106,7 @@ export class FarmNftMinterV3 extends Contract {
    * @param {number | undefined} params.poolCount - Optional; Number of deployed farm reward pools; If undefined value will get onchain
    * @param {Address | string} params.ownerAddress - Optional; custom owner of stake; if undefined stake owner is sender address
    * @param {bigint | number | undefined} params.queryId - Optional; query id
+   * @param {Address | string | undefined} params.transferExcessAddress - Optional; address to transfer excess tokens
    *
    * @returns {SenderArguments} containing all data required to execute a jetton `stake` transaction
    */
@@ -116,6 +119,7 @@ export class FarmNftMinterV3 extends Contract {
       poolCount?: number;
       ownerAddress?: AddressType;
       queryId?: QueryIdType;
+      transferExcessAddress?: AddressType;
     },
   ): Promise<SenderArguments> {
     const [jettonWalletAddress, forwardPayload, poolCount] = await Promise.all([
@@ -138,7 +142,8 @@ export class FarmNftMinterV3 extends Contract {
       queryId: params.queryId ?? 0,
       amount: params.jettonAmount,
       destination: this.address,
-      responseDestination: params.userWalletAddress,
+      responseDestination:
+        params.transferExcessAddress ?? params.userWalletAddress,
       forwardTonAmount,
       forwardPayload,
     });
@@ -238,6 +243,7 @@ export class FarmNftMinterV3 extends Contract {
    */
   public async getFarmingMinterData(provider: ContractProvider) {
     const result = await provider.get("get_farming_minter_data", []);
+    const version = await this.getVersion(provider);
 
     return {
       nextItemIndex: result.stack.readBigNumber(),
@@ -313,6 +319,10 @@ export class FarmNftMinterV3 extends Contract {
               rewardTokenWallet: slice.loadAddress(),
               canChangeFee: slice.loadBit(),
               status: slice.loadUint(8),
+              rampDays:
+                version.major === 3 && version.minor === 2
+                  ? slice.loadUint(16)
+                  : null,
             };
             farmDataParameters.set(poolIndex, parametersData);
           }

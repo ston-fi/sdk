@@ -190,6 +190,7 @@ export class BaseRouterV2_1 extends Contract {
       forwardGasAmount?: AmountType;
       queryId?: QueryIdType;
       jettonCustomPayload?: Cell;
+      transferExcessAddress?: AddressType;
     },
   ): Promise<SenderArguments> {
     const contractAddress = this.address;
@@ -228,7 +229,8 @@ export class BaseRouterV2_1 extends Contract {
       queryId: params.queryId ?? 0,
       amount: params.offerAmount,
       destination: contractAddress,
-      responseDestination: params.userWalletAddress,
+      responseDestination:
+        params.transferExcessAddress ?? params.userWalletAddress,
       customPayload: params.jettonCustomPayload,
       forwardTonAmount,
       forwardPayload,
@@ -277,6 +279,7 @@ export class BaseRouterV2_1 extends Contract {
       forwardGasAmount?: AmountType;
       queryId?: QueryIdType;
       jettonCustomPayload?: Cell;
+      transferExcessAddress?: AddressType;
     },
   ): Promise<SenderArguments> {
     this.assertProxyTon(params.proxyTon);
@@ -419,6 +422,7 @@ export class BaseRouterV2_1 extends Contract {
       forwardGasAmount?: AmountType;
       queryId?: QueryIdType;
       jettonCustomPayload?: Cell;
+      transferExcessAddress?: AddressType;
     },
   ): Promise<SenderArguments> {
     return this.implGetProvideLiquidityJettonTxParams(provider, {
@@ -463,6 +467,7 @@ export class BaseRouterV2_1 extends Contract {
       forwardGasAmount?: AmountType;
       queryId?: QueryIdType;
       jettonCustomPayload?: Cell;
+      transferExcessAddress?: AddressType;
     },
   ): Promise<SenderArguments> {
     return this.implGetProvideLiquidityJettonTxParams(provider, {
@@ -531,7 +536,8 @@ export class BaseRouterV2_1 extends Contract {
       queryId: params.queryId ?? 0,
       amount: params.sendAmount,
       destination: contractAddress,
-      responseDestination: params.userWalletAddress,
+      responseDestination:
+        params.transferExcessAddress ?? params.userWalletAddress,
       customPayload: params.jettonCustomPayload,
       forwardTonAmount,
       forwardPayload,
