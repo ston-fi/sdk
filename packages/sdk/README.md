@@ -8,7 +8,7 @@
 
 The SDK is written in TypeScript and designed to be a thin wrapper on top of the [STON.fi](https://ston.fi/) contracts, which will help STON.fi protocol to be used more easily in JS/TS projects
 
-Documentation for the SDK is available at [docs.ston.fi](https://docs.ston.fi/docs/technical-reference/sdk)
+Documentation for the SDK is available at [docs.ston.fi](https://docs.ston.fi/docs/developer-section/sdk)
 
 ## Installation
 
