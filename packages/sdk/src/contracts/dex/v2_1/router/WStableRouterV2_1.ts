@@ -2,24 +2,24 @@ import { type ContractProvider, toNano } from "@ton/ton";
 
 import type { AddressType } from "../../../../types";
 import { DEX_TYPE } from "../../constants";
-import { StablePoolV2_1 } from "../pool/StablePoolV2_1";
+import { WStablePoolV2_1 } from "../pool/WStablePoolV2_1";
 import { BaseRouterV2_1, type BaseRouterV2_1Options } from "./BaseRouterV2_1";
 
-export class StableRouterV2_1 extends BaseRouterV2_1 {
-  public static readonly dexType = DEX_TYPE.Stable;
+export class WStableRouterV2_1 extends BaseRouterV2_1 {
+  public static readonly dexType = DEX_TYPE.WStable;
 
   public static override readonly gasConstants = {
     ...BaseRouterV2_1.gasConstants,
     swapJettonToJetton: {
-      gasAmount: toNano("0.329"),
-      forwardGasAmount: toNano("0.269"),
+      gasAmount: toNano("0.479"),
+      forwardGasAmount: toNano("0.419"),
     },
     swapJettonToTon: {
-      gasAmount: toNano("0.329"),
-      forwardGasAmount: toNano("0.269"),
+      gasAmount: toNano("0.479"),
+      forwardGasAmount: toNano("0.419"),
     },
     swapTonToJetton: {
-      forwardGasAmount: toNano("0.329"),
+      forwardGasAmount: toNano("0.479"),
     },
   };
 
@@ -30,7 +30,7 @@ export class StableRouterV2_1 extends BaseRouterV2_1 {
     super(address, {
       ...options,
       gasConstants: {
-        ...StableRouterV2_1.gasConstants,
+        ...WStableRouterV2_1.gasConstants,
         ...gasConstants,
       },
     });
@@ -48,6 +48,6 @@ export class StableRouterV2_1 extends BaseRouterV2_1 {
       params,
     );
 
-    return StablePoolV2_1.create(poolAddress);
+    return WStablePoolV2_1.create(poolAddress);
   }
 }

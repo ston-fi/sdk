@@ -1,5 +1,136 @@
 # Changelog
 
+## [2.4.0]
+
+With this release, we are adding two new Router & Pool types:
+- `WCPI`
+- `WStable`
+
+Previously we used BaseRouter/BasePool classes to call the contract classes but because new contracts are unique we are more leaning from the Base* contract approach to the explicit one. So it should work like this:
+
+```ts
+export const DEX = {
+ Router: {
+  CPI: CPIRouterV2_2,
+  Stable: StableRouterV2_2,
+  WCPI: WCPIRouterV2_2,
+  WStable: WStableRouterV2_2,
+ },
+ Pool: {
+  CPI: CPIPoolV2_2,
+  Stable: StablePoolV2_2,
+  WCPI: WCPIPoolV2_2,
+  WStable: WStablePoolV2_2,
+ },
+ LpAccount: LpAccountV2_2,
+ Vault: VaultV2_2,
+ pTON: PtonV2_1,
+};
+```
+
+So Because of the contracts uniq moments code like this `DEX.Router.getSwapJettonToJettonTxParams()` will not work correctly in all cases. We are deprecating the method calls on `DEX.Router` and `DEX.Pool` classes. In the next versions, they will become just objects.
+The new preferable way to do such calls is `DEX.Router.CPI.getSwapJettonToJettonTxParams()`
+
+So the expected diff to support new contract calls in your code following:
+
+```diff
+- const swapTxParams = await DEX.Router.getSwapJettonToJettonTxParams()
++ const swapTxParams = await DEX.Router.CPI.getSwapJettonToJettonTxParams()
+```
+
+This logic of defining the correct router/pool type to use might be complicated, but the good part is that if you are using our `dexFactory` or `routerFactory` helper function it will select the contracts of the needed type for you **automatically** if `routerType` parameter is provided!
+
+So this is how it works:
+
+```ts
+import { StonApiClient } from "@ston-fi/api";
+import { dexFactory } from "@ston-fi/sdk";
+
+const stonApi = new StonApiClient();
+
+const routerInfo = await stonApi.getRouter("EQCS4UEa5UaJLzOyyKieqQOQ2P9M-7kXpkO5HnP3Bv250cN3");
+
+// ^ {
+//   address: 'EQCS4UEa5UaJLzOyyKieqQOQ2P9M-7kXpkO5HnP3Bv250cN3',
+//   majorVersion: 2,
+//   minorVersion: 2,
+//   routerType: 'ConstantProduct',
+//   ...
+// }
+
+const contracts = dexFactory(routerInfo);
+
+// ^ {
+//     Router: CPIRouterV2_2,
+//     Pool: CPIPoolV2_2,
+//     LpAccount: LpAccountV2_2,
+//     Vault: VaultV2_2,
+//     pTON: PtonV2_1
+// }
+```
+
+### Added
+
+- new `WCPI` contracts
+
+ Could be accessed like this
+
+  ```ts
+  import { DEX } from "@ston-fi/sdk";
+
+  const router = DEX.v2_2.Router.WCPI;
+  const pool = DEX.v2_2.Pool.WCPI;
+  ```
+
+ Or like this
+
+  ```ts
+  import { WCPIRouterV2_2, WCPIPoolV2_2 } from "@ston-fi/sdk/dex/v2_2";
+  ```
+
+- new `WStable` contracts
+
+ Could be accessed like this
+
+  ```ts
+  import { DEX } from "@ston-fi/sdk";
+
+  const router = DEX.v2_2.Router.WStable;
+  const pool = DEX.v2_2.Pool.WStable;
+  ```
+
+ Or like this
+
+  ```ts
+  import { WStableRouterV2_2, WStablePoolV2_2 } from "@ston-fi/sdk/dex/v2_2";
+  ```
+
+### Changed
+
+- The `Router` & `Pool` fields returned by the `dexFactory` method became a specific class instead of a Base* class. So after an update, code like this will not work
+
+  ```ts
+  const contracts = dexFactory(routerInfo).Router.CPI; // Property 'CPI' does not exist
+  ```
+
+ We are not expecting many of you to face these breaking changes, but in case of need, we temporarily add new fields to simplify migration. 
+ All you need to do is to use `_Router` instead of `Router` and `_Pool` instead of `_Pool` correspondently.
+
+  ```ts
+  const contracts = dexFactory(routerInfo)._Router.CPI; // will work but deprecated. Should `.Router` should be used instead.
+  ```
+
+ But we are not recommending doing that since new `_*` fields are instances of Base* contracts and their usage with the routers of new types might lead to failed transactions.
+
+### Deprecated
+
+- methods calls on the Base* classes are deprecated and will be removed in the next versions;
+
+  ```diff
+  - const swapTxParams = await DEX.Router.getSwapJettonToJettonTxParams()
+  + const swapTxParams = await DEX.Router.CPI.getSwapJettonToJettonTxParams()
+  ```
+
 ## [2.3.0]
 
 ### Added
