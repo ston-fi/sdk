@@ -101,7 +101,8 @@ export class FarmNftItemV3 extends Contract {
 
     const value =
       this.gasConstants.claimRewardsBase +
-      this.gasConstants.claimRewardsPerPool * BigInt(poolCount - 1);
+      this.gasConstants.claimRewardsPerPool *
+        BigInt(Math.max(poolCount - 1, 0));
 
     return { to, value, body };
   }
@@ -150,7 +151,7 @@ export class FarmNftItemV3 extends Contract {
 
     const value =
       this.gasConstants.unstakeBase +
-      this.gasConstants.unstakePerPool * BigInt(poolCount - 1);
+      this.gasConstants.unstakePerPool * BigInt(Math.max(poolCount - 1, 0));
 
     return { to, value, body };
   }

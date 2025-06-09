@@ -1,5 +1,11 @@
 # Changelog
 
+## [2.4.1]
+
+### Fixed
+
+- correct `Farm.getClaimRewardsTxParams` gas calculation for pools with 0 rewards
+
 ## [2.4.0]
 
 With this release, we are adding two new Router & Pool types:

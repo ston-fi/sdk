@@ -172,6 +172,7 @@ describe("FarmNftItemV3", () => {
 
     it("gasAmount should be different based on poolCount", async () => {
       const poolsToGasMap = [
+        [0, "350000000"],
         [1, "350000000"],
         [2, "480000000"],
         [3, "610000000"],
@@ -284,6 +285,7 @@ describe("FarmNftItemV3", () => {
 
     it("gasAmount should be different based on poolCount", async () => {
       const poolsToGasMap = [
+        [0, "450000000"],
         [1, "450000000"],
         [2, "580000000"],
         [3, "710000000"],
