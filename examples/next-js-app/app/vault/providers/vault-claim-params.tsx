@@ -1,6 +1,6 @@
-import { createContext, useReducer, useContext, useEffect } from "react";
-import { useSearchParams, useRouter, usePathname } from "next/navigation";
 import { useTonAddress } from "@tonconnect/ui-react";
+import { usePathname, useRouter, useSearchParams } from "next/navigation";
+import { createContext, useContext, useEffect, useReducer } from "react";
 
 const URL_PARAMS = {
   WALLET_ADDRESS: "ref_address",

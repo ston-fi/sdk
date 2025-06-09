@@ -47,11 +47,10 @@ export function bigNumberToFloat(value: bigint | string, decimals: number) {
 
   display = display.padStart(decimals, "0");
 
-  let [integer, fraction] = [
-    display.slice(0, display.length - decimals),
-    display.slice(display.length - decimals),
-  ];
-  fraction = fraction.replace(/(0+)$/, "");
+  const integer = display.slice(0, display.length - decimals);
+  const fraction = display
+    .slice(display.length - decimals)
+    .replace(/(0+)$/, "");
 
   return `${negative ? "-" : ""}${integer || "0"}${
     fraction ? `.${fraction}` : ""

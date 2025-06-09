@@ -69,7 +69,7 @@ const SwapSimulationData = ({ data }: { data: SwapSimulation }) => {
         </pre>
         <ArrowRightLeft size={16} />
       </button>
-      <li className="grid grid-cols-[max-content,_1fr] gap-2">
+      <li className="grid grid-cols-[max-content__1fr] gap-2">
         <b>Offer amount:</b>
         <span className="overflow-hidden text-ellipsis text-right">
           {bigNumberToFloat(data.offerUnits, offerAsset.meta?.decimals ?? 9)}
@@ -77,7 +77,7 @@ const SwapSimulationData = ({ data }: { data: SwapSimulation }) => {
           {offerAsset.meta?.symbol}
         </span>
       </li>
-      <li className="grid grid-cols-[max-content,_1fr] gap-2">
+      <li className="grid grid-cols-[max-content__1fr] gap-2">
         <b>Ask amount:</b>
         <span className="overflow-hidden text-ellipsis text-right">
           {bigNumberToFloat(data.askUnits, askAsset.meta?.decimals ?? 9)}
@@ -85,7 +85,7 @@ const SwapSimulationData = ({ data }: { data: SwapSimulation }) => {
           {askAsset.meta?.symbol}
         </span>
       </li>
-      <li className="grid grid-cols-[max-content,_1fr] gap-2">
+      <li className="grid grid-cols-[max-content__1fr] gap-2">
         <b>Ask amount (min):</b>
         <span className="overflow-hidden text-ellipsis text-right">
           {bigNumberToFloat(data.minAskUnits, askAsset.meta?.decimals ?? 9)}
@@ -93,13 +93,13 @@ const SwapSimulationData = ({ data }: { data: SwapSimulation }) => {
           {askAsset.meta?.symbol}
         </span>
       </li>
-      <li className="grid grid-cols-[max-content,_1fr] gap-2">
+      <li className="grid grid-cols-[max-content__1fr] gap-2">
         <b>Price impact:</b>
         <span className="overflow-hidden text-ellipsis text-right">
           {(Number(data.priceImpact) * 100).toFixed(2)}%
         </span>
       </li>
-      <li className="grid grid-cols-[max-content,_1fr] gap-2">
+      <li className="grid grid-cols-[max-content__1fr] gap-2">
         <b>Slippage tolerance (max):</b>
         <span className="overflow-hidden text-ellipsis text-right">
           {(Number(data.slippageTolerance) * 100 * 100).toFixed(2)}%

@@ -4,10 +4,10 @@ import type React from "react";
 
 import { Card, CardContent } from "@/components/ui/card";
 import { useAssetsQuery } from "@/hooks/use-assets-query";
+import { useBlockchainExplorer } from "@/hooks/use-blockchain-explorer";
 import { usePoolQuery } from "@/hooks/use-pool-query";
 import { useRouters } from "@/hooks/use-routers";
 import { bigNumberToFloat, cn } from "@/lib/utils";
-import { useBlockchainExplorer } from "@/hooks/use-blockchain-explorer";
 
 import { useVaultQuery } from "../hooks/use-vault-query";
 import { useVaultClaimParams } from "../providers";
@@ -43,7 +43,7 @@ const VaultInfo: React.FC<
         ) : (
           <>
             <ul className="space-y-2">
-              <li className="grid grid-cols-[max-content,_1fr] gap-2">
+              <li className="grid grid-cols-[max-content__1fr] gap-2">
                 <b>Vault: </b>
                 <a
                   href={blockchainExplorer.contract(
@@ -57,7 +57,7 @@ const VaultInfo: React.FC<
                 </a>
               </li>
 
-              <li className="grid grid-cols-[max-content,_1fr] gap-2">
+              <li className="grid grid-cols-[max-content__1fr] gap-2">
                 <b>Amount:</b>
                 <span className="overflow-hidden text-ellipsis text-right">
                   {bigNumberToFloat(

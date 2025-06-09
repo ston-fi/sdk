@@ -1,7 +1,7 @@
 "use client";
 
-import { cn } from "@/lib/utils";
 import { AddressInput } from "@/components/address-input";
+import { cn } from "@/lib/utils";
 
 import { useVaultClaimParams, useVaultClaimParamsDispatch } from "../providers";
 

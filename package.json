@@ -1,16 +1,18 @@
 {
   "name": "root",
   "private": true,
+  "packageManager": "pnpm@10.0.0",
   "scripts": {
     "preinstall": "npx only-allow pnpm",
-    "prepare": "lefthook install",
-    "cleanup": "rm -rf .turbo node_modules ./examples/**/{.next,.turbo,node_modules} ./packages/**/{.turbo,coverage,dist,node_modules,build-report.html}"
+    "cleanup": "rm -rf .turbo node_modules ./examples/**/{.next,.turbo,node_modules} ./packages/**/{.turbo,coverage,dist,node_modules,build-report.html}",
+    "lint": "biome lint ./*",
+    "format": "biome format ./*",
+    "test": "turbo run test"
   },
   "devDependencies": {
     "@biomejs/biome": "1.9.4",
-    "lefthook": "1.11.3",
-    "turbo": "2.4.4",
+    "lefthook": "1.11.12",
+    "turbo": "2.5.3",
     "typescript": "^5"
-  },
-  "packageManager": "pnpm@9.0.0"
+  }
 }

@@ -61,13 +61,13 @@ const getSwapTxParams = async (
       proxyTon,
       askJettonAddress: simulation.askAddress,
     });
-  } else {
-    return router.getSwapJettonToTonTxParams({
-      ...sharedTxParams,
-      proxyTon,
-      offerJettonAddress: simulation.offerAddress,
-    });
   }
+
+  return router.getSwapJettonToTonTxParams({
+    ...sharedTxParams,
+    proxyTon,
+    offerJettonAddress: simulation.offerAddress,
+  });
 };
 
 export const buildSwapTransaction = async (

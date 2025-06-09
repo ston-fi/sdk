@@ -60,7 +60,7 @@ export function SwapButton() {
         ownerAddress: walletAddress,
         routerAddress: swapSimulationQuery.data.routerAddress,
       });
-    } catch (e) {
+    } catch {
       setSwapTransaction(null);
     } finally {
       setIsClicked(false);

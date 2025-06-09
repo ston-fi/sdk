@@ -66,7 +66,7 @@ export function AssetSelect({
         <Button
           variant="outline"
           aria-expanded={open}
-          className={cn("w-full !px-2", className)}
+          className={cn("w-full px-2!", className)}
         >
           {selectedAsset ? (
             <>
