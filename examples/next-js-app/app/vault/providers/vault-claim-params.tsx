@@ -4,27 +4,19 @@ import { createContext, useContext, useEffect, useReducer } from "react";
 
 const URL_PARAMS = {
   WALLET_ADDRESS: "ref_address",
-  POOL_ADDRESS: "pool_address",
 } as const;
 
 type VaultClaimParams = {
   walletAddress: string;
-  poolAddress: string;
 };
 
-type Action =
-  | {
-      type: "SET_WALLET_ADDRESS";
-      payload: VaultClaimParams["walletAddress"];
-    }
-  | {
-      type: "SET_POOL_ADDRESS";
-      payload: VaultClaimParams["poolAddress"];
-    };
+type Action = {
+  type: "SET_WALLET_ADDRESS";
+  payload: VaultClaimParams["walletAddress"];
+};
 
 const VaultClaimParamsContext = createContext<VaultClaimParams>({
   walletAddress: "",
-  poolAddress: "",
 });
 
 const VaultClaimParamsContextDispatch = createContext<React.Dispatch<Action>>(
@@ -43,10 +35,6 @@ const vaultClaimParamsReducer = (
     return { ...state, walletAddress: action.payload };
   }
 
-  if (action.type === "SET_POOL_ADDRESS") {
-    return { ...state, poolAddress: action.payload };
-  }
-
   return state;
 };
 
@@ -61,15 +49,12 @@ export const VaultClaimParamsProvider = ({
   const [state, dispatch] = useReducer(vaultClaimParamsReducer, {
     walletAddress:
       searchParams.get(URL_PARAMS.WALLET_ADDRESS) ?? walletAddress ?? "",
-    poolAddress: searchParams.get(URL_PARAMS.POOL_ADDRESS) ?? "",
   });
 
   useEffect(() => {
     const params = new URLSearchParams();
     if (state.walletAddress)
       params.set(URL_PARAMS.WALLET_ADDRESS, state.walletAddress);
-    if (state.poolAddress)
-      params.set(URL_PARAMS.POOL_ADDRESS, state.poolAddress);
 
     const search = params.toString();
     const newUrl = `${pathname}${search ? `?${search}` : ""}`;

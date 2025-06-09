@@ -7,7 +7,7 @@ import { TON_ADDRESS } from "@/constants";
 import { getRouter } from "@/lib/routers-repository";
 import { tonApiClient } from "@/lib/ton-api-client";
 
-type GetVaultDataParams = {
+type GetVaultParams = {
   userWalletAddress: string;
   routerAddress: string;
   tokenMinter: string;
@@ -17,7 +17,7 @@ const getVault = async ({
   userWalletAddress,
   routerAddress,
   tokenMinter,
-}: GetVaultDataParams) => {
+}: GetVaultParams) => {
   const routerInfo = await getRouter(routerAddress);
 
   if (!routerInfo) {
@@ -37,21 +37,8 @@ const getVault = async ({
   });
 };
 
-export async function getVaultData(params: GetVaultDataParams) {
-  const vault = tonApiClient.open(await getVault(params));
-  const vaultData = await vault.getVaultData();
-
-  return {
-    vaultAddress: vault.address.toString(),
-    ownerAddress: vaultData.ownerAddress.toString(),
-    tokenAddress: vaultData.tokenAddress.toString(),
-    routerAddress: vaultData.routerAddress.toString(),
-    depositedAmount: vaultData.depositedAmount.toString(),
-  };
-}
-
 export async function buildVaultWithdrawalFeeTx(
-  params: GetVaultDataParams[],
+  params: GetVaultParams[],
 ): Promise<SendTransactionRequest["messages"]> {
   const vaults = (await Promise.all(params.map(getVault))).map((vault) =>
     tonApiClient.open(vault),

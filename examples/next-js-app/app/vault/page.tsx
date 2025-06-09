@@ -4,7 +4,7 @@ import { Card } from "@/components/ui/card";
 import { WalletGuard } from "@/components/wallet-guard";
 
 import { VaultClaimParamsForm } from "./components/vault-claim-params-form";
-import { PoolVaultsInfo } from "./components/vault-info";
+import { WalletVaultsInfo } from "./components/vault-info";
 import { VaultClaimParamsProvider } from "./providers";
 
 export default function VaultPage() {
@@ -35,7 +35,7 @@ function VaultPageContentWithWallet() {
   return (
     <VaultClaimParamsProvider>
       <VaultClaimParamsForm />
-      <PoolVaultsInfo />
+      <WalletVaultsInfo />
     </VaultClaimParamsProvider>
   );
 }

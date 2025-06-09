@@ -3,15 +3,13 @@ import { useState } from "react";
 import { Button, type ButtonProps } from "@/components/ui/button";
 import { useTonConnectUI } from "@tonconnect/ui-react";
 
-import { useWithdrawalFeeParams } from "../hooks/use-withdrawal-params";
+import { buildVaultWithdrawalFeeTx } from "../actions/build-vault-withdrawal-fee-tx";
+import { useVaultClaimParams } from "../providers/vault-claim-params";
 
 export const ClaimWithdrawalFeeButton: React.FC<
   ButtonProps & { routerAddress: string; tokenMinters: string[] }
 > = ({ routerAddress, tokenMinters, ...props }) => {
-  const withdrawalParamsQuery = useWithdrawalFeeParams({
-    routerAddress,
-    tokenMinters,
-  });
+  const { walletAddress: userWalletAddress } = useVaultClaimParams();
 
   const [tonConnectUI] = useTonConnectUI();
   const [isLoading, setIsLoading] = useState(false);
@@ -21,16 +19,20 @@ export const ClaimWithdrawalFeeButton: React.FC<
       props.onClick(event);
     }
 
-    if (!withdrawalParamsQuery.data) {
-      return;
-    }
-
     setIsLoading(true);
 
     try {
+      const withdrawalFeeTxParams = await buildVaultWithdrawalFeeTx(
+        tokenMinters.map((tokenMinter) => ({
+          routerAddress,
+          userWalletAddress,
+          tokenMinter,
+        })),
+      );
+
       await tonConnectUI.sendTransaction({
         validUntil: Date.now() + 1000000,
-        messages: withdrawalParamsQuery.data,
+        messages: withdrawalFeeTxParams,
       });
     } finally {
       setIsLoading(false);
@@ -41,7 +43,7 @@ export const ClaimWithdrawalFeeButton: React.FC<
     <Button
       {...props}
       onClick={handleClaim}
-      disabled={props.disabled || isLoading || !withdrawalParamsQuery.data}
+      disabled={props.disabled || isLoading}
     />
   );
 };
