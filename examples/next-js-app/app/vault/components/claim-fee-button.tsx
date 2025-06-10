@@ -7,8 +7,8 @@ import { buildVaultWithdrawalFeeTx } from "../actions/build-vault-withdrawal-fee
 import { useVaultClaimParams } from "../providers/vault-claim-params";
 
 export const ClaimWithdrawalFeeButton: React.FC<
-  ButtonProps & { routerAddress: string; tokenMinters: string[] }
-> = ({ routerAddress, tokenMinters, ...props }) => {
+  ButtonProps & { routerAddress: string; assetAddress: string }
+> = ({ routerAddress, assetAddress, ...props }) => {
   const { walletAddress: userWalletAddress } = useVaultClaimParams();
 
   const [tonConnectUI] = useTonConnectUI();
@@ -22,13 +22,13 @@ export const ClaimWithdrawalFeeButton: React.FC<
     setIsLoading(true);
 
     try {
-      const withdrawalFeeTxParams = await buildVaultWithdrawalFeeTx(
-        tokenMinters.map((tokenMinter) => ({
+      const withdrawalFeeTxParams = await buildVaultWithdrawalFeeTx([
+        {
           routerAddress,
           userWalletAddress,
-          tokenMinter,
-        })),
-      );
+          tokenMinter: assetAddress,
+        },
+      ]);
 
       await tonConnectUI.sendTransaction({
         validUntil: Date.now() + 1000000,
