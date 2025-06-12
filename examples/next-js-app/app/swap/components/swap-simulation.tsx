@@ -4,7 +4,8 @@ import { ArrowRightLeft } from "lucide-react";
 import { useState } from "react";
 
 import { Skeleton } from "@/components/ui/skeleton";
-import { bigNumberToFloat, cn } from "@/lib/utils";
+import { Formatter } from "@/lib/formatter";
+import { cn } from "@/lib/utils";
 
 import {
   type SwapSimulation,
@@ -72,7 +73,7 @@ const SwapSimulationData = ({ data }: { data: SwapSimulation }) => {
       <li className="grid grid-cols-[max-content__1fr] gap-2">
         <b>Offer amount:</b>
         <span className="overflow-hidden text-ellipsis text-right">
-          {bigNumberToFloat(data.offerUnits, offerAsset.meta?.decimals ?? 9)}
+          {Formatter.units(data.offerUnits, offerAsset.meta?.decimals ?? 9)}
           &nbsp;
           {offerAsset.meta?.symbol}
         </span>
@@ -80,7 +81,7 @@ const SwapSimulationData = ({ data }: { data: SwapSimulation }) => {
       <li className="grid grid-cols-[max-content__1fr] gap-2">
         <b>Ask amount:</b>
         <span className="overflow-hidden text-ellipsis text-right">
-          {bigNumberToFloat(data.askUnits, askAsset.meta?.decimals ?? 9)}
+          {Formatter.units(data.askUnits, askAsset.meta?.decimals ?? 9)}
           &nbsp;
           {askAsset.meta?.symbol}
         </span>
@@ -88,7 +89,7 @@ const SwapSimulationData = ({ data }: { data: SwapSimulation }) => {
       <li className="grid grid-cols-[max-content__1fr] gap-2">
         <b>Ask amount (min):</b>
         <span className="overflow-hidden text-ellipsis text-right">
-          {bigNumberToFloat(data.minAskUnits, askAsset.meta?.decimals ?? 9)}
+          {Formatter.units(data.minAskUnits, askAsset.meta?.decimals ?? 9)}
           &nbsp;
           {askAsset.meta?.symbol}
         </span>
@@ -102,7 +103,7 @@ const SwapSimulationData = ({ data }: { data: SwapSimulation }) => {
       <li className="grid grid-cols-[max-content__1fr] gap-2">
         <b>Slippage tolerance (max):</b>
         <span className="overflow-hidden text-ellipsis text-right">
-          {(Number(data.slippageTolerance) * 100 * 100).toFixed(2)}%
+          {(Number(data.slippageTolerance) * 100).toFixed(2)}%
         </span>
       </li>
     </ul>

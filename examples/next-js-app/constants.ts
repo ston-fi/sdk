@@ -6,4 +6,5 @@ export const TonAddressRegex =
 export const ROUTES = {
   swap: "/swap",
   vault: "/vault",
+  liquidityProvide: "/liquidity/provide",
 } as const;

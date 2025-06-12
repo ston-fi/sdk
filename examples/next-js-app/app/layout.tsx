@@ -15,6 +15,7 @@ const inter = Inter({ subsets: ["latin"] });
 
 const navBarLinks = [
   { href: ROUTES.swap, label: "Swap" },
+  { href: ROUTES.liquidityProvide, label: "Liquidity provide" },
   { href: ROUTES.vault, label: "Vault" },
 ];
 

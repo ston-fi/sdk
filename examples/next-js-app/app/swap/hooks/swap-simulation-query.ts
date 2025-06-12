@@ -57,7 +57,7 @@ export function useSwapSimulation(
                 referralAddress && referralValue
                   ? referralValue.toString()
                   : undefined,
-              slippageTolerance: (slippageTolerance / 100).toString(),
+              slippageTolerance: slippageTolerance.toString(),
               dexV2: true,
             } as const;
 

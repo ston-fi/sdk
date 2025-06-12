@@ -9,13 +9,12 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog";
-
 import {
   SLIPPAGE_TOLERANCE_OPTIONS,
-  useSwapSettings,
-} from "../providers/swap-settings";
+  useLiquidityProvideSettings,
+} from "../providers/liquidity-provide-settings";
 
-export function SwapSettings({
+export function LiquidityProvideSettings({
   trigger = (
     <Button variant="outline" className="w-fit">
       Settings
@@ -24,14 +23,15 @@ export function SwapSettings({
 }: {
   trigger?: React.ReactNode;
 }) {
-  const { slippageTolerance, setSlippageTolerance } = useSwapSettings();
+  const { slippageTolerance, setSlippageTolerance } =
+    useLiquidityProvideSettings();
 
   return (
     <Dialog>
       <DialogTrigger asChild>{trigger}</DialogTrigger>
       <DialogContent>
         <DialogHeader>
-          <DialogTitle>Swap Settings</DialogTitle>
+          <DialogTitle>Liquidity Settings</DialogTitle>
         </DialogHeader>
         <SlippageToleranceSection
           slippageTolerance={slippageTolerance}

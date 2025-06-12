@@ -20,7 +20,8 @@ import {
 } from "@/components/ui/popover";
 import { Skeleton } from "@/components/ui/skeleton";
 import type { AssetInfo } from "@/hooks/use-assets-query";
-import { bigNumberToFloat, cn } from "@/lib/utils";
+import { Formatter } from "@/lib/formatter";
+import { cn } from "@/lib/utils";
 
 type AssetSelectProps = {
   assets?: AssetInfo[];
@@ -114,7 +115,7 @@ export function AssetSelect({
 
                   {asset.balance ? (
                     <pre className="ml-auto">
-                      {bigNumberToFloat(
+                      {Formatter.units(
                         asset.balance,
                         asset.meta?.decimals ?? 9,
                       )}
