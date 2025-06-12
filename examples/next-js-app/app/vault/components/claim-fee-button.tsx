@@ -31,7 +31,7 @@ export const ClaimWithdrawalFeeButton: React.FC<
       ]);
 
       await tonConnectUI.sendTransaction({
-        validUntil: Date.now() + 1000000,
+        validUntil: Math.floor(Date.now() / 1000) + 5 * 60, // 5 minutes
         messages: withdrawalFeeTxParams,
       });
     } finally {
