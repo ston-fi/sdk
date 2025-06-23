@@ -50,6 +50,8 @@ const getSwapTxParams = async (
       ...sharedTxParams,
       offerJettonAddress: simulation.offerAddress,
       askJettonAddress: simulation.askAddress,
+      gasAmount: simulation.gasParams.gasBudget,
+      forwardGasAmount: simulation.gasParams.forwardGas,
     });
   }
 
@@ -60,6 +62,7 @@ const getSwapTxParams = async (
       ...sharedTxParams,
       proxyTon,
       askJettonAddress: simulation.askAddress,
+      forwardGasAmount: simulation.gasParams.forwardGas,
     });
   }
 
@@ -67,6 +70,8 @@ const getSwapTxParams = async (
     ...sharedTxParams,
     proxyTon,
     offerJettonAddress: simulation.offerAddress,
+    gasAmount: simulation.gasParams.gasBudget,
+    forwardGasAmount: simulation.gasParams.forwardGas,
   });
 };
 

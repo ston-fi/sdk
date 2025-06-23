@@ -45,8 +45,8 @@ importers:
         specifier: 1.2.13
         version: 1.2.13(@types/react-dom@19.1.5(@types/react@19.1.4))(@types/react@19.1.4)(react-dom@19.1.0(react@19.1.0))(react@19.1.0)
       '@ston-fi/api':
-        specifier: 0.23.0
-        version: 0.23.0
+        specifier: 0.24.0
+        version: 0.24.0
       '@ston-fi/sdk':
         specifier: workspace:*
         version: link:../../packages/sdk
@@ -134,7 +134,7 @@ importers:
     dependencies:
       '@ston-fi/api':
         specifier: ^0
-        version: 0.23.0
+        version: 0.24.0
       '@ton/ton':
         specifier: ^13.9.0 || ^14.0.0 || ^15.0.0
         version: 15.2.1(@ton/core@0.60.1(@ton/crypto@3.3.0))(@ton/crypto@3.3.0)
@@ -158,11 +158,49 @@ importers:
         specifier: 3.1.1
         version: 3.1.1(@types/node@22.15.19)(jiti@2.4.2)(lightningcss@1.30.1)
 
+  packages/stake-sdk:
+    dependencies:
+      '@ton/ton':
+        specifier: ^13.9.0 || ^14.0.0 || ^15.0.0
+        version: 15.2.1(@ton/core@0.60.1(@ton/crypto@3.3.0))(@ton/crypto@3.3.0)
+    devDependencies:
+      '@ston-fi/typescript-config':
+        specifier: workspace:*
+        version: link:../typescript-config
+      esbuild-analyzer:
+        specifier: ^0.2.0
+        version: 0.2.0
+      tsup:
+        specifier: 8.3.5
+        version: 8.3.5(jiti@2.4.2)(postcss@8.5.3)(typescript@5.8.3)
+      vitest:
+        specifier: 3.1.1
+        version: 3.1.1(@types/node@22.15.19)(jiti@2.4.2)(lightningcss@1.30.1)
+
   packages/typescript-config:
     devDependencies:
       '@total-typescript/tsconfig':
         specifier: ^1.0.4
         version: 1.0.4
+
+  packages/wton-sdk:
+    dependencies:
+      '@ton/ton':
+        specifier: ^13.9.0 || ^14.0.0 || ^15.0.0
+        version: 15.2.1(@ton/core@0.60.1(@ton/crypto@3.3.0))(@ton/crypto@3.3.0)
+    devDependencies:
+      '@ston-fi/typescript-config':
+        specifier: workspace:*
+        version: link:../typescript-config
+      esbuild-analyzer:
+        specifier: ^0.2.0
+        version: 0.2.0
+      tsup:
+        specifier: 8.3.5
+        version: 8.3.5(jiti@2.4.2)(postcss@8.5.3)(typescript@5.8.3)
+      vitest:
+        specifier: 3.1.1
+        version: 3.1.1(@types/node@22.15.19)(jiti@2.4.2)(lightningcss@1.30.1)
 
 packages:
 
@@ -1307,8 +1345,8 @@ packages:
     resolution: {integrity: sha512-t09vSN3MdfsyCHoFcTRCH/iUtG7OJ0CsjzB8cjAmKc/va/kIgeDI/TxsigdncE/4be734m0cvIYwNaV4i2XqAw==}
     engines: {node: '>=10'}
 
-  '@ston-fi/api@0.23.0':
-    resolution: {integrity: sha512-MIRQUvyUpULURteWml8kKzUxfzt8fqThoF7pMr9OUdgEBG3PTU4oxdzWReAAXB83daTXhMz7YR83Qdf0eWq9DQ==}
+  '@ston-fi/api@0.24.0':
+    resolution: {integrity: sha512-mYmUzjABRfRW3Qknbvv98t13hqBzlHcREkVCHngZOZ5kzwOn7eCfxxcGIIn6XsZoMIj2dY8EDWhWCr/q/at5Cw==}
 
   '@swc/counter@0.1.3':
     resolution: {integrity: sha512-e2BR4lsJkkRlKZ/qCHPw9ZaSxc0MVUd7gtbtaB7aMvHeJVYe8sOB8DBZkP2DtISHGSku9sCK6T6cnY0CtXrOCQ==}
@@ -4533,7 +4571,7 @@ snapshots:
 
   '@sindresorhus/is@4.6.0': {}
 
-  '@ston-fi/api@0.23.0':
+  '@ston-fi/api@0.24.0':
     dependencies:
       camelcase-keys: 9.1.3
       decamelize-keys: 2.0.1

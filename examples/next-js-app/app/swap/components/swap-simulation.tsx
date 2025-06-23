@@ -106,6 +106,16 @@ const SwapSimulationData = ({ data }: { data: SwapSimulation }) => {
           {(Number(data.slippageTolerance) * 100).toFixed(2)}%
         </span>
       </li>
+      <li className="grid grid-cols-[max-content__1fr] gap-2">
+        <b>Est. gas:</b>
+        <span className="overflow-hidden text-ellipsis text-right">
+          {Formatter.units(
+            data.gasParams.estimatedGasConsumption,
+            9, // TON decimals
+          )}{" "}
+          TON
+        </span>
+      </li>
     </ul>
   );
 };
