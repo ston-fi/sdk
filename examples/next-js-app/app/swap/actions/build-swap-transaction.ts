@@ -21,6 +21,7 @@ const getSwapTxParams = async (
     queryId?: QueryIdType;
     referralAddress?: AddressType;
     referralValue?: AmountType;
+    useRecommendedSlippage: boolean;
   },
 ) => {
   const routerMetadata = await getRouter(simulation.routerAddress);
@@ -39,7 +40,9 @@ const getSwapTxParams = async (
     ...params,
     userWalletAddress: walletAddress,
     offerAmount: simulation.offerUnits,
-    minAskAmount: simulation.minAskUnits,
+    minAskAmount: params?.useRecommendedSlippage
+      ? simulation.recommendedMinAskUnits
+      : simulation.minAskUnits,
   };
 
   if (
@@ -82,6 +85,7 @@ export const buildSwapTransaction = async (
     queryId?: QueryIdType;
     referralAddress?: AddressType;
     referralValue?: AmountType;
+    useRecommendedSlippage: boolean;
   },
 ) => {
   const txParams = await getSwapTxParams(simulation, walletAddress, params);

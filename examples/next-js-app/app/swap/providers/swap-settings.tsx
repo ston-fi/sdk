@@ -5,12 +5,16 @@ import { createContext, useContext, useState } from "react";
 type SwapSettings = {
   slippageTolerance: number;
   setSlippageTolerance: (value: SwapSettings["slippageTolerance"]) => void;
+  autoSlippageTolerance: boolean;
+  setAutoSlippageTolerance: (
+    value: SwapSettings["autoSlippageTolerance"],
+  ) => void;
 };
 
 export const SLIPPAGE_TOLERANCE_OPTIONS = [0.005, 0.01, 0.05] as const;
 
-const DEFAULT_SLIPPAGE_TOLERANCE: SwapSettings["slippageTolerance"] =
-  SLIPPAGE_TOLERANCE_OPTIONS[1];
+export const DEFAULT_SLIPPAGE_TOLERANCE: SwapSettings["slippageTolerance"] = 0.05;
+const DEFAULT_AUTO_SLIPPAGE_TOLERANCE: SwapSettings["autoSlippageTolerance"] = false;
 
 const SwapSettingsContext = createContext<SwapSettings>({} as SwapSettings);
 
@@ -23,11 +27,17 @@ export const SwapSettingsProvider = ({
     DEFAULT_SLIPPAGE_TOLERANCE,
   );
 
+  const [autoSlippageTolerance, setAutoSlippageTolerance] = useState(
+    DEFAULT_AUTO_SLIPPAGE_TOLERANCE,
+  );
+
   return (
     <SwapSettingsContext.Provider
       value={{
         slippageTolerance,
         setSlippageTolerance,
+        autoSlippageTolerance,
+        setAutoSlippageTolerance,
       }}
     >
       {children}

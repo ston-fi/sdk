@@ -1,6 +1,5 @@
 "use client";
 
-import { SlippageToleranceSection } from "@/components/slippage-tolerance-section";
 import { Button } from "@/components/ui/button";
 import {
   Dialog,
@@ -10,10 +9,8 @@ import {
   DialogTrigger,
 } from "@/components/ui/dialog";
 
-import {
-  SLIPPAGE_TOLERANCE_OPTIONS,
-  useSwapSettings,
-} from "../providers/swap-settings";
+import { AutoSlippageSection } from "./auto-slippage-section";
+import { SlippageToleranceSection } from "./slippage-tolerance-section";
 
 export function SwapSettings({
   trigger = (
@@ -24,8 +21,6 @@ export function SwapSettings({
 }: {
   trigger?: React.ReactNode;
 }) {
-  const { slippageTolerance, setSlippageTolerance } = useSwapSettings();
-
   return (
     <Dialog>
       <DialogTrigger asChild>{trigger}</DialogTrigger>
@@ -33,11 +28,8 @@ export function SwapSettings({
         <DialogHeader>
           <DialogTitle>Swap Settings</DialogTitle>
         </DialogHeader>
-        <SlippageToleranceSection
-          slippageTolerance={slippageTolerance}
-          onSlippageChange={setSlippageTolerance}
-          slippageTolerancePresetItems={SLIPPAGE_TOLERANCE_OPTIONS}
-        />
+        <SlippageToleranceSection />
+        <AutoSlippageSection />
       </DialogContent>
     </Dialog>
   );

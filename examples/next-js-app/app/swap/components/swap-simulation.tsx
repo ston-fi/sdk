@@ -12,6 +12,7 @@ import {
   useSwapSimulation,
 } from "../hooks/swap-simulation-query";
 import { useSwapForm } from "../providers/swap-form";
+import { useSwapSettings } from "../providers/swap-settings";
 
 export const SwapSimulationPreview = (props: { className?: string }) => {
   const { data, error, isFetching, isFetched } = useSwapSimulation();
@@ -43,7 +44,9 @@ const SwapSimulationError = ({ error }: { error: Error }) => {
 };
 
 const SwapSimulationData = ({ data }: { data: SwapSimulation }) => {
+  const { autoSlippageTolerance } = useSwapSettings();
   const { askAsset, offerAsset } = useSwapForm();
+
   const [swapRateDirection, setSwapRateDirection] = useState<
     "forward" | "reverse"
   >("forward");
@@ -103,7 +106,14 @@ const SwapSimulationData = ({ data }: { data: SwapSimulation }) => {
       <li className="grid grid-cols-[max-content__1fr] gap-2">
         <b>Slippage tolerance (max):</b>
         <span className="overflow-hidden text-ellipsis text-right">
-          {(Number(data.slippageTolerance) * 100).toFixed(2)}%
+          {(
+            Number(
+              autoSlippageTolerance
+                ? data.slippageTolerance
+                : data.recommendedSlippageTolerance,
+            ) * 100
+          ).toFixed(2)}
+          %
         </span>
       </li>
       <li className="grid grid-cols-[max-content__1fr] gap-2">

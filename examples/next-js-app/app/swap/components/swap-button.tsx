@@ -11,6 +11,7 @@ import { useSwapSimulation } from "../hooks/swap-simulation-query";
 import { useSwapStatusNotifications } from "../hooks/swap-status-notifications";
 import { useSwapStatusQuery } from "../hooks/swap-status-query";
 import { useSwapForm } from "../providers/swap-form";
+import { useSwapSettings } from "../providers/swap-settings";
 import { useSetSwapTransactionDetails } from "../providers/swap-transaction";
 
 export function SwapButton() {
@@ -24,6 +25,7 @@ export function SwapButton() {
     referralValue,
     referralAddress,
   } = useSwapForm();
+  const { autoSlippageTolerance } = useSwapSettings();
   const swapSimulationQuery = useSwapSimulation();
   const setSwapTransaction = useSetSwapTransactionDetails();
   const swapStatusQuery = useSwapStatusQuery();
@@ -47,6 +49,7 @@ export function SwapButton() {
           queryId,
           referralAddress,
           referralValue,
+          useRecommendedSlippage: autoSlippageTolerance,
         },
       );
 

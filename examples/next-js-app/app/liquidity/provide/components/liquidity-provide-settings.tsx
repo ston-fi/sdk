@@ -1,6 +1,5 @@
 "use client";
 
-import { SlippageToleranceSection } from "@/components/slippage-tolerance-section";
 import { Button } from "@/components/ui/button";
 import {
   Dialog,
@@ -9,10 +8,8 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog";
-import {
-  SLIPPAGE_TOLERANCE_OPTIONS,
-  useLiquidityProvideSettings,
-} from "../providers/liquidity-provide-settings";
+
+import { SlippageToleranceSection } from "./slippage-tolerance-section";
 
 export function LiquidityProvideSettings({
   trigger = (
@@ -23,9 +20,6 @@ export function LiquidityProvideSettings({
 }: {
   trigger?: React.ReactNode;
 }) {
-  const { slippageTolerance, setSlippageTolerance } =
-    useLiquidityProvideSettings();
-
   return (
     <Dialog>
       <DialogTrigger asChild>{trigger}</DialogTrigger>
@@ -33,11 +27,7 @@ export function LiquidityProvideSettings({
         <DialogHeader>
           <DialogTitle>Liquidity Settings</DialogTitle>
         </DialogHeader>
-        <SlippageToleranceSection
-          slippageTolerance={slippageTolerance}
-          onSlippageChange={setSlippageTolerance}
-          slippageTolerancePresetItems={SLIPPAGE_TOLERANCE_OPTIONS}
-        />
+        <SlippageToleranceSection />
       </DialogContent>
     </Dialog>
   );
