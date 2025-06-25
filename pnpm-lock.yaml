@@ -158,49 +158,11 @@ importers:
         specifier: 3.1.1
         version: 3.1.1(@types/node@22.15.19)(jiti@2.4.2)(lightningcss@1.30.1)
 
-  packages/stake-sdk:
-    dependencies:
-      '@ton/ton':
-        specifier: ^13.9.0 || ^14.0.0 || ^15.0.0
-        version: 15.2.1(@ton/core@0.60.1(@ton/crypto@3.3.0))(@ton/crypto@3.3.0)
-    devDependencies:
-      '@ston-fi/typescript-config':
-        specifier: workspace:*
-        version: link:../typescript-config
-      esbuild-analyzer:
-        specifier: ^0.2.0
-        version: 0.2.0
-      tsup:
-        specifier: 8.3.5
-        version: 8.3.5(jiti@2.4.2)(postcss@8.5.3)(typescript@5.8.3)
-      vitest:
-        specifier: 3.1.1
-        version: 3.1.1(@types/node@22.15.19)(jiti@2.4.2)(lightningcss@1.30.1)
-
   packages/typescript-config:
     devDependencies:
       '@total-typescript/tsconfig':
         specifier: ^1.0.4
         version: 1.0.4
-
-  packages/wton-sdk:
-    dependencies:
-      '@ton/ton':
-        specifier: ^13.9.0 || ^14.0.0 || ^15.0.0
-        version: 15.2.1(@ton/core@0.60.1(@ton/crypto@3.3.0))(@ton/crypto@3.3.0)
-    devDependencies:
-      '@ston-fi/typescript-config':
-        specifier: workspace:*
-        version: link:../typescript-config
-      esbuild-analyzer:
-        specifier: ^0.2.0
-        version: 0.2.0
-      tsup:
-        specifier: 8.3.5
-        version: 8.3.5(jiti@2.4.2)(postcss@8.5.3)(typescript@5.8.3)
-      vitest:
-        specifier: 3.1.1
-        version: 3.1.1(@types/node@22.15.19)(jiti@2.4.2)(lightningcss@1.30.1)
 
 packages:
 
