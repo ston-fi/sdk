@@ -1,5 +1,6 @@
 "use client";
 
+import { fromUnits } from "@ston-fi/sdk";
 import { ExternalLink } from "lucide-react";
 import type { ChangeEvent } from "react";
 
@@ -8,7 +9,7 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { type AssetInfo, useAssetsQuery } from "@/hooks/use-assets-query";
 import { Formatter } from "@/lib/formatter";
-import { bigNumberToFloat, cn, validateFloatValue } from "@/lib/utils";
+import { cn, validateFloatValue } from "@/lib/utils";
 
 import { useLiquiditySimulationQuery } from "../hooks/liquidity-simulation-query";
 import {
@@ -25,7 +26,7 @@ function assetUsdValue(asset: AssetInfo) {
 
   if (!balance || !priceUsd) return 0;
 
-  return Number(bigNumberToFloat(balance, decimals)) * Number(priceUsd);
+  return Number(fromUnits(BigInt(balance), decimals)) * Number(priceUsd);
 }
 
 function sortAssets(a: AssetInfo, b: AssetInfo): number {

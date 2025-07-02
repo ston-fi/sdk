@@ -1,9 +1,9 @@
 "use client";
 
+import { toUnits } from "@ston-fi/sdk";
 import { skipToken, useQuery } from "@tanstack/react-query";
 
 import { useStonApi } from "@/hooks/use-ston-api";
-import { floatToBigNumber } from "@/lib/utils";
 import {
   LiquidityProvisionType,
   useLiquidityProvideForm,
@@ -43,11 +43,11 @@ export const useLiquiditySimulationQuery = () => {
               return stonApi.simulateLiquidityProvision({
                 ...shared,
                 provisionType,
-                tokenAUnits: floatToBigNumber(
+                tokenAUnits: toUnits(
                   assetAUnits,
                   assetA.meta?.decimals ?? 9,
                 ).toString(),
-                tokenBUnits: floatToBigNumber(
+                tokenBUnits: toUnits(
                   assetBUnits,
                   assetB.meta?.decimals ?? 9,
                 ).toString(),
@@ -58,7 +58,7 @@ export const useLiquiditySimulationQuery = () => {
               return stonApi.simulateLiquidityProvision({
                 ...shared,
                 provisionType,
-                tokenAUnits: floatToBigNumber(
+                tokenAUnits: toUnits(
                   assetAUnits,
                   assetA.meta?.decimals ?? 9,
                 ).toString(),
@@ -69,7 +69,7 @@ export const useLiquiditySimulationQuery = () => {
               return stonApi.simulateLiquidityProvision({
                 ...shared,
                 provisionType,
-                tokenBUnits: floatToBigNumber(
+                tokenBUnits: toUnits(
                   assetBUnits,
                   assetB.meta?.decimals ?? 9,
                 ).toString(),

@@ -1,5 +1,40 @@
 # Changelog
 
+## 02-07-2025
+
+### @ston-fi/sdk@2.5.0
+
+#### Added
+
+- new `fromUnits`, `toUnits` utils
+
+The @ton/core utils do not allow specifying decimals and expect all jettons to have exactly 9 decimals. [(source code)](https://github.com/ton-org/ton-core/blob/main/src/utils/convert.ts)
+
+```ts
+import { toNano } from "@ton/ton";
+
+const tonUnits = toNano("1");
+// ^ 1000000000n
+// Correct for jettons with default decimals
+
+const usdtUnits = toNano("1");
+// ^ 1000000000n
+// Invalid for jettons with custom decimals
+// USDT (EQCxE6mUtQJKFnGfaROTKOt1lZbDiiX1kCixRv7Nw2Id_sDs) has 6 decimals
+```
+
+Our version of the same utils has a different name to avoid conflict with your local usage of @tpn/core utils and allows you to specify custom decimals.
+
+```ts
+import { toUnits } from "@ston-fi/sdk";
+
+const tonUnits = toUnits("1"); // the default decimals value is 9
+// ^ 1000000000n
+
+const usdtUnits = toUnits("1", 6);
+// ^ 1000000n
+```
+
 ## [2.4.1]
 
 ### Fixed

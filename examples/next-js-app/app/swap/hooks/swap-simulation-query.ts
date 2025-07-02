@@ -1,4 +1,5 @@
 import type { SwapSimulation } from "@ston-fi/api";
+import { toUnits } from "@ston-fi/sdk";
 import {
   type UseQueryOptions,
   skipToken,
@@ -7,7 +8,6 @@ import {
 import { useTonAddress } from "@tonconnect/ui-react";
 
 import { useStonApi } from "@/hooks/use-ston-api";
-import { floatToBigNumber } from "@/lib/utils";
 
 import { useSwapForm } from "../providers/swap-form";
 import { useSwapSettings } from "../providers/swap-settings";
@@ -65,7 +65,7 @@ export function useSwapSimulation(
               return stonApi.simulateSwap({
                 ...shared,
                 offerAddress: offerAsset.contractAddress,
-                offerUnits: floatToBigNumber(
+                offerUnits: toUnits(
                   offerAmount,
                   offerAsset.meta?.decimals ?? 9,
                 ).toString(),
@@ -78,7 +78,7 @@ export function useSwapSimulation(
                 ...shared,
                 offerAddress: offerAsset.contractAddress,
                 askAddress: askAsset.contractAddress,
-                askUnits: floatToBigNumber(
+                askUnits: toUnits(
                   askAmount,
                   askAsset.meta?.decimals ?? 9,
                 ).toString(),

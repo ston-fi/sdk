@@ -1,8 +1,8 @@
-import { bigNumberToFloat } from "./utils";
+import { fromUnits } from "@ston-fi/sdk";
 
 export const Formatter = {
   units: (value: bigint | string, decimals: number) => {
-    return bigNumberToFloat(value, decimals);
+    return fromUnits(BigInt(value), decimals);
   },
   fiatAmount: (value: number, options: { currency?: string } = {}) => {
     const currency = options.currency ?? "USD";

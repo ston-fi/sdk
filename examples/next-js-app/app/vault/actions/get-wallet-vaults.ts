@@ -1,7 +1,7 @@
 "use server";
 
 import { stonApiClient } from "@/lib/ston-api-client";
-import { bigNumberToFloat } from "@/lib/utils";
+import { fromUnits } from "@ston-fi/sdk";
 
 export async function getWalletVaults(params: { userWalletAddress: string }) {
   const vaultsData = await stonApiClient.getWalletVaultsFee({
@@ -64,13 +64,13 @@ export async function getWalletVaults(params: { userWalletAddress: string }) {
       if (aUsdPrice && bUsdPrice) {
         const aAmount = a.asset
           ? Number(
-              bigNumberToFloat(a.depositedAmount, a.asset.meta?.decimals ?? 9),
+              fromUnits(BigInt(a.depositedAmount), a.asset.meta?.decimals ?? 9),
             )
           : 0;
 
         const bAmount = b.asset
           ? Number(
-              bigNumberToFloat(b.depositedAmount, b.asset.meta?.decimals ?? 9),
+              fromUnits(BigInt(b.depositedAmount), b.asset.meta?.decimals ?? 9),
             )
           : 0;
 
