@@ -1,0 +1,3 @@
+{
+  "extends": "@ston-fi/typescript-config/tsconfig.json"
+}

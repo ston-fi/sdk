@@ -2,6 +2,12 @@
 
 ## 02-07-2025
 
+### @ston-fi/stake-sdk@1.2.0
+
+Introducing a new SDK to the monorepo family. `@ston-fi/stake-sdk` will let you perform operations on Ston.fi Stake contracts
+
+More information about the new SDK you can find in its [README](https://github.com/ston-fi/sdk/tree/main/packages/stake-sdk/README.md)
+
 ### @ston-fi/sdk@2.5.0
 
 #### Added

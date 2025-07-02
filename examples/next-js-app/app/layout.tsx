@@ -17,6 +17,7 @@ const navBarLinks = [
   { href: ROUTES.swap, label: "Swap" },
   { href: ROUTES.liquidityProvide, label: "Liquidity provide" },
   { href: ROUTES.vault, label: "Vault" },
+  { href: ROUTES.stake, label: "Stake" },
 ];
 
 export const metadata: Metadata = {

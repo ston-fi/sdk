@@ -1,0 +1,42 @@
+{
+  "name": "@ston-fi/stake-sdk",
+  "version": "1.2.0",
+  "description": "Typescript SDK to interact with the Ston.fi stake contracts",
+  "license": "MIT",
+  "homepage": "https://github.com/ston-fi/sdk#readme",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/ston-fi/sdk.git",
+    "directory": "packages/stake-sdk"
+  },
+  "type": "module",
+  "packageManager": "pnpm@9.0.0",
+  "files": ["dist", "package.json", "README.md"],
+  "main": "./dist/index.js",
+  "module": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "sideEffects": false,
+  "exports": {
+    "./package.json": "./package.json",
+    ".": "./dist/index.js"
+  },
+  "scripts": {
+    "format": "pnpm run /^format:.*/",
+    "format:biome": "biome format --write",
+    "lint": "pnpm run /^lint:.*/",
+    "lint:tsc": "tsc --noEmit --pretty",
+    "lint:biome": "biome check",
+    "test": "vitest",
+    "build": "tsup",
+    "prepublishOnly": "pnpm run format && pnpm run lint && pnpm run test --run && pnpm run build"
+  },
+  "peerDependencies": {
+    "@ton/ton": "^13.9.0 || ^14.0.0 || ^15.0.0"
+  },
+  "devDependencies": {
+    "@ston-fi/typescript-config": "workspace:*",
+    "esbuild-analyzer": "^0.2.0",
+    "tsup": "8.3.5",
+    "vitest": "3.1.1"
+  }
+}

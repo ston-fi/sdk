@@ -50,9 +50,15 @@ importers:
       '@ston-fi/sdk':
         specifier: workspace:*
         version: link:../../packages/sdk
+      '@ston-fi/stake-sdk':
+        specifier: workspace:*
+        version: link:../../packages/stake-sdk
       '@tanstack/react-query':
         specifier: 5.76.1
         version: 5.76.1(react@19.1.0)
+      '@ton-api/client':
+        specifier: 0.4.0
+        version: 0.4.0(@ton/core@0.60.1(@ton/crypto@3.3.0))
       '@ton/core':
         specifier: 0.60.1
         version: 0.60.1(@ton/crypto@3.3.0)
@@ -151,6 +157,25 @@ importers:
       publint:
         specifier: ^0.3.11
         version: 0.3.12
+      tsup:
+        specifier: 8.3.5
+        version: 8.3.5(jiti@2.4.2)(postcss@8.5.3)(typescript@5.8.3)
+      vitest:
+        specifier: 3.1.1
+        version: 3.1.1(@types/node@22.15.19)(jiti@2.4.2)(lightningcss@1.30.1)
+
+  packages/stake-sdk:
+    dependencies:
+      '@ton/ton':
+        specifier: ^13.9.0 || ^14.0.0 || ^15.0.0
+        version: 15.2.1(@ton/core@0.60.1(@ton/crypto@3.3.0))(@ton/crypto@3.3.0)
+    devDependencies:
+      '@ston-fi/typescript-config':
+        specifier: workspace:*
+        version: link:../typescript-config
+      esbuild-analyzer:
+        specifier: ^0.2.0
+        version: 0.2.0
       tsup:
         specifier: 8.3.5
         version: 8.3.5(jiti@2.4.2)(postcss@8.5.3)(typescript@5.8.3)
@@ -1421,6 +1446,11 @@ packages:
     peerDependencies:
       react: ^18 || ^19
 
+  '@ton-api/client@0.4.0':
+    resolution: {integrity: sha512-k3d6RzNWRDEZpVa9Gig2kHqp74tGvaK/imkjb08RIGxn+wKC7Yv5g98GnXEHf3srRkjtRCG0Nnjx8EsasOMJkw==}
+    peerDependencies:
+      '@ton/core': '>=0.59.0'
+
   '@ton/core@0.60.1':
     resolution: {integrity: sha512-8FwybYbfkk57C3l9gvnlRhRBHbLYmeu0LbB1z9N+dhDz0Z+FJW8w0TJlks8CgHrAFxsT3FlR2LsqFnsauMp38w==}
     peerDependencies:
@@ -1912,6 +1942,9 @@ packages:
   consola@3.4.2:
     resolution: {integrity: sha512-5IKcdX0nnYavi6G7TtOhwkYzyjfJlatbjMjuLSfE2kYT5pMDOilZ4OvMhi637CcDICTmz3wARPoyhqyX1Y+XvA==}
     engines: {node: ^14.18.0 || >=16.10.0}
+
+  core-js-pure@3.43.0:
+    resolution: {integrity: sha512-i/AgxU2+A+BbJdMxh3v7/vxi2SbFqxiFmg6VsDwYB4jkucrd1BZNA9a9gphC0fYMG5IBSgQcbQnk865VCLe7xA==}
 
   cross-spawn@7.0.6:
     resolution: {integrity: sha512-uV2QOWP2nWzsy2aMp8aRibhi9dlzF5Hgh5SHaB9OiTGEyDTiJJyx0uy51QXdyWbtAHNua4XJzUKca3OzKUd3vA==}
@@ -4632,6 +4665,11 @@ snapshots:
       '@tanstack/query-core': 5.76.0
       react: 19.1.0
 
+  '@ton-api/client@0.4.0(@ton/core@0.60.1(@ton/crypto@3.3.0))':
+    dependencies:
+      '@ton/core': 0.60.1(@ton/crypto@3.3.0)
+      core-js-pure: 3.43.0
+
   '@ton/core@0.60.1(@ton/crypto@3.3.0)':
     dependencies:
       '@ton/crypto': 3.3.0
@@ -5188,6 +5226,8 @@ snapshots:
   concat-map@0.0.1: {}
 
   consola@3.4.2: {}
+
+  core-js-pure@3.43.0: {}
 
   cross-spawn@7.0.6:
     dependencies:
