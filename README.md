@@ -1,5 +1,10 @@
 <div align="center" style="margin-bottom: 20px">
-  <img alt="Ston.fi logo" src="https://static.ston.fi/logo/full-logo.svg" height="69" />
+  <img
+    alt="Ston.fi logo"
+    height="69px"
+    style="max-width: 100%; height: 69px;"
+    src="https://static.ston.fi/logo/full-logo.svg"
+  />
 </div>
 
 Our SDKs are written in TypeScript and designed to be thin wrappers on top of the [STON.fi](https://ston.fi) contracts, making it easier to integrate STON.fi protocols into JavaScript/TypeScript projects.
