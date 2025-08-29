@@ -1,4 +1,5 @@
 import { TonAddressRegex } from "@/constants";
+import { Address } from "@ton/ton";
 import { type ClassValue, clsx } from "clsx";
 import { twMerge } from "tailwind-merge";
 
@@ -30,3 +31,8 @@ export function percentToBps(percent: number) {
 
 export const isValidAddress = (address: string) =>
   TonAddressRegex.test(address);
+
+export const isSameAddress = (addr1: string, addr2: string) => {
+  const normalize = (addr: string) => Address.parse(addr).toString();
+  return normalize(addr1) === normalize(addr2);
+};

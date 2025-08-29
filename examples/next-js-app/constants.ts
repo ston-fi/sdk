@@ -7,5 +7,6 @@ export const ROUTES = {
   swap: "/swap",
   vault: "/vault",
   liquidityProvide: "/liquidity/provide",
+  liquidityRefund: "/liquidity/refund",
   stake: "/stake",
 } as const;
