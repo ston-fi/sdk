@@ -1,18 +1,22 @@
 import { queryOptions, skipToken, useQuery } from "@tanstack/react-query";
 import { useTonAddress } from "@tonconnect/ui-react";
 
-import { getWalletStakeNft } from "../actions/get-wallet-stake-nft";
+import { getWalletStakeInfo } from "../actions/get-wallet-stake-info";
 
-export const walletStakeNftQueryOptions = (walletAddress: string | undefined) =>
+export const walletStakeInfoQueryOptions = (
+  walletAddress: string | undefined,
+) =>
   queryOptions({
-    queryKey: ["wallet-stake-nft", `wallet:${walletAddress}`],
-    queryFn: walletAddress ? () => getWalletStakeNft(walletAddress) : skipToken,
+    queryKey: ["wallet-stake-info", `wallet:${walletAddress}`],
+    queryFn: walletAddress
+      ? () => getWalletStakeInfo(walletAddress)
+      : skipToken,
     refetchOnWindowFocus: false,
     refetchOnReconnect: false,
   });
 
-export const useWalletStakeNftQuery = () => {
+export const useWalletStakeInfoQuery = () => {
   const walletAddress = useTonAddress();
 
-  return useQuery(walletStakeNftQueryOptions(walletAddress));
+  return useQuery(walletStakeInfoQueryOptions(walletAddress));
 };

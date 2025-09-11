@@ -45,8 +45,8 @@ importers:
         specifier: 1.2.13
         version: 1.2.13(@types/react-dom@19.1.5(@types/react@19.1.4))(@types/react@19.1.4)(react-dom@19.1.0(react@19.1.0))(react@19.1.0)
       '@ston-fi/api':
-        specifier: 0.24.0
-        version: 0.24.0
+        specifier: 0.25.0
+        version: 0.25.0
       '@ston-fi/sdk':
         specifier: workspace:*
         version: link:../../packages/sdk
@@ -140,7 +140,7 @@ importers:
     dependencies:
       '@ston-fi/api':
         specifier: ^0
-        version: 0.24.0
+        version: 0.25.0
       '@ton/ton':
         specifier: ^13.9.0 || ^14.0.0 || ^15.0.0
         version: 15.2.1(@ton/core@0.60.1(@ton/crypto@3.3.0))(@ton/crypto@3.3.0)
@@ -1332,8 +1332,8 @@ packages:
     resolution: {integrity: sha512-t09vSN3MdfsyCHoFcTRCH/iUtG7OJ0CsjzB8cjAmKc/va/kIgeDI/TxsigdncE/4be734m0cvIYwNaV4i2XqAw==}
     engines: {node: '>=10'}
 
-  '@ston-fi/api@0.24.0':
-    resolution: {integrity: sha512-mYmUzjABRfRW3Qknbvv98t13hqBzlHcREkVCHngZOZ5kzwOn7eCfxxcGIIn6XsZoMIj2dY8EDWhWCr/q/at5Cw==}
+  '@ston-fi/api@0.25.0':
+    resolution: {integrity: sha512-oj5FHmMB5FiI47lNKmlbAFM+aexG66sKEOIu7bgwhFl5JgQKKrFvejGACjRkm3Eg1VhIoAvO8Be9bakwS1Ifjg==}
 
   '@swc/counter@0.1.3':
     resolution: {integrity: sha512-e2BR4lsJkkRlKZ/qCHPw9ZaSxc0MVUd7gtbtaB7aMvHeJVYe8sOB8DBZkP2DtISHGSku9sCK6T6cnY0CtXrOCQ==}
@@ -4566,7 +4566,7 @@ snapshots:
 
   '@sindresorhus/is@4.6.0': {}
 
-  '@ston-fi/api@0.24.0':
+  '@ston-fi/api@0.25.0':
     dependencies:
       camelcase-keys: 9.1.3
       decamelize-keys: 2.0.1

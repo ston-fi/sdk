@@ -1,8 +1,8 @@
 export {
   DAY_IN_SECONDS,
   MONTH_IN_SECONDS,
-  StakeNftItemStatus,
 } from "@ston-fi/stake-sdk";
+export { StakeNftStatus } from "@ston-fi/api";
 
 export const STAKE_MINTER_ADDRESS =
   process.env.NEXT_PUBLIC_STAKE_MINTER_ADDRESS ??

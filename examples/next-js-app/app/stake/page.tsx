@@ -4,12 +4,12 @@ import { WalletGuard } from "@/components/wallet-guard";
 
 import { NftList } from "./components/nft-list";
 import { StakeForm } from "./components/stake-form";
-import { StakeNftItemStatus } from "./constants";
+import { StakeNftStatus } from "./constants";
 import { StakeFormProvider } from "./providers/stake-form";
 
 export default function StakePage() {
   return (
-    <section className="mx-auto max-w-[900px] w-full pt-4 md:pt-12 flex flex-col gap-4">
+    <>
       <div className="max-w-[500px] w-full mx-auto space-y-4">
         <h1 className="text-xl leading-8 font-medium mr-auto">
           Stake your STON
@@ -31,10 +31,11 @@ export default function StakePage() {
           <NftList
             nftSelector={(nfts) =>
               nfts
-                .filter((nft) => nft.status === StakeNftItemStatus.ACTIVE)
+                .filter((nft) => nft.status === StakeNftStatus.Active)
                 .sort(
                   (a, b) =>
-                    a.min_unstake_date.getTime() - b.min_unstake_date.getTime(),
+                    a.minUnstakingTimestamp.getTime() -
+                    b.minUnstakingTimestamp.getTime(),
                 )
             }
           />
@@ -45,12 +46,16 @@ export default function StakePage() {
           <NftList
             nftSelector={(nfts) =>
               nfts
-                .filter((nft) => nft.status === StakeNftItemStatus.UNSTAKED)
-                .sort((a, b) => a.lock_date.getTime() - b.lock_date.getTime())
+                .filter((nft) => nft.status === StakeNftStatus.Unstaked)
+                .sort(
+                  (a, b) =>
+                    (a.unstakeTimestamp?.getTime() ?? 0) -
+                    (b.unstakeTimestamp?.getTime() ?? 0),
+                )
             }
           />
         </div>
       </WalletGuard>
-    </section>
+    </>
   );
 }

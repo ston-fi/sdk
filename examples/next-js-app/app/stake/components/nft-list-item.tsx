@@ -19,14 +19,14 @@ import { cn } from "@/lib/utils";
 
 import { buildDestroyNftMessage } from "../actions/build-destroy-nft-message";
 import { buildUnstakeNftMessage } from "../actions/build-unstake-nft-message";
-import type { StakeNftData } from "../actions/get-wallet-stake-nft";
-import { StakeNftItemStatus } from "../constants";
+import type { StakeNft } from "../actions/get-wallet-stake-info";
+import { StakeNftStatus } from "../constants";
 
 export function NftListItem({
   nft,
   ...props
 }: React.ComponentProps<typeof Card> & {
-  nft: StakeNftData;
+  nft: StakeNft;
 }) {
   const [tonConnectUI] = useTonConnectUI();
   const blockchainExplorer = useBlockchainExplorer();
@@ -36,7 +36,7 @@ export function NftListItem({
       <CardHeader>
         <div className="inline-flex items-center gap-4">
           <img
-            src={nft.image_url}
+            src={nft.imageUrl}
             alt={`NFT ${nft.address} preview`}
             className="size-[60px] rounded-xl"
           />
@@ -54,7 +54,7 @@ export function NftListItem({
               </h4>
             </a>
             <p className="truncate">
-              <small>{nft.lock_date.toLocaleString()}</small>
+              <small>{nft.minUnstakingTimestamp.toLocaleString()}</small>
             </p>
           </div>
         </div>
@@ -64,18 +64,16 @@ export function NftListItem({
         <div className="w-full text-sm">
           <div className="flex items-center justify-between">
             <p className="font-medium whitespace-nowrap truncate">
-              {nft.status === StakeNftItemStatus.ACTIVE
-                ? "Staked:"
-                : "Ex. staked:"}
+              {nft.status === StakeNftStatus.Active ? "Staked:" : "Ex. staked:"}
             </p>
             <p className="text-end">
-              {Formatter.units(nft.staked_tokens, 9)} STON
+              {Formatter.units(nft.stakedTokens, 9)} STON
             </p>
           </div>
           <div className="flex items-center justify-between">
             <p className="font-medium whitespace-nowrap truncate">Earned:</p>
             <p className="text-end">
-              {Formatter.units(nft.minted_gemston, 9)} GEMSTON
+              {Formatter.units(nft.mintedGemston, 9)} GEMSTON
             </p>
           </div>
         </div>
@@ -84,7 +82,7 @@ export function NftListItem({
       <CardFooter>
         {(() => {
           switch (nft.status) {
-            case StakeNftItemStatus.UNSTAKED: {
+            case StakeNftStatus.Unstaked: {
               return (
                 <Button
                   className="w-full"
@@ -102,14 +100,14 @@ export function NftListItem({
                 </Button>
               );
             }
-            case StakeNftItemStatus.ACTIVE: {
+            case StakeNftStatus.Active: {
               const buttonProps = {
                 className: "w-full",
                 variant: "outline",
                 children: "Unstake NFT",
               } as const;
 
-              if (nft.min_unstake_date > new Date()) {
+              if (nft.minUnstakingTimestamp > new Date()) {
                 return (
                   <Popover>
                     <PopoverTrigger asChild>
@@ -124,7 +122,7 @@ export function NftListItem({
                     <PopoverContent>
                       <p>
                         Unstake available after{" "}
-                        {nft.min_unstake_date.toLocaleString()}
+                        {nft.minUnstakingTimestamp.toLocaleString()}
                       </p>
                     </PopoverContent>
                   </Popover>
