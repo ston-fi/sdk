@@ -1,9 +1,9 @@
 <div align="center" style="margin-bottom: 20px">
   <img
     alt="Ston.fi logo"
-    height="69px"
-    style="max-width: 100%; height: 69px;"
-    src="https://static.ston.fi/logo/full-logo.svg"
+    height="100px"
+    style="max-width: 100%; height: 100px;"
+    src="https://static.ston.fi/branbook/ston/logo/black.svg"
   />
 </div>
 

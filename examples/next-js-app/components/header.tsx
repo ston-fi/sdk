@@ -17,8 +17,13 @@ export function Header() {
           target="_blank noopener noreferrer"
           className="hover:opacity-80 transition-opacity relative mr-auto"
         >
-          <img src="https://static.ston.fi/logo/full-logo.svg" alt="logo" />
-          <Badge className="absolute rotate-[-13deg] -right-8 -bottom-3 scale-[0.8]">
+          <Image
+            src="https://static.ston.fi/branbook/ston/logo/black.svg"
+            width={120}
+            height={40}
+            alt="logo"
+          />
+          <Badge className="absolute rotate-[-13deg] -right-7 -bottom-1 scale-[0.8]">
             example
           </Badge>
         </a>
