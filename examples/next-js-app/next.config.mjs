@@ -3,6 +3,8 @@ const nextConfig = {
   output: "standalone",
   poweredByHeader: false,
 
+  
+
   // enabling server side source maps
   /**
    *
