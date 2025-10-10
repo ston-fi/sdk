@@ -15,7 +15,7 @@ const inter = Inter({ subsets: ["latin"] });
 
 const navBarLinks = [
   { href: ROUTES.swap, label: "Swap" },
- 
+  { href: ROUTES.vault, label: "Vault" },
 ];
 
 export const metadata: Metadata = {

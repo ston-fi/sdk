@@ -28,13 +28,43 @@ export const useAssetsQuery = <TError = Error, TData = AssetInfo[]>(
         condition: [
           AssetTag.LiquidityVeryHigh,
           AssetTag.LiquidityHigh,
-          AssetTag.LiquidityMedium,
           AssetTag.WalletHasBalance,
         ].join(" | "),
         walletAddress,
       });
 
-      return assets.sort((a, b) => {
+      return assets
+        .filter((asset) => asset.meta?.symbol !== "STORM")
+        .filter((asset) => asset.meta?.symbol !== "BabyDoge")
+        .filter((asset) => asset.meta?.symbol !== "tsTON")
+        .filter((asset) => asset.meta?.symbol !== "REDO")
+        .filter((asset) => asset.meta?.symbol !== "UTYA")
+        .filter((asset) => asset.meta?.symbol !== "DOGS")
+        .filter((asset) => asset.meta?.symbol !== "AMORE")
+        .filter((asset) => asset.meta?.symbol !== "CHERRY")
+        .filter((asset) => asset.meta?.symbol !== "FPIBANK")
+        .filter((asset) => asset.meta?.symbol !== "GEMSTON")
+        .filter((asset) => asset.meta?.symbol !== "SP")
+        .filter((asset) => asset.meta?.symbol !== "FISH")
+        .filter((asset) => asset.meta?.symbol !== "ANON")
+        .filter((asset) => asset.meta?.symbol !== "RAFF")
+        .filter((asset) => asset.meta?.symbol !== "TPET")
+        .filter((asset) => asset.meta?.symbol !== "CATS")
+        .filter((asset) => asset.meta?.symbol !== "LLAMA")
+        .filter((asset) => asset.meta?.symbol !== "EVAA")
+        .filter((asset) => asset.meta?.symbol !== "TONG")
+        .filter((asset) => asset.meta?.symbol !== "MEM")
+        .filter((asset) => asset.meta?.symbol !== "SHIT")
+        .filter((asset) => asset.meta?.symbol !== "tsUSDe")
+        .filter((asset) => asset.meta?.symbol !== "BLUM")
+        .filter((asset) => asset.meta?.symbol !== "ESIM")
+        .filter((asset) => asset.meta?.symbol !== "TFT")
+        .filter((asset) => asset.meta?.symbol !== "GEAR")
+        .filter((asset) => asset.meta?.symbol !== "AGP")
+        
+        
+        
+        .sort((a, b) => {
         if (a.popularityIndex && b.popularityIndex) {
           return b.popularityIndex - a.popularityIndex;
         }
