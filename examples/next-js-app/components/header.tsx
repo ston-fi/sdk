@@ -4,8 +4,7 @@ import Image from "next/image";
 
 import { TonConnectButton } from "@tonconnect/ui-react";
 
-import { Badge } from "@/components/ui/badge";
-import GitBookIcon from "@/public/icons/gitbook.svg";
+
 import GitHubIcon from "@/public/icons/github.svg";
 
 export function Header() {
