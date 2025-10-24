@@ -17,10 +17,12 @@ export function Header() {
           target="_blank noopener noreferrer"
           className="hover:opacity-80 transition-opacity relative mr-auto"
         >
-        
-          <Badge className="absolute rotate-[-13deg] -right-7 -bottom-1 scale-[0.8]">
-            Eswap
-          </Badge>
+          <Image
+            src="/icons/logoviolet.jpg"
+            alt="Logo"
+            width={60}
+            height={60}
+          />
         </a>
 
         <TonConnectButton />
