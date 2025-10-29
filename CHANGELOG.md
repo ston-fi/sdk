@@ -8,6 +8,7 @@
 - monorepo tsconfig was refactored from being a package to just a file in the root
 
 ### @ston-fi/sdk@2.6.0
+### @ston-fi/stake-sdk@1.3.0
 
 #### Added
 
