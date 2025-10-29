@@ -1,4 +1,4 @@
-// @ts-ignore - esbuild-analyzer package is not typed
+// @ts-expect-error - esbuild-analyzer package is not typed
 import AnalyzerPlugin from "esbuild-analyzer";
 import { defineConfig } from "tsup";
 

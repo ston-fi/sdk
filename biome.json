@@ -1,23 +1,22 @@
 {
-  "$schema": "https://biomejs.dev/schemas/1.9.4/schema.json",
+  "$schema": "https://biomejs.dev/schemas/2.2.6/schema.json",
   "files": {
     "ignoreUnknown": true,
-    "include": ["./examples/**", "./packages/**"],
-    "ignore": ["node_modules", ".turbo", ".next", "dist", "coverage"]
+    "includes": [
+      "**",
+      "!**/node_modules",
+      "!**/.turbo",
+      "!**/.next",
+      "!**/dist"
+    ]
   },
-  "organizeImports": {
-    "enabled": true
-  },
+  "assist": { "actions": { "source": { "organizeImports": "on" } } },
   "formatter": {
     "enabled": true,
     "indentStyle": "space"
   },
   "linter": {
     "enabled": true,
-    "rules": {
-      "complexity": {
-        "noStaticOnlyClass": "off"
-      }
-    }
+    "includes": ["**", "!examples/next-js-app/**"]
   }
 }

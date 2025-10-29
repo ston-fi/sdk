@@ -40,6 +40,7 @@ RUN --mount=type=cache,id=pnpm,target=/pnpm/store pnpm install --ignore-scripts 
 
 # Build the project and its dependencies
 COPY --from=builder /app/out/full/ .
+COPY tsconfig.json ./tsconfig.json
 COPY turbo.json ./turbo.json
 
 # Uncomment and use build args to enable remote caching

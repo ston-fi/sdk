@@ -11,8 +11,8 @@ export function setup() {
 
 export { createMockObj } from "./createMockObj";
 export {
-  createProviderSnapshot,
   createMockProvider,
   createMockProviderFromSnapshot,
   createPrintableProvider,
+  createProviderSnapshot,
 } from "./snapshot";

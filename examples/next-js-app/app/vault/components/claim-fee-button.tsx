@@ -1,7 +1,7 @@
+import { useTonConnectUI } from "@tonconnect/ui-react";
 import { useState } from "react";
 
 import { Button, type ButtonProps } from "@/components/ui/button";
-import { useTonConnectUI } from "@tonconnect/ui-react";
 
 import { buildVaultWithdrawalFeeTx } from "../actions/build-vault-withdrawal-fee-tx";
 import { useVaultClaimParams } from "../providers/vault-claim-params";

@@ -1,5 +1,18 @@
 # Changelog
 
+## 29-10-2025
+
+- monorepo package manager was changed to pnpm@10, and workspace settings were configured to prevent installation of recently published packages. This change, along with explicitly fixed dependency versions, should minimize the risk of publishing packages that depend on a recently published newer version of a dependency
+- monorepo package dependencies were unified via pnpm workspace
+- monorepo was formatted with the latest [biome](https://biomejs.dev) default rules
+- monorepo tsconfig was refactored from being a package to just a file in the root
+
+### @ston-fi/sdk@2.6.0
+
+#### Added
+
+- [@ton/ton@16](https://github.com/ton-org/ton/blob/master/CHANGELOG.md#1600---2025-10-03) was added as possible peerDependency
+
 ## 02-07-2025
 
 ### @ston-fi/stake-sdk@1.2.0
@@ -160,7 +173,7 @@ const contracts = dexFactory(routerInfo);
   const contracts = dexFactory(routerInfo).Router.CPI; // Property 'CPI' does not exist
   ```
 
- We are not expecting many of you to face these breaking changes, but in case of need, we temporarily add new fields to simplify migration. 
+ We are not expecting many of you to face these breaking changes, but in case of need, we temporarily add new fields to simplify migration.
  All you need to do is to use `_Router` instead of `Router` and `_Pool` instead of `_Pool` correspondently.
 
   ```ts

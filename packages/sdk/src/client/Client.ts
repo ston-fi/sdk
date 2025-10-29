@@ -1,5 +1,5 @@
 import { StonApiClient } from "@ston-fi/api";
-import { Address, TonClient, TupleReader, beginCell } from "@ton/ton";
+import { Address, beginCell, TonClient, TupleReader } from "@ton/ton";
 
 export class Client extends TonClient {
   private stonApiClient: StonApiClient;

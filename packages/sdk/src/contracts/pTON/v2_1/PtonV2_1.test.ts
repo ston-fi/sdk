@@ -1,4 +1,4 @@
-import { type Sender, beginCell, toNano } from "@ton/ton";
+import { beginCell, type Sender, toNano } from "@ton/ton";
 import { beforeAll, describe, expect, it, vi } from "vitest";
 
 import {
@@ -134,6 +134,24 @@ describe("PtonV2_1", () => {
         '"te6cckEBAgEANwABZAHzg10AAAAAAAAAAEO5rKAIACE+JdUq+wPWHEaGeeZ6wHj2SzKrIOfTGgf/k9ACJZzRAQAAEQ6zpA=="',
       );
       expect(txParams.value).toMatchInlineSnapshot("1110000000n");
+    });
+
+    it("should build expected tx params when destinationWalletAddress is defined", async () => {
+      const contract = provider.open(new PtonV2_1(PROXY_TON_ADDRESS));
+
+      const txParams = await contract.getTonTransferTxParams({
+        ...txArgs,
+        destinationWalletAddress:
+          "EQA_GPaT7xsaEi6kv2gWwA6_FSF98RXi60H6FirOntLpnBz7",
+      });
+
+      expect(txParams.to).toMatchInlineSnapshot(
+        '"EQA_GPaT7xsaEi6kv2gWwA6_FSF98RXi60H6FirOntLpnBz7"',
+      );
+      expect(txParams.body?.toBoc().toString("base64")).toMatchInlineSnapshot(
+        '"te6cckEBAQEANAAAYwHzg10AAAAAAAAAAEO5rKAIACE+JdUq+wPWHEaGeeZ6wHj2SzKrIOfTGgf/k9ACJZzRRFUPGw=="',
+      );
+      expect(txParams.value).toMatchInlineSnapshot("1010000000n");
     });
 
     it("should build expected tx params when queryId is defined", async () => {

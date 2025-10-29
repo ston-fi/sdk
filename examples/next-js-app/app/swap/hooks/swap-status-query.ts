@@ -1,7 +1,7 @@
 import type { SwapStatus } from "@ston-fi/api";
 import {
-  type UseQueryOptions,
   skipToken,
+  type UseQueryOptions,
   useQuery,
 } from "@tanstack/react-query";
 

@@ -8,8 +8,8 @@ import { tonApiClient } from "@/lib/ton-api-client";
 import {
   MONTH_IN_SECONDS,
   STAKE_MAX_DURATION_MONTH,
-  STAKE_MINTER_ADDRESS,
   STAKE_MIN_DURATION_MONTH,
+  STAKE_MINTER_ADDRESS,
   STAKE_TOKEN_ADDRESS,
 } from "../constants";
 

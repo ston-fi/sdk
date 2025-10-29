@@ -1,18 +1,24 @@
 {
   "name": "root",
   "private": true,
-  "packageManager": "pnpm@10.0.0",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/ston-fi/sdk.git"
+  },
+  "packageManager": "pnpm@10.20.0",
   "scripts": {
     "preinstall": "npx only-allow pnpm",
-    "cleanup": "rm -rf .turbo node_modules ./examples/**/{.next,.turbo,node_modules} ./packages/**/{.turbo,coverage,dist,node_modules,build-report.html}",
+    "cleanup": "rm -rf .turbo node_modules ./{examples,packages}/**/{.next,.turbo,node_modules,dist}",
     "lint": "biome lint ./*",
     "format": "biome format ./*",
-    "test": "turbo run test"
+    "test": "turbo run test",
+    "build": "turbo run build",
+    "dev": "turbo dev --filter=@ston-fi/sdk-example-next-js-app..."
   },
   "devDependencies": {
-    "@biomejs/biome": "1.9.4",
-    "lefthook": "1.11.12",
-    "turbo": "2.5.3",
-    "typescript": "^5"
+    "@biomejs/biome": "2.2.6",
+    "lefthook": "2.0.0",
+    "turbo": "2.5.8",
+    "typescript": "5.9.3"
   }
 }

@@ -2,10 +2,10 @@ import {
   type Address,
   Cell,
   type ContractProvider,
+  openContract,
   TonClient,
   type TupleItem,
   TupleReader,
-  openContract,
 } from "@ton/ton";
 import { vi } from "vitest";
 
@@ -42,16 +42,24 @@ class Snapshot {
     return {
       gas_used: 0,
       stack: new TupleReader(
-        this.items.map((item) => {
-          switch (item.type) {
-            case "cell":
-              return { type: "cell", cell: Cell.fromBase64(item.data) };
-            case "number":
-              return { type: "int", value: BigInt(item.data) };
-            case "null":
-              return { type: "null" };
-          }
-        }),
+        this.items.reduce<ConstructorParameters<typeof TupleReader>[0]>(
+          (acc, item) => {
+            switch (item.type) {
+              case "cell":
+                acc.push({ type: "cell", cell: Cell.fromBase64(item.data) });
+                break;
+              case "number":
+                acc.push({ type: "int", value: BigInt(item.data) });
+                break;
+              case "null":
+                acc.push({ type: "null" });
+                break;
+            }
+
+            return acc;
+          },
+          [],
+        ),
       ),
     };
   }

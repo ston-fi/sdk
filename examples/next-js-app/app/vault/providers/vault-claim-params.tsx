@@ -40,7 +40,9 @@ const vaultClaimParamsReducer = (
 
 export const VaultClaimParamsProvider = ({
   children,
-}: { children: React.ReactNode }) => {
+}: {
+  children: React.ReactNode;
+}) => {
   const searchParams = useSearchParams();
   const router = useRouter();
   const pathname = usePathname();

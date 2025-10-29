@@ -1,7 +1,8 @@
+import { useId } from "react";
+
 import { Switch } from "@/components/ui/switch";
 import { useRouters } from "@/hooks/use-routers";
 import { cn } from "@/lib/utils";
-import { useId } from "react";
 
 import {
   LiquidityProvisionType,

@@ -1,4 +1,4 @@
-import { type Cell, beginCell } from "@ton/ton";
+import { beginCell, type Cell } from "@ton/ton";
 
 import type { AddressType, AmountType, QueryIdType } from "../types";
 import { toAddress } from "./toAddress";

@@ -1,4 +1,4 @@
-import { type ContractProvider, beginCell } from "@ton/ton";
+import { beginCell, type ContractProvider } from "@ton/ton";
 
 import type { AddressType } from "../../types";
 import { toAddress } from "../../utils/toAddress";

@@ -1,7 +1,8 @@
 "use client";
 
-import React, { createContext, useContext, useReducer } from "react";
 import type { ReactNode } from "react";
+import React, { createContext, useContext, useReducer } from "react";
+
 import { STAKE_MAX_DURATION_MONTH } from "../constants";
 
 export type StakeFormState = {

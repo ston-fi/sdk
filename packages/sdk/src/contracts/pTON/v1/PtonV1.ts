@@ -1,10 +1,10 @@
 import {
+  address,
+  beginCell,
   type Cell,
   type ContractProvider,
   type Sender,
   type SenderArguments,
-  address,
-  beginCell,
   toNano,
 } from "@ton/ton";
 
@@ -53,13 +53,16 @@ export class PtonV1 extends JettonMinter implements AbstractPton {
     params: {
       tonAmount: AmountType;
       destinationAddress: AddressType;
+      destinationWalletAddress?: AddressType;
       refundAddress: AddressType;
       forwardPayload?: Cell;
       forwardTonAmount?: AmountType;
       queryId?: QueryIdType;
     },
   ): Promise<SenderArguments> {
-    const to = await this.getWalletAddress(provider, params.destinationAddress);
+    const to = params.destinationWalletAddress
+      ? toAddress(params.destinationWalletAddress)
+      : await this.getWalletAddress(provider, params.destinationAddress);
 
     const body = createJettonTransferMessage({
       queryId: params.queryId ?? 0,

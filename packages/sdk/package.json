@@ -1,6 +1,6 @@
 {
   "name": "@ston-fi/sdk",
-  "version": "2.5.0",
+  "version": "2.6.0",
   "description": "Typescript SDK to interact with the Ston.fi DEX",
   "license": "MIT",
   "homepage": "https://github.com/ston-fi/sdk#readme",
@@ -10,8 +10,11 @@
     "directory": "packages/sdk"
   },
   "type": "module",
-  "packageManager": "pnpm@9.0.0",
-  "files": ["dist", "package.json", "README.md"],
+  "files": [
+    "dist",
+    "package.json",
+    "README.md"
+  ],
   "main": "./dist/index.cjs",
   "module": "./dist/index.js",
   "types": "./dist/index.d.ts",
@@ -53,22 +56,19 @@
     "lint": "pnpm run /^lint:.*/",
     "lint:tsc": "tsc --noEmit --pretty",
     "lint:biome": "biome check",
-    "inspect:unused-code": "pnpm dlx knip",
-    "inspect:circular-dependencies": "npx --yes madge --circular --extensions js,ts .",
     "test": "vitest",
     "build": "tsup",
-    "prepublishOnly": "pnpm run format && pnpm run lint && pnpm run test --run && pnpm run build && pnpm pack && pnpm attw --pack *.tgz --profile node16 && rm *.tgz && pnpm publint"
+    "prepublishOnly": "pnpm run lint && pnpm run test --run && pnpm run build && pnpm attw --profile node16 --pack . && pnpm publint"
   },
   "peerDependencies": {
     "@ston-fi/api": "^0",
-    "@ton/ton": "^13.9.0 || ^14.0.0 || ^15.0.0"
+    "@ton/ton": "^13.9.0 || ^14.0.0 || ^15.0.0 || ^16.0.0"
   },
   "devDependencies": {
-    "@arethetypeswrong/cli": "^0.17.4",
-    "@ston-fi/typescript-config": "workspace:*",
-    "esbuild-analyzer": "^0.2.0",
-    "publint": "^0.3.11",
-    "tsup": "8.3.5",
-    "vitest": "3.1.1"
+    "@arethetypeswrong/cli": "catalog:",
+    "esbuild-analyzer": "catalog:",
+    "publint": "catalog:",
+    "tsup": "catalog:",
+    "vitest": "catalog:"
   }
 }

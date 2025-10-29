@@ -1,8 +1,7 @@
 "use client";
 
-import Image from "next/image";
-
 import { TonConnectButton } from "@tonconnect/ui-react";
+import Image from "next/image";
 
 import { Badge } from "@/components/ui/badge";
 import GitBookIcon from "@/public/icons/gitbook.svg";

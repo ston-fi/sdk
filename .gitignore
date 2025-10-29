@@ -23,6 +23,5 @@ packages/*/build-report.html
 *.sln
 *.sw?
 
-.husky
 .turbo
 .vercel

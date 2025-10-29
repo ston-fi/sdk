@@ -1,8 +1,8 @@
 import type { SwapSimulation } from "@ston-fi/api";
 import { toUnits } from "@ston-fi/sdk";
 import {
-  type UseQueryOptions,
   skipToken,
+  type UseQueryOptions,
   useQuery,
 } from "@tanstack/react-query";
 import { useTonAddress } from "@tonconnect/ui-react";

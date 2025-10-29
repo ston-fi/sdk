@@ -4,10 +4,9 @@ import type { LiquidityProvisionSimulation } from "@ston-fi/api";
 import { dexFactory } from "@ston-fi/sdk";
 import type { SendTransactionRequest } from "@tonconnect/ui-react";
 
+import { TON_ADDRESS } from "@/constants";
 import { getRouter } from "@/lib/routers-repository";
 import { tonApiClient } from "@/lib/ton-api-client";
-
-import { TON_ADDRESS } from "@/constants";
 
 const getLpTxParams = async (
   simulation: Pick<

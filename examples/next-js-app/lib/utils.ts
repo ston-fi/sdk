@@ -1,7 +1,8 @@
-import { TonAddressRegex } from "@/constants";
 import { Address } from "@ton/ton";
 import { type ClassValue, clsx } from "clsx";
 import { twMerge } from "tailwind-merge";
+
+import { TonAddressRegex } from "@/constants";
 
 export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs));

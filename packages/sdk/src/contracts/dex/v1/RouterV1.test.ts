@@ -1,4 +1,4 @@
-import { type Sender, beginCell } from "@ton/ton";
+import { beginCell, type Sender } from "@ton/ton";
 import { beforeAll, describe, expect, it, vi } from "vitest";
 
 import {
@@ -217,6 +217,42 @@ describe("RouterV1", () => {
       expect(txParams.value).toMatchInlineSnapshot("220000000n");
     });
 
+    it("should build expected tx params when offerJettonWalletAddress is defined", async () => {
+      const contract = provider.open(new RouterV1());
+
+      const txParams = await contract.getSwapJettonToJettonTxParams({
+        ...txArgs,
+        offerJettonWalletAddress:
+          "EQBB_eiDQ9YJ_7UiNsrVvhTKt2O0oKjKe76eVQ7QPS-oYPsi",
+      });
+
+      expect(txParams.to).toMatchInlineSnapshot(
+        '"EQBB_eiDQ9YJ_7UiNsrVvhTKt2O0oKjKe76eVQ7QPS-oYPsi"',
+      );
+      expect(txParams.body?.toBoc().toString("base64")).toMatchInlineSnapshot(
+        '"te6cckEBAgEAqQABsA+KfqUAAAAAAAAAAEHc1lAIAO87mQKicbKgHIk4pSPP4k5xhHqutqYgAB7USnesDnCdAAQnxLqlX2B6w4jQzzzPWA8eyWZVZBz6Y0D/8noARLOaCBTck4EBAJclk4VhgAEAzmDZI8Xr3NC7nZo+aFkM7M/0vb5/f2/1dAy3bDlFqBfXhAEABCfEuqVfYHrDiNDPPM9YDx7JZlVkHPpjQP/yegBEs5oQsE7cRQ=="',
+      );
+      expect(txParams.value).toMatchInlineSnapshot("220000000n");
+    });
+
+    it("should build expected tx params when askJettonWalletAddress is defined", async () => {
+      const contract = provider.open(new RouterV1());
+
+      const txParams = await contract.getSwapJettonToJettonTxParams({
+        ...txArgs,
+        askJettonWalletAddress:
+          "EQAIBnMGyR4vXuaF3OzR80LIZ2Z_pe3z-_t_q6Blu2HKLeaY",
+      });
+
+      expect(txParams.to).toMatchInlineSnapshot(
+        '"EQBB_eiDQ9YJ_7UiNsrVvhTKt2O0oKjKe76eVQ7QPS-oYPsi"',
+      );
+      expect(txParams.body?.toBoc().toString("base64")).toMatchInlineSnapshot(
+        '"te6cckEBAgEAqQABsA+KfqUAAAAAAAAAAEHc1lAIAO87mQKicbKgHIk4pSPP4k5xhHqutqYgAB7USnesDnCdAAQnxLqlX2B6w4jQzzzPWA8eyWZVZBz6Y0D/8noARLOaCBTck4EBAJclk4VhgAEAzmDZI8Xr3NC7nZo+aFkM7M/0vb5/f2/1dAy3bDlFqBfXhAEABCfEuqVfYHrDiNDPPM9YDx7JZlVkHPpjQP/yegBEs5oQsE7cRQ=="',
+      );
+      expect(txParams.value).toMatchInlineSnapshot("220000000n");
+    });
+
     it("should build expected tx params when referralAddress is defined", async () => {
       const contract = provider.open(new RouterV1());
 
@@ -388,6 +424,24 @@ describe("RouterV1", () => {
 
       const txParams = await contract.getSwapJettonToTonTxParams({
         ...txArgs,
+      });
+
+      expect(txParams.to).toMatchInlineSnapshot(
+        '"EQBB_eiDQ9YJ_7UiNsrVvhTKt2O0oKjKe76eVQ7QPS-oYPsi"',
+      );
+      expect(txParams.body?.toBoc().toString("base64")).toMatchInlineSnapshot(
+        '"te6cckEBAgEAqQABsA+KfqUAAAAAAAAAAEHc1lAIAO87mQKicbKgHIk4pSPP4k5xhHqutqYgAB7USnesDnCdAAQnxLqlX2B6w4jQzzzPWA8eyWZVZBz6Y0D/8noARLOaCA7msoEBAJclk4VhgAIqFqMWTE1aoxM/MRD/EEluAMqKyKvv/FAn4CTTNIDD6BfXhAEABCfEuqVfYHrDiNDPPM9YDx7JZlVkHPpjQP/yegBEs5oQv9h8dw=="',
+      );
+      expect(txParams.value).toMatchInlineSnapshot("170000000n");
+    });
+
+    it("should build expected tx params when offerJettonWalletAddress is defined", async () => {
+      const contract = provider.open(new RouterV1());
+
+      const txParams = await contract.getSwapJettonToTonTxParams({
+        ...txArgs,
+        offerJettonWalletAddress:
+          "EQBB_eiDQ9YJ_7UiNsrVvhTKt2O0oKjKe76eVQ7QPS-oYPsi",
       });
 
       expect(txParams.to).toMatchInlineSnapshot(
@@ -587,6 +641,24 @@ describe("RouterV1", () => {
 
       const txParams = await contract.getSwapTonToJettonTxParams({
         ...txArgs,
+      });
+
+      expect(txParams.to).toMatchInlineSnapshot(
+        '"EQARULUYsmJq1RiZ-YiH-IJLcAZUVkVff-KBPwEmmaQGH6aC"',
+      );
+      expect(txParams.body?.toBoc().toString("base64")).toMatchInlineSnapshot(
+        '"te6cckEBAgEAiAABbQ+KfqUAAAAAAAAAAEHc1lAIAO87mQKicbKgHIk4pSPP4k5xhHqutqYgAB7USnesDnCcECwbgQMBAJclk4VhgAEAzmDZI8Xr3NC7nZo+aFkM7M/0vb5/f2/1dAy3bDlFqBfXhAEABCfEuqVfYHrDiNDPPM9YDx7JZlVkHPpjQP/yegBEs5oQ4VeW3A=="',
+      );
+      expect(txParams.value).toMatchInlineSnapshot("685000000n");
+    });
+
+    it("should build expected tx params when askJettonWalletAddress is defined", async () => {
+      const contract = provider.open(new RouterV1());
+
+      const txParams = await contract.getSwapTonToJettonTxParams({
+        ...txArgs,
+        askJettonWalletAddress:
+          "EQAIBnMGyR4vXuaF3OzR80LIZ2Z_pe3z-_t_q6Blu2HKLeaY",
       });
 
       expect(txParams.to).toMatchInlineSnapshot(

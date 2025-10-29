@@ -31,7 +31,7 @@ export const useAssetsQuery = <TError = Error, TData = AssetInfo[]>(
           AssetTag.LiquidityMedium,
           AssetTag.WalletHasBalance,
         ].join(" | "),
-        walletAddress,
+        walletAddress: walletAddress || undefined,
       });
 
       return assets.sort((a, b) => {

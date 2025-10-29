@@ -1,7 +1,7 @@
 "use server";
 
-import { stonApiClient } from "@/lib/ston-api-client";
 import { fromUnits } from "@ston-fi/sdk";
+import { stonApiClient } from "@/lib/ston-api-client";
 
 export async function getWalletVaults(params: { userWalletAddress: string }) {
   const vaultsData = await stonApiClient.getWalletVaultsFee({

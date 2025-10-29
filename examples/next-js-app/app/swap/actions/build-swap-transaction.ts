@@ -4,15 +4,14 @@ import type { SwapSimulation } from "@ston-fi/api";
 import {
   type AddressType,
   type AmountType,
-  type QueryIdType,
   dexFactory,
+  type QueryIdType,
 } from "@ston-fi/sdk";
 import type { SendTransactionRequest } from "@tonconnect/ui-react";
 
+import { TON_ADDRESS } from "@/constants";
 import { getRouter } from "@/lib/routers-repository";
 import { tonApiClient } from "@/lib/ton-api-client";
-
-import { TON_ADDRESS } from "@/constants";
 
 const getSwapTxParams = async (
   simulation: SwapSimulation,

@@ -1,3 +1,21 @@
+minimumReleaseAge: 2880
+minimumReleaseAgeExclude:
+- '@ston-fi/*'
+
+onlyBuiltDependencies:
+- '@biomejs/biome'
+- '@ston-fi/*'
+- 'lefthook'
+
 packages:
   - 'examples/*'
   - 'packages/*'
+
+verifyDepsBeforeRun: 'install'
+
+catalog:
+  '@arethetypeswrong/cli': 0.18.2
+  'esbuild-analyzer': 0.2.0
+  'publint': 0.3.15
+  'vitest': 3.2.4
+  'tsup': 8.3.5

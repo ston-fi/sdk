@@ -1,9 +1,9 @@
 import {
+  beginCell,
   type Cell,
   type ContractProvider,
   type Sender,
   type SenderArguments,
-  beginCell,
   toNano,
 } from "@ton/ton";
 
@@ -13,8 +13,8 @@ import type { ContractOptions } from "../../core/Contract";
 import { JettonMinter } from "../../core/JettonMinter";
 import { JettonWallet } from "../../core/JettonWallet";
 import { DEX_VERSION } from "../constants";
-import { LpAccountV1 } from "./LpAccountV1";
 import { DEX_OP_CODES } from "./constants";
+import { LpAccountV1 } from "./LpAccountV1";
 
 export interface PoolV1Options extends ContractOptions {
   gasConstants?: Partial<typeof PoolV1.gasConstants>;

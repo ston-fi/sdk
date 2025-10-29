@@ -1,8 +1,8 @@
 "use client";
 
 import {
-  type UseQueryResult,
   skipToken,
+  type UseQueryResult,
   useQuery,
 } from "@tanstack/react-query";
 

@@ -1,5 +1,5 @@
 {
-  "extends": "@ston-fi/typescript-config/tsconfig.json",
+  "extends": "../../tsconfig.json",
   "compilerOptions": {
     "paths": {
       "@/*": ["./*"]
@@ -10,7 +10,6 @@
         "name": "next"
       }
     ],
-    "target": "ESNext",
     "module": "ESNext",
     "moduleResolution": "Bundler",
     "jsx": "preserve",

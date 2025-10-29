@@ -1,10 +1,10 @@
 import {
   type Address,
+  beginCell,
   type Cell,
   type ContractProvider,
   type Sender,
   type SenderArguments,
-  beginCell,
   toNano,
 } from "@ton/ton";
 

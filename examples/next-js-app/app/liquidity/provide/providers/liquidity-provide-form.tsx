@@ -2,9 +2,9 @@
 
 import { LiquidityProvisionType, type PoolInfo } from "@ston-fi/api";
 import {
+  createContext,
   type Dispatch,
   type ReactNode,
-  createContext,
   useContext,
   useReducer,
 } from "react";
@@ -120,7 +120,9 @@ const swapReducer = (
 
 export const LiquidityFormProvider = ({
   children,
-}: { children: ReactNode }) => {
+}: {
+  children: ReactNode;
+}) => {
   const [state, dispatch] = useReducer(swapReducer, initialState);
 
   return (

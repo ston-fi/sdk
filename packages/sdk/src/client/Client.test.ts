@@ -1,7 +1,6 @@
-import { describe, expect, it, vi } from "vitest";
-
 import { StonApiClient } from "@ston-fi/api";
-import { Address, TonClient, beginCell } from "@ton/ton";
+import { Address, beginCell, TonClient } from "@ton/ton";
+import { describe, expect, it, vi } from "vitest";
 
 import { Client } from "./Client";
 
@@ -26,7 +25,7 @@ describe("Client", () => {
     it("should create an instance of StonApiClient if not provided", () => {
       const client = new Client(DEPENDENCIES);
 
-      // @ts-ignore: `stonApiClient` is private field. But for testing purposes it's ok
+      // @ts-expect-error: `stonApiClient` is private field. But for testing purposes it's ok
       expect(client.stonApiClient).toBeInstanceOf(StonApiClient);
     });
 
@@ -34,7 +33,7 @@ describe("Client", () => {
       const stonApiClient = new StonApiClient();
       const client = new Client({ ...DEPENDENCIES, stonApiClient });
 
-      // @ts-ignore: `stonApiClient` is private field. But for testing purposes it's ok
+      // @ts-expect-error: `stonApiClient` is private field. But for testing purposes it's ok
       expect(client.stonApiClient).toBe(stonApiClient);
     });
   });
@@ -50,7 +49,7 @@ describe("Client", () => {
 
       const callGetMethod = vi.spyOn(TonClient.prototype, "callGetMethod");
       callGetMethod.mockImplementation(() =>
-        // @ts-ignore: mock real implementation of callGetMethod method to avoid real network call
+        // @ts-expect-error: mock real implementation of callGetMethod method to avoid real network call
         Promise.resolve({ gas_used: 0, stack: [] }),
       );
 
@@ -121,7 +120,7 @@ describe("Client", () => {
 
       const callGetMethod = vi.spyOn(TonClient.prototype, "callGetMethod");
       callGetMethod.mockImplementation(() =>
-        // @ts-ignore: mock real implementation of callGetMethod method to avoid real network call
+        // @ts-expect-error: mock real implementation of callGetMethod method to avoid real network call
         Promise.resolve({ gas_used: 0, stack: [] }),
       );
 

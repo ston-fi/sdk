@@ -10,8 +10,11 @@
     "directory": "packages/stake-sdk"
   },
   "type": "module",
-  "packageManager": "pnpm@9.0.0",
-  "files": ["dist", "package.json", "README.md"],
+  "files": [
+    "dist",
+    "package.json",
+    "README.md"
+  ],
   "main": "./dist/index.js",
   "module": "./dist/index.js",
   "types": "./dist/index.d.ts",
@@ -28,15 +31,16 @@
     "lint:biome": "biome check",
     "test": "vitest",
     "build": "tsup",
-    "prepublishOnly": "pnpm run format && pnpm run lint && pnpm run test --run && pnpm run build"
+    "prepublishOnly": "pnpm run lint && pnpm run test --run && pnpm run build && pnpm attw --profile esm-only --pack . && pnpm publint"
   },
   "peerDependencies": {
-    "@ton/ton": "^13.9.0 || ^14.0.0 || ^15.0.0"
+    "@ton/ton": "^13.9.0 || ^14.0.0 || ^15.0.0 || ^16.0.0"
   },
   "devDependencies": {
-    "@ston-fi/typescript-config": "workspace:*",
-    "esbuild-analyzer": "^0.2.0",
-    "tsup": "8.3.5",
-    "vitest": "3.1.1"
+    "@arethetypeswrong/cli": "catalog:",
+    "esbuild-analyzer": "catalog:",
+    "publint": "catalog:",
+    "tsup": "catalog:",
+    "vitest": "catalog:"
   }
 }

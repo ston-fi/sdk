@@ -3,7 +3,7 @@ import { DEX as DEXv1 } from "./v1";
 import { DEX as DEXv2_1 } from "./v2_1";
 import { DEX as DEXv2_2 } from "./v2_2";
 
-export { DEX_VERSION, DEX_TYPE } from "./constants";
+export { DEX_TYPE, DEX_VERSION } from "./constants";
 
 export const DEX = {
   [DEX_VERSION.v1]: DEXv1,

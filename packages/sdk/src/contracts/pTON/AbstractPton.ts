@@ -6,6 +6,7 @@ import type {
 } from "@ton/ton";
 
 import type { AddressType, AmountType, QueryIdType } from "../../types";
+
 import type { pTON_VERSION } from "./constants";
 
 export interface AbstractPton {
@@ -17,6 +18,7 @@ export interface AbstractPton {
     params: {
       tonAmount: AmountType;
       destinationAddress: AddressType;
+      destinationWalletAddress?: AddressType;
       refundAddress: AddressType;
       forwardPayload?: Cell;
       forwardTonAmount?: AmountType;

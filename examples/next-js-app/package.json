@@ -6,9 +6,9 @@
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "lint": "next lint",
-    "test": "pnpm run /^test:/",
-    "test:typecheck": "tsc --noEmit"
+    "lint": "pnpm run /^lint:/",
+    "lint:eslint": "next lint",
+    "lint:tsc": "tsc --noEmit --pretty"
   },
   "dependencies": {
     "@radix-ui/react-avatar": "1.1.9",
@@ -18,7 +18,7 @@
     "@radix-ui/react-slot": "1.2.2",
     "@radix-ui/react-switch": "1.2.5",
     "@radix-ui/react-toast": "1.2.13",
-    "@ston-fi/api": "0.25.0",
+    "@ston-fi/api": "0.27.1",
     "@ston-fi/sdk": "workspace:*",
     "@ston-fi/stake-sdk": "workspace:*",
     "@tanstack/react-query": "5.76.1",
@@ -38,7 +38,6 @@
     "tailwindcss-animate": "1.0.7"
   },
   "devDependencies": {
-    "@ston-fi/typescript-config": "workspace:*",
     "@tailwindcss/postcss": "4.1.7",
     "@tanstack/react-query-devtools": "5.76.1",
     "@total-typescript/ts-reset": "^0.6.1",

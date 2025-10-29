@@ -2,9 +2,9 @@
 
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import {
+  createContext,
   type Dispatch,
   type ReactNode,
-  createContext,
   useContext,
   useEffect,
   useReducer,
@@ -51,7 +51,9 @@ const reducer = (state: LiquidityRefundFormState, action: IAction) => {
 
 export const LiquidityRefundFormProvider = ({
   children,
-}: { children: ReactNode }) => {
+}: {
+  children: ReactNode;
+}) => {
   const searchParams = useSearchParams();
   const router = useRouter();
   const pathname = usePathname();

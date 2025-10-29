@@ -1,9 +1,9 @@
 import {
+  beginCell,
   type Cell,
   type ContractProvider,
   type Sender,
   type SenderArguments,
-  beginCell,
   toNano,
 } from "@ton/ton";
 
@@ -68,13 +68,16 @@ export class PtonV2_1 extends PtonV1 implements AbstractPton {
     params: {
       tonAmount: AmountType;
       destinationAddress: AddressType;
+      destinationWalletAddress?: AddressType;
       refundAddress: AddressType;
       forwardPayload?: Cell;
       forwardTonAmount?: AmountType;
       queryId?: QueryIdType;
     },
   ): Promise<SenderArguments> {
-    const to = await this.getWalletAddress(provider, params.destinationAddress);
+    const to = params.destinationWalletAddress
+      ? toAddress(params.destinationWalletAddress)
+      : await this.getWalletAddress(provider, params.destinationAddress);
 
     const body = await this.createTonTransferBody({
       tonAmount: params.tonAmount,

@@ -1,9 +1,11 @@
 "use client";
 
+import type { LiquidityProvisionSimulation } from "@ston-fi/api";
+
 import { Skeleton } from "@/components/ui/skeleton";
 import { Formatter } from "@/lib/formatter";
 import { cn } from "@/lib/utils";
-import type { LiquidityProvisionSimulation } from "@ston-fi/api";
+
 import { useLiquiditySimulationQuery } from "../hooks/liquidity-simulation-query";
 import { useLiquidityProvideForm } from "../providers/liquidity-provide-form";
 
@@ -42,7 +44,9 @@ const LiquidityProvideSimulationError = ({ error }: { error: Error }) => {
 
 const LiquidityProvideSimulationData = ({
   data,
-}: { data: LiquidityProvisionSimulation }) => {
+}: {
+  data: LiquidityProvisionSimulation;
+}) => {
   const { assetA, assetB, pool } = useLiquidityProvideForm();
 
   if (!assetA || !assetB || !pool) {

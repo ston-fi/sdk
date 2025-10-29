@@ -1,10 +1,10 @@
 import {
+  address,
+  beginCell,
   type Cell,
   type ContractProvider,
   type Sender,
   type SenderArguments,
-  address,
-  beginCell,
   toNano,
 } from "@ton/ton";
 
@@ -12,14 +12,14 @@ import type { AddressType, AmountType, QueryIdType } from "../../../types";
 import { createJettonTransferMessage } from "../../../utils/createJettonTransferMessage";
 import { toAddress } from "../../../utils/toAddress";
 import { Contract, type ContractOptions } from "../../core/Contract";
-import { JettonMinter } from "../../core/JettonMinter";
 import { HOLE_ADDRESS } from "../../core/constants";
+import { JettonMinter } from "../../core/JettonMinter";
 import { pTON_VERSION } from "../../pTON";
 import type { AbstractPton } from "../../pTON/AbstractPton";
 import { DEX_VERSION } from "../constants";
 import * as Errors from "../errors";
-import { PoolV1 } from "./PoolV1";
 import { DEX_OP_CODES, ROUTER_ADDRESS } from "./constants";
+import { PoolV1 } from "./PoolV1";
 
 export interface RouterV1Options extends ContractOptions {
   gasConstants?: Partial<typeof RouterV1.gasConstants>;
@@ -117,7 +117,9 @@ export class RouterV1 extends Contract {
     params: {
       userWalletAddress: AddressType;
       offerJettonAddress: AddressType;
+      offerJettonWalletAddress?: AddressType;
       askJettonAddress: AddressType;
+      askJettonWalletAddress?: AddressType;
       offerAmount: AmountType;
       minAskAmount: AmountType;
       referralAddress?: AddressType;
@@ -130,12 +132,16 @@ export class RouterV1 extends Contract {
   ): Promise<SenderArguments> {
     const [offerJettonWalletAddress, askJettonWalletAddress] =
       await Promise.all([
-        provider
-          .open(JettonMinter.create(params.offerJettonAddress))
-          .getWalletAddress(params.userWalletAddress),
-        provider
-          .open(JettonMinter.create(params.askJettonAddress))
-          .getWalletAddress(this.address),
+        params.offerJettonWalletAddress
+          ? toAddress(params.offerJettonWalletAddress)
+          : provider
+              .open(JettonMinter.create(params.offerJettonAddress))
+              .getWalletAddress(params.userWalletAddress),
+        params.askJettonWalletAddress
+          ? params.askJettonWalletAddress
+          : provider
+              .open(JettonMinter.create(params.askJettonAddress))
+              .getWalletAddress(this.address),
       ]);
 
     const forwardPayload = await this.createSwapBody({
@@ -204,7 +210,9 @@ export class RouterV1 extends Contract {
     params: {
       userWalletAddress: AddressType;
       offerJettonAddress: AddressType;
+      offerJettonWalletAddress?: AddressType;
       proxyTon: AbstractPton;
+      askJettonWalletAddress?: AddressType;
       offerAmount: AmountType;
       minAskAmount: AmountType;
       referralAddress?: AddressType;
@@ -219,7 +227,8 @@ export class RouterV1 extends Contract {
 
     return await this.getSwapJettonToJettonTxParams(provider, {
       ...params,
-      askJettonAddress: params.proxyTon.address,
+      askJettonAddress:
+        params.askJettonWalletAddress ?? params.proxyTon.address,
       gasAmount:
         params.gasAmount ?? this.gasConstants.swapJettonToTon.gasAmount,
       forwardGasAmount:
@@ -257,7 +266,9 @@ export class RouterV1 extends Contract {
     params: {
       userWalletAddress: AddressType;
       proxyTon: AbstractPton;
+      offerJettonWalletAddress?: AddressType;
       askJettonAddress: AddressType;
+      askJettonWalletAddress?: AddressType;
       offerAmount: AmountType;
       minAskAmount: AmountType;
       referralAddress?: AddressType | undefined;
@@ -267,9 +278,11 @@ export class RouterV1 extends Contract {
   ): Promise<SenderArguments> {
     this.assertProxyTon(params.proxyTon);
 
-    const askJettonWalletAddress = await provider
-      .open(JettonMinter.create(params.askJettonAddress))
-      .getWalletAddress(this.address);
+    const askJettonWalletAddress =
+      params.askJettonWalletAddress ??
+      (await provider
+        .open(JettonMinter.create(params.askJettonAddress))
+        .getWalletAddress(this.address));
 
     const forwardPayload = await this.createSwapBody({
       userWalletAddress: params.userWalletAddress,
@@ -287,6 +300,7 @@ export class RouterV1 extends Contract {
       queryId: params.queryId ?? 0,
       tonAmount: params.offerAmount,
       destinationAddress: this.address,
+      destinationWalletAddress: params.offerJettonWalletAddress,
       refundAddress: params.userWalletAddress,
       forwardPayload,
       forwardTonAmount,
