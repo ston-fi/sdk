@@ -58,6 +58,8 @@ export class PtonV2_1 extends PtonV1 implements AbstractPton {
     if (params.forwardPayload) {
       builder.storeBit(true);
       builder.storeRef(params.forwardPayload);
+    } else {
+      builder.storeBit(false);
     }
 
     return builder.endCell();

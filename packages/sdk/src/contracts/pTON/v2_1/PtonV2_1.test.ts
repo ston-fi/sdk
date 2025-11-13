@@ -113,7 +113,7 @@ describe("PtonV2_1", () => {
         '"EQA_GPaT7xsaEi6kv2gWwA6_FSF98RXi60H6FirOntLpnBz7"',
       );
       expect(txParams.body?.toBoc().toString("base64")).toMatchInlineSnapshot(
-        '"te6cckEBAQEANAAAYwHzg10AAAAAAAAAAEO5rKAIACE+JdUq+wPWHEaGeeZ6wHj2SzKrIOfTGgf/k9ACJZzRRFUPGw=="',
+        '"te6cckEBAQEANAAAZAHzg10AAAAAAAAAAEO5rKAIACE+JdUq+wPWHEaGeeZ6wHj2SzKrIOfTGgf/k9ACJZzQ1XO8Rg=="',
       );
       expect(txParams.value).toMatchInlineSnapshot("1010000000n");
     });
@@ -149,7 +149,7 @@ describe("PtonV2_1", () => {
         '"EQA_GPaT7xsaEi6kv2gWwA6_FSF98RXi60H6FirOntLpnBz7"',
       );
       expect(txParams.body?.toBoc().toString("base64")).toMatchInlineSnapshot(
-        '"te6cckEBAQEANAAAYwHzg10AAAAAAAAAAEO5rKAIACE+JdUq+wPWHEaGeeZ6wHj2SzKrIOfTGgf/k9ACJZzRRFUPGw=="',
+        '"te6cckEBAQEANAAAZAHzg10AAAAAAAAAAEO5rKAIACE+JdUq+wPWHEaGeeZ6wHj2SzKrIOfTGgf/k9ACJZzQ1XO8Rg=="',
       );
       expect(txParams.value).toMatchInlineSnapshot("1010000000n");
     });
@@ -166,7 +166,7 @@ describe("PtonV2_1", () => {
         '"EQA_GPaT7xsaEi6kv2gWwA6_FSF98RXi60H6FirOntLpnBz7"',
       );
       expect(txParams.body?.toBoc().toString("base64")).toMatchInlineSnapshot(
-        '"te6cckEBAQEANAAAYwHzg10AAAAAAAAwOUO5rKAIACE+JdUq+wPWHEaGeeZ6wHj2SzKrIOfTGgf/k9ACJZzR24kJEw=="',
+        '"te6cckEBAQEANAAAZAHzg10AAAAAAAAwOUO5rKAIACE+JdUq+wPWHEaGeeZ6wHj2SzKrIOfTGgf/k9ACJZzQSq+6Tg=="',
       );
       expect(txParams.value).toMatchInlineSnapshot("1010000000n");
     });

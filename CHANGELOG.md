@@ -1,5 +1,15 @@
 # Changelog
 
+## 13-11-2025
+
+### @ston-fi/sdk@2.7.0
+
+#### Changed
+
+- ⚠️ Now, in pTON v2 `TON_TRANSFER(0x01f3835d)` body when `forwardPayload` is not specified, the 0 bit will be set. This change does not affect SDK or pTON usage with the SDK.
+
+  But if you are using pTON v2 transfers without a payload (or with inlined payload) and parse those transactions, please verify the correctness of such transaction parsing.
+
 ## 29-10-2025
 
 - monorepo package manager was changed to pnpm@10, and workspace settings were configured to prevent installation of recently published packages. This change, along with explicitly fixed dependency versions, should minimize the risk of publishing packages that depend on a recently published newer version of a dependency
