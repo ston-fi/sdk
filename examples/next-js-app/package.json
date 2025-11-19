@@ -18,7 +18,7 @@
     "@radix-ui/react-slot": "1.2.2",
     "@radix-ui/react-switch": "1.2.5",
     "@radix-ui/react-toast": "1.2.13",
-    "@ston-fi/api": "0.27.1",
+    "@ston-fi/api": "0.29.0",
     "@ston-fi/sdk": "workspace:*",
     "@ston-fi/stake-sdk": "workspace:*",
     "@tanstack/react-query": "5.76.1",

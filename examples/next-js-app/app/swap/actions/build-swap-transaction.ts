@@ -10,7 +10,6 @@ import {
 import type { SendTransactionRequest } from "@tonconnect/ui-react";
 
 import { TON_ADDRESS } from "@/constants";
-import { getRouter } from "@/lib/routers-repository";
 import { tonApiClient } from "@/lib/ton-api-client";
 
 const getSwapTxParams = async (
@@ -23,16 +22,10 @@ const getSwapTxParams = async (
     useRecommendedSlippage: boolean;
   },
 ) => {
-  const routerMetadata = await getRouter(simulation.routerAddress);
-
-  if (!routerMetadata) {
-    throw new Error(`Router ${simulation.routerAddress} not found`);
-  }
-
-  const dexContracts = dexFactory(routerMetadata);
+  const dexContracts = dexFactory(simulation.router);
 
   const router = tonApiClient.open(
-    dexContracts.Router.create(routerMetadata.address),
+    dexContracts.Router.create(simulation.router.address),
   );
 
   const sharedTxParams = {
@@ -57,7 +50,9 @@ const getSwapTxParams = async (
     });
   }
 
-  const proxyTon = dexContracts.pTON.create(routerMetadata.ptonMasterAddress);
+  const proxyTon = dexContracts.pTON.create(
+    simulation.router.ptonMasterAddress,
+  );
 
   if (simulation.offerAddress === TON_ADDRESS) {
     return router.getSwapTonToJettonTxParams({

@@ -5,7 +5,6 @@ import { dexFactory } from "@ston-fi/sdk";
 import type { SendTransactionRequest } from "@tonconnect/ui-react";
 
 import { TON_ADDRESS } from "@/constants";
-import { getRouter } from "@/lib/routers-repository";
 import { tonApiClient } from "@/lib/ton-api-client";
 
 const getLpTxParams = async (
@@ -17,7 +16,7 @@ const getLpTxParams = async (
     | "tokenBUnits"
     | "minLpUnits"
     | "provisionType"
-    | "routerAddress"
+    | "router"
   >,
   walletAddress: string,
 ) => {
@@ -65,18 +64,14 @@ const getLpTxParams = async (
     }
   }
 
-  const routerMetadata = await getRouter(simulation.routerAddress);
-
-  if (!routerMetadata) {
-    throw new Error(`Router ${simulation.routerAddress} not found`);
-  }
-
-  const dexContracts = dexFactory(routerMetadata);
+  const dexContracts = dexFactory(simulation.router);
 
   const routerContract = tonApiClient.open(
-    dexContracts.Router.create(routerMetadata.address),
+    dexContracts.Router.create(simulation.router.address),
   );
-  const proxyTon = dexContracts.pTON.create(routerMetadata.ptonMasterAddress);
+  const proxyTon = dexContracts.pTON.create(
+    simulation.router.ptonMasterAddress,
+  );
 
   const isSingleSide =
     simulation.provisionType === "Arbitrary" && txsArgs.length === 1;
@@ -100,7 +95,7 @@ const getLpTxParams = async (
           false
         ) {
           throw new Error(
-            `Router ${routerMetadata.address} v${routerMetadata.majorVersion}.${routerMetadata.minorVersion} not supported TON single side liquidity provision`,
+            `Router ${simulation.router.address} v${simulation.router.majorVersion}.${simulation.router.minorVersion} not supported TON single side liquidity provision`,
           );
         }
 
@@ -126,7 +121,7 @@ const getLpTxParams = async (
         false
       ) {
         throw new Error(
-          `Router ${routerMetadata.address} v${routerMetadata.majorVersion}.${routerMetadata.minorVersion} not supported Jetton single side liquidity provision`,
+          `Router ${simulation.router.address} v${simulation.router.majorVersion}.${simulation.router.minorVersion} not supported Jetton single side liquidity provision`,
         );
       }
 
