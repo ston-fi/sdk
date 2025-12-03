@@ -1,6 +1,10 @@
 minimumReleaseAge: 2880
 minimumReleaseAgeExclude:
+- '@next/env'
 - '@ston-fi/*'
+- 'next'
+- 'react'
+- 'react-dom'
 
 onlyBuiltDependencies:
 - '@biomejs/biome'
