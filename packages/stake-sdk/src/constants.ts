@@ -14,8 +14,7 @@ export const DAY_IN_SECONDS = 86400;
 
 /**
  * Number of seconds in a month.
- * Is calculated as an average of 4 years: `(365 * 3 + 366) * DAY_IN_SECONDS / (12 * 4)`
  *
- * 30 days * 24 hours * 60 minutes * 60 seconds = 2592000 seconds
+ * Is calculated as an average of 4 years: `DAY_IN_SECONDS * (365 * 3 + 366) / (12 * 4)`
  */
-export const MONTH_IN_SECONDS = 2592000;
+export const MONTH_IN_SECONDS = 2629800;

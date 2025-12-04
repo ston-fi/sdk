@@ -1,5 +1,12 @@
 # Changelog
 
+## 04-12-2025
+
+### @ston-fi/stake-sdk@1.3.1
+
+#### Fixed
+- the `MONTH_IN_SECONDS` constant value was changed from `2592000` to `2629800` to match the contract value.
+
 ## 13-11-2025
 
 ### @ston-fi/sdk@2.7.0
