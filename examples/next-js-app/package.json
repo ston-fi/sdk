@@ -31,9 +31,9 @@
     "clsx": "2.1.1",
     "cmdk": "1.1.1",
     "lucide-react": "0.511.0",
-    "next": "15.5.7",
-    "react": "19.1.2",
-    "react-dom": "19.1.2",
+    "next": "16.0.10",
+    "react": "19.2.3",
+    "react-dom": "19.2.3",
     "tailwind-merge": "2.6.0",
     "tailwindcss-animate": "1.0.7"
   },
@@ -42,12 +42,18 @@
     "@tanstack/react-query-devtools": "5.76.1",
     "@total-typescript/ts-reset": "^0.6.1",
     "@types/node": "^22.15.19",
-    "@types/react": "19.1.4",
-    "@types/react-dom": "19.1.5",
+    "@types/react": "19.2.7",
+    "@types/react-dom": "19.2.3",
     "eslint": "^9.27.0",
-    "eslint-config-next": "15.3.2",
+    "eslint-config-next": "16.0.10",
     "globals": "15.15.0",
     "postcss": "8.5.3",
     "tailwindcss": "4.1.7"
+  },
+  "pnpm": {
+    "overrides": {
+      "@types/react": "19.2.7",
+      "@types/react-dom": "19.2.3"
+    }
   }
 }
