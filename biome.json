@@ -4,10 +4,10 @@
     "ignoreUnknown": true,
     "includes": [
       "**",
-      "!**/node_modules",
-      "!**/.turbo",
       "!**/.next",
-      "!**/dist"
+      "!**/.turbo",
+      "!**/dist",
+      "!**/node_modules"
     ]
   },
   "assist": { "actions": { "source": { "organizeImports": "on" } } },

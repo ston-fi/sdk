@@ -2,6 +2,9 @@ FROM node:22-alpine AS base
 
 FROM base AS pnpm-base
 
+# Check https://github.com/nodejs/docker-node/tree/b4117f9333da4138b03a546ec926ef50a31506c3#nodealpine to understand why libc6-compat might be needed.
+RUN apk update && apk add --no-cache libc6-compat
+
 ENV PNPM_HOME="/pnpm"
 ENV PATH="$PNPM_HOME:$PATH"
 
@@ -10,9 +13,6 @@ RUN --mount=type=cache,id=pnpm,target=/pnpm/store pnpm install turbo --global
 
 
 FROM pnpm-base AS builder
-# Check https://github.com/nodejs/docker-node/tree/b4117f9333da4138b03a546ec926ef50a31506c3#nodealpine to understand why libc6-compat might be needed.
-RUN apk add --no-cache libc6-compat
-RUN apk update
 
 WORKDIR /app
 
@@ -23,9 +23,6 @@ RUN turbo prune @ston-fi/sdk-example-next-js-app --docker
 
 
 FROM pnpm-base AS installer
-
-RUN apk add --no-cache libc6-compat
-RUN apk update
 
 WORKDIR /app
 

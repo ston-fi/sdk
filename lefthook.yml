@@ -1,10 +1,10 @@
-# Refer for explanation to following link:
-# https://github.com/evilmartians/lefthook/blob/master/docs/configuration.md
+# Lefthook configuration guide: https://lefthook.dev/configuration
 
 pre-commit:
   parallel: true
   commands:
-    check:
+    format:biome:
+      # https://biomejs.dev/recipes/git-hooks/#lefthook
       glob: "*"
-      run: npx @biomejs/biome check --write --no-errors-on-unmatched --files-ignore-unknown=true --colors=off {staged_files}
+      run: npx @biomejs/biome format --write --no-errors-on-unmatched --files-ignore-unknown=true --colors=off {staged_files}
       stage_fixed: true
