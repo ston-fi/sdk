@@ -22,6 +22,7 @@
     "@ston-fi/sdk": "workspace:*",
     "@ston-fi/stake-sdk": "workspace:*",
     "@tanstack/react-query": "5.76.1",
+    "@telegram-apps/analytics": "^1.4.4",
     "@telegram-apps/sdk-react": "^3.3.9",
     "@ton-api/client": "0.4.0",
     "@ton/core": "0.60.1",

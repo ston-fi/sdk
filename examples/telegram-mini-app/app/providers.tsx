@@ -15,6 +15,13 @@ const TelegramInit = dynamic(
   },
 );
 
+const AnalyticsInit = dynamic(
+  () => import("@/telegram/client/AnalyticsInit"),
+  {
+    ssr: false,
+  },
+);
+
 function QueryProvider({ children }: { children: React.ReactNode }) {
   return (
     <QueryClientProvider client={queryClient}>
@@ -42,6 +49,7 @@ export function Providers({ children }: { children: React.ReactNode }) {
   return (
     <TonConnectProvider>
       <TelegramInit />
+      <AnalyticsInit />
       <QueryProvider>{children}</QueryProvider>
     </TonConnectProvider>
   );
