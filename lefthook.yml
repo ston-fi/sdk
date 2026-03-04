@@ -5,6 +5,5 @@ pre-commit:
   commands:
     format:biome:
       # https://biomejs.dev/recipes/git-hooks/#lefthook
-      glob: "*"
       run: npx @biomejs/biome format --write --no-errors-on-unmatched --files-ignore-unknown=true --colors=off {staged_files}
       stage_fixed: true
