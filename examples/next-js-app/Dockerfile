@@ -66,7 +66,7 @@ RUN addgroup --system --gid 1001 nodejs
 RUN adduser --system --uid 1001 app
 USER app
 
-COPY --from=installer --chown=app:nodejs /app/examples/next-js-app/next.config.mjs .
+COPY --from=installer --chown=app:nodejs /app/examples/next-js-app/next.config.ts .
 COPY --from=installer --chown=app:nodejs /app/examples/next-js-app/package.json .
 
 # Automatically leverage output traces to reduce image size
