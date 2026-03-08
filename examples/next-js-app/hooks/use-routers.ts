@@ -1,6 +1,8 @@
 import { type UseQueryOptions, useQuery } from "@tanstack/react-query";
 
-import { getRouters, type RouterInfo } from "@/lib/routers-repository";
+import type { RouterInfo } from "@ston-fi/api";
+
+import { getRouters } from "@/lib/routers-repository";
 
 export const useRouters = (
   options?: Omit<

@@ -6,8 +6,6 @@ import { stonApiClient } from "./ston-api-client";
 
 const routersCache: Map<string, RouterInfo> = new Map();
 
-export type { RouterInfo };
-
 export const getRouter = async (routerAddress: string) => {
   try {
     if (!routersCache.size) {
