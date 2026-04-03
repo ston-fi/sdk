@@ -2,8 +2,8 @@
   <h1>STON.fi SDK</h1>
 </div>
 
-[![TON](https://img.shields.io/badge/based%20on-TON-blue)](https://ton.org/)
-[![License](https://img.shields.io/npm/l/@ston-fi/sdk)](https://img.shields.io/npm/l/@ston-fi/sdk)
+[![TON](https://img.shields.io/badge/based%20on-TON-blue)](https://ton.org)
+[![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](https://opensource.org/licenses/MIT)
 [![npm version](https://img.shields.io/npm/v/@ston-fi/sdk/latest.svg)](https://www.npmjs.com/package/@ston-fi/sdk/v/latest)
 
 The SDK is written in TypeScript and designed to be a thin wrapper on top of the [STON.fi](https://ston.fi/) contracts, which will help STON.fi protocol to be used more easily in JS/TS projects

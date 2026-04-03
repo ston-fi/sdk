@@ -2,8 +2,8 @@
   <h1>STON.fi Stake SDK</h1>
 </div>
 
-[![TON](https://img.shields.io/badge/based%20on-TON-blue)](https://ton.org/)
-[![License](https://img.shields.io/npm/l/@ston-fi/stake-sdk)](https://img.shields.io/npm/l/@ston-fi/stake-sdk)
+[![TON](https://img.shields.io/badge/based%20on-TON-blue)](https://ton.org)
+[![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](https://opensource.org/licenses/MIT)
 [![npm version](https://img.shields.io/npm/v/@ston-fi/stake-sdk/latest.svg)](https://www.npmjs.com/package/@ston-fi/stake-sdk/v/latest)
 
 ## Installation
