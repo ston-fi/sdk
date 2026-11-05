@@ -13,7 +13,7 @@ The app demonstrates token swaps, liquidity provision and refunds, vault fee wit
 
 ## Development
 
-Use Node.js 24 and pnpm 10.20.0 (the version pinned in the root `package.json`). From the repository root, install dependencies and start the example app:
+Use Node.js 24 and pnpm 12.12.0 (the version pinned in the root `package.json`). From the repository root, install dependencies and start the example app:
 
 ```sh
 pnpm install

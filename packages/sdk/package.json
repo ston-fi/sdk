@@ -11,9 +11,7 @@
   },
   "type": "module",
   "files": [
-    "dist",
-    "package.json",
-    "README.md"
+    "dist"
   ],
   "main": "./dist/index.cjs",
   "module": "./dist/index.js",
@@ -51,14 +49,12 @@
     }
   },
   "scripts": {
-    "format": "pnpm run /^format:.*/",
-    "format:biome": "biome format --write",
-    "lint": "pnpm run /^lint:.*/",
-    "lint:tsc": "tsc --noEmit --pretty",
-    "lint:biome": "biome check",
-    "test": "vitest",
     "build": "tsup",
-    "prepublishOnly": "pnpm run lint && pnpm run test --run && pnpm run build && pnpm attw --profile node16 --pack . && pnpm publint"
+    "lint": "biome check .",
+    "format": "biome format --write .",
+    "typecheck": "tsc --noEmit",
+    "test": "vitest",
+    "prepublishOnly": "pnpm run lint && pnpm run typecheck && pnpm run test --run && pnpm run build && pnpm attw --profile node16 --pack . && pnpm publint"
   },
   "peerDependencies": {
     "@ston-fi/api": "^0",

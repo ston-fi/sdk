@@ -6,23 +6,20 @@ yarn-debug.log*
 yarn-error.log*
 pnpm-debug.log*
 
-# Runtime data
-node_modules
-dist
-coverage
-*.local
-
 # Editor directories and files
 .vscode
 .idea
 .DS_Store
-*.suo
-*.ntvs*
-*.njsproj
-*.sln
 *.sw?
 
+# Runtime data
+node_modules
+dist
+coverage
 .turbo
-.vercel
+*.local
 
-packages/*/build-report.html
+/packages/*/
+/packages/*/build-report.html
+!/packages/sdk/
+!/packages/stake-sdk/

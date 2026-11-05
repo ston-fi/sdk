@@ -1,18 +1,38 @@
 {
-  "$schema": "https://turbo.build/schema.json",
+  "$schema": "https://turborepo.dev/schema.json",
+  "agentGuidance": false,
   "ui": "tui",
+  "globalDependencies": ["biome.json", "tsconfig.base.json"],
   "tasks": {
-    "build": {
-      "dependsOn": ["^build"],
-      "outputs": [".next/**", "!.next/cache/**", "dist/**"]
-    },
     "dev": {
+      "cache": false,
+      "dependsOn": ["^build"],
+      "persistent": true
+    },
+    "build": {
+      "cache": true,
+      "dependsOn": ["^build"],
+      "outputs": ["dist/**"]
+    },
+    "@ston-fi/sdk-example-next-js-app#build": {
+      "cache": true,
+      "dependsOn": ["^build"],
+      "inputs": ["$TURBO_DEFAULT$", ".env*"],
+      "outputs": [".next/**", "!.next/cache/**", "!.next/dev/**"]
+    },
+    "lint": {
+      "cache": true
+    },
+    "format": {
+      "cache": false
+    },
+    "typecheck": {
+      "cache": true,
       "dependsOn": ["^build"]
     },
     "test": {
-      "dependsOn": ["^build"],
       "cache": false,
-      "outputs": ["coverage/**"]
+      "dependsOn": ["^build"]
     }
   }
 }

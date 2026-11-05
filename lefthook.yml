@@ -1,9 +1,5 @@
-# Lefthook configuration guide: https://lefthook.dev/configuration
-
 pre-commit:
-  parallel: true
   commands:
-    format:biome:
-      # https://biomejs.dev/recipes/git-hooks/#lefthook
+    format:
       run: npx @biomejs/biome format --write --no-errors-on-unmatched --files-ignore-unknown=true --colors=off {staged_files}
       stage_fixed: true

@@ -6,9 +6,9 @@
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "lint": "pnpm run /^lint:/",
-    "lint:eslint": "next lint",
-    "lint:tsc": "tsc --noEmit --pretty"
+    "lint": "eslint .",
+    "format": "biome format --write .",
+    "typecheck": "tsc --noEmit"
   },
   "dependencies": {
     "@radix-ui/react-avatar": "1.1.9",

@@ -1,21 +1,15 @@
-minimumReleaseAge: 2880
-minimumReleaseAgeExclude:
-- '@next/env'
-- '@ston-fi/*'
-- 'next'
-- 'react'
-- 'react-dom'
-
-onlyBuiltDependencies:
-- '@biomejs/biome'
-- '@ston-fi/*'
-- 'lefthook'
-
 packages:
   - 'examples/*'
   - 'packages/*'
 
+saveExact: true
+linkWorkspacePackages: true
+preferWorkspacePackages: true
 verifyDepsBeforeRun: 'install'
+
+minimumReleaseAge: 2880
+minimumReleaseAgeExclude:
+- '@ston-fi/*'
 
 catalog:
   '@arethetypeswrong/cli': 0.18.2
@@ -23,3 +17,12 @@ catalog:
   'publint': 0.3.15
   'vitest': 3.2.4
   'tsup': 8.3.5
+
+allowBuilds:
+  '@ston-fi/api': false
+  '@tailwindcss/oxide': false
+  core-js-pure: false
+  esbuild: false
+  lefthook: true
+  sharp: false
+  unrs-resolver: false
