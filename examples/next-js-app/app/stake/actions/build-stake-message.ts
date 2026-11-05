@@ -1,7 +1,7 @@
 "use server";
 
 import { StakeNftMinter } from "@ston-fi/stake-sdk";
-import type { SendTransactionRequest } from "@tonconnect/ui-react";
+import type { SendTransactionRequestWithMessages } from "@tonconnect/ui-react";
 
 import { tonApiClient } from "@/lib/ton-api-client";
 
@@ -17,7 +17,7 @@ export async function buildStakeMessage(
   amount: bigint,
   durationMonths: number,
   walletAddress: string,
-): Promise<SendTransactionRequest["messages"][number]> {
+): Promise<SendTransactionRequestWithMessages["messages"][number]> {
   if (amount <= 0n) {
     throw new Error("Amount must be greater than zero");
   }

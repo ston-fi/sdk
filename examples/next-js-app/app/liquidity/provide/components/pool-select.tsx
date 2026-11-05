@@ -2,7 +2,7 @@
 
 import type { PoolInfo } from "@ston-fi/api";
 import { ChevronDown } from "lucide-react";
-import { useCallback, useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 
 import { Button } from "@/components/ui/button";
 import {
@@ -32,7 +32,7 @@ export const PoolSelect = () => {
   const { assetB, assetA, pool } = useLiquidityProvideForm();
   const dispatch = useLiquidityProvideFormDispatch();
 
-  const { isFetched, data } = usePoolsByAssetsQuery({
+  const { data } = usePoolsByAssetsQuery({
     asset0Address: assetA?.contractAddress,
     asset1Address: assetB?.contractAddress,
   });
@@ -42,22 +42,18 @@ export const PoolSelect = () => {
     return poolAddress.toLowerCase().includes(search.toLowerCase()) ? 1 : 0;
   };
 
-  const handleSelect = useCallback(
-    (pool: PoolInfo) => {
-      dispatch({ type: "SET_POOL", payload: pool });
-      setOpen(false);
-    },
-    [dispatch],
-  );
+  const handleSelect = (pool: PoolInfo) => {
+    dispatch({ type: "SET_POOL", payload: pool });
+    setOpen(false);
+  };
 
-  // biome-ignore lint/correctness/useExhaustiveDependencies: we only want to run this once when data is fetched
+  const suggestedPool = data?.[0];
+
   useEffect(() => {
-    const suggestedPool = data?.[0];
-
-    if (suggestedPool) {
-      handleSelect(suggestedPool);
+    if (!pool && suggestedPool) {
+      dispatch({ type: "SET_POOL", payload: suggestedPool });
     }
-  }, [isFetched, handleSelect]);
+  }, [pool, suggestedPool, dispatch]);
 
   return (
     <Popover open={open} onOpenChange={setOpen}>

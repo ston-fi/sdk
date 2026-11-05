@@ -1,6 +1,6 @@
 import { fromUnits, toUnits } from "@ston-fi/sdk";
 import { useTonAddress, useTonConnectUI } from "@tonconnect/ui-react";
-import { useRef, useState } from "react";
+import { useId, useState } from "react";
 
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardFooter } from "@/components/ui/card";
@@ -14,19 +14,19 @@ import { useStakeForm } from "../providers/stake-form";
 export function StakeForm(
   props: Omit<React.ComponentProps<"div">, "children">,
 ) {
-  const inputId = useRef("stake-amount");
-  const durationId = useRef("stake-duration");
+  const inputId = useId();
+  const durationId = useId();
 
   const [tonConnectUI] = useTonConnectUI();
 
   return (
     <Card {...props}>
       <CardContent className="flex flex-col gap-4 p-6">
-        <label htmlFor={inputId.current}>Amount:</label>
-        <StakeFormAmount id={inputId.current} />
+        <label htmlFor={inputId}>Amount:</label>
+        <StakeFormAmount id={inputId} />
 
-        <label htmlFor={durationId.current}>Duration:</label>
-        <StakeFormDuration id={durationId.current} />
+        <label htmlFor={durationId}>Duration:</label>
+        <StakeFormDuration id={durationId} />
       </CardContent>
       <CardFooter>
         <WalletGuard

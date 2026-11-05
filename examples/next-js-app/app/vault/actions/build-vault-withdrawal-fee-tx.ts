@@ -1,7 +1,7 @@
 "use server";
 
 import { DEX_VERSION, routerFactory } from "@ston-fi/sdk";
-import type { SendTransactionRequest } from "@tonconnect/ui-react";
+import type { SendTransactionRequestWithMessages } from "@tonconnect/ui-react";
 
 import { TON_ADDRESS } from "@/constants";
 import { getRouter } from "@/lib/routers-repository";
@@ -39,7 +39,7 @@ const getVault = async ({
 
 export async function buildVaultWithdrawalFeeTx(
   params: GetVaultParams[],
-): Promise<SendTransactionRequest["messages"]> {
+): Promise<SendTransactionRequestWithMessages["messages"]> {
   const vaults = (await Promise.all(params.map(getVault))).map((vault) =>
     tonApiClient.open(vault),
   );

@@ -23,17 +23,17 @@
     "@ston-fi/stake-sdk": "workspace:*",
     "@tanstack/react-query": "5.76.1",
     "@ton-api/client": "0.4.0",
-    "@ton/core": "0.60.1",
+    "@ton/core": "0.63.1",
     "@ton/crypto": "3.3.0",
-    "@ton/ton": "15.2.1",
-    "@tonconnect/ui-react": "2.4.2",
+    "@ton/ton": "16.3.0",
+    "@tonconnect/ui-react": "5.0.1",
     "class-variance-authority": "0.7.1",
     "clsx": "2.1.1",
     "cmdk": "1.1.1",
     "lucide-react": "0.511.0",
-    "next": "16.1.6",
-    "react": "19.2.4",
-    "react-dom": "19.2.4",
+    "next": "16.4.4",
+    "react": "19.3.1",
+    "react-dom": "19.3.1",
     "tailwind-merge": "2.6.0",
     "tailwindcss-animate": "1.0.7"
   },
@@ -42,18 +42,12 @@
     "@tanstack/react-query-devtools": "5.76.1",
     "@total-typescript/ts-reset": "^0.6.1",
     "@types/node": "^22.15.19",
-    "@types/react": "19.2.14",
-    "@types/react-dom": "19.2.3",
-    "eslint": "^9.27.0",
-    "eslint-config-next": "16.0.10",
+    "@types/react": "19.3.0",
+    "@types/react-dom": "19.3.0",
+    "eslint": "9.39.5",
+    "eslint-config-next": "16.4.4",
     "globals": "15.15.0",
     "postcss": "8.5.3",
     "tailwindcss": "4.1.7"
-  },
-  "pnpm": {
-    "overrides": {
-      "@types/react": "19.2.14",
-      "@types/react-dom": "19.2.3"
-    }
   }
 }
